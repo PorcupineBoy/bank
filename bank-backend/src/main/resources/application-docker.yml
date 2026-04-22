@@ -6,13 +6,13 @@ spring:
     name: bank-backend
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.245.147.101:3306/bank_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://bank-mysql:3306/bank_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
     username: root
     password: root
   redis:
-    host: 172.245.147.101
+    host: bank-redis
     port: 6379
-    password: 9ijnNJI(
+    password: ${REDIS_PASSWORD:}
     database: 0
     timeout: 3000ms
     lettuce:
@@ -36,7 +36,7 @@ mybatis-plus:
 
 bank:
   jwt:
-    secret: bank-mobile-jwt-secret-key-2026
+    secret: ${JWT_SECRET:bank-mobile-jwt-secret-key-2026}
     expiration: 1800000
   aes:
-    key: bank-mobile-aes-256-secret-key!!
+    key: ${AES_KEY:bank-mobile-aes-256-secret-key!!}

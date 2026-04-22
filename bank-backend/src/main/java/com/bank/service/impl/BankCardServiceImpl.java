@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -89,6 +90,7 @@ public class BankCardServiceImpl implements BankCardService {
         card.setIsDefault(cardCount == 0 ? 1 : 0);
         card.setStatus(Constants.CARD_STATUS_NORMAL);
         card.setBalance(BigDecimal.valueOf(new Random().nextInt(100000) + 1000));
+        card.setBindTime(LocalDateTime.now());
 
         bankCardMapper.insert(card);
         redisTemplate.delete(smsKey);

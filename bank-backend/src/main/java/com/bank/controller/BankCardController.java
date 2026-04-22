@@ -34,28 +34,31 @@ public class BankCardController {
         return Result.success();
     }
 
-    @GetMapping
+    @PostMapping("/list")
     public Result<List<BankCardVO>> listCards(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
         return Result.success(bankCardService.listCards(userId));
     }
 
-    @GetMapping("/{cardId}")
-    public Result<BankCardVO> getCardDetail(@PathVariable Long cardId, HttpServletRequest request) {
+    @PostMapping("/detail")
+    public Result<BankCardVO> getCardDetail(@RequestBody Map<String, Long> body, HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
+        Long cardId = body.get("cardId");
         return Result.success(bankCardService.getCardDetail(userId, cardId));
     }
 
-    @PutMapping("/{cardId}/default")
-    public Result<Void> setDefaultCard(@PathVariable Long cardId, HttpServletRequest request) {
+    @PostMapping("/default")
+    public Result<Void> setDefaultCard(@RequestBody Map<String, Long> body, HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
+        Long cardId = body.get("cardId");
         bankCardService.setDefaultCard(userId, cardId);
         return Result.success();
     }
 
-    @GetMapping("/{cardId}/balance")
-    public Result<BalanceVO> queryBalance(@PathVariable Long cardId, HttpServletRequest request) {
+    @PostMapping("/balance")
+    public Result<BalanceVO> queryBalance(@RequestBody Map<String, Long> body, HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
+        Long cardId = body.get("cardId");
         return Result.success(bankCardService.queryBalance(userId, cardId));
     }
 }

@@ -25,20 +25,20 @@ public class SecurityController {
         return Result.success();
     }
 
-    @PutMapping("/trade-password")
+    @PostMapping("/trade-password/modify")
     public Result<Void> modifyTradePassword(@RequestBody @Validated TradePasswordRequest request, HttpServletRequest httpRequest) {
         Long userId = (Long) httpRequest.getAttribute("userId");
         securityService.modifyTradePassword(userId, request);
         return Result.success();
     }
 
-    @GetMapping("/limits")
+    @PostMapping("/limits")
     public Result<SecurityLimitVO> getLimits(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
         return Result.success(securityService.getLimits(userId));
     }
 
-    @PutMapping("/limits")
+    @PostMapping("/limits/update")
     public Result<Void> updateLimits(@RequestBody @Validated LimitUpdateRequest request, HttpServletRequest httpRequest) {
         Long userId = (Long) httpRequest.getAttribute("userId");
         securityService.updateLimits(userId, request);

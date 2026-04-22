@@ -1,0 +1,20 @@
+# Redis Docker Image for Bank Project
+# This Dockerfile extends the official Redis 7 Alpine image with custom configuration.
+# Usage:
+#   docker build -f Dockerfile.redis -t bank-redis .
+#   docker run -d --name bank-redis -p 6379:6379 bank-redis
+
+FROM redis:7-alpine
+
+LABEL maintainer="bank-project"
+LABEL description="Redis for Mobile Banking Core System"
+
+# Copy custom Redis configuration (optional)
+# If redis.conf exists, it will be used; otherwise default Redis config applies
+COPY redis.conf /usr/local/etc/redis/redis.conf
+
+# Expose default Redis port
+EXPOSE 6379
+
+# Start Redis with custom config if available, otherwise use default
+CMD ["sh", "-c", "if [ -f /usr/local/etc/redis/redis.conf ]; then redis-server /usr/local/etc/redis/redis.conf; else redis-server; fi"]

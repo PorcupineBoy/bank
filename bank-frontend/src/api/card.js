@@ -18,28 +18,31 @@ export function unbindCard(cardId, data) {
 
 export function listCards() {
   return request({
-    url: '/api/cards',
-    method: 'get'
+    url: '/api/cards/list',
+    method: 'post'
   })
 }
 
 export function getCardDetail(cardId) {
   return request({
-    url: `/api/cards/${cardId}`,
-    method: 'get'
+    url: '/api/cards/detail',
+    method: 'post',
+    data: { cardId }
   })
 }
 
 export function setDefaultCard(cardId) {
   return request({
-    url: `/api/cards/${cardId}/default`,
-    method: 'put'
+    url: '/api/cards/default',
+    method: 'post',
+    data: { cardId }
   })
 }
 
 export function queryBalance(cardId) {
   return request({
-    url: `/api/cards/${cardId}/balance`,
-    method: 'get'
+    url: '/api/cards/balance',
+    method: 'post',
+    data: { cardId }
   })
 }

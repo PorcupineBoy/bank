@@ -2,6 +2,7 @@ package com.bank.exception;
 
 import com.bank.common.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,6 +40,12 @@ public class GlobalExceptionHandler {
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining(", "));
         return Result.error(400, message);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public Result<Void> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        log.warn("Request body parse error: {}", e.getMessage());
+        return Result.error(400, "Request format error, please check input data types");
     }
 
     @ExceptionHandler(Exception.class)

@@ -19,15 +19,16 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
-    @GetMapping
-    public Result<IPage<TransactionVO>> queryTransactions(TransactionQueryRequest request, HttpServletRequest httpRequest) {
+    @PostMapping("/query")
+    public Result<IPage<TransactionVO>> queryTransactions(@RequestBody TransactionQueryRequest request, HttpServletRequest httpRequest) {
         Long userId = (Long) httpRequest.getAttribute("userId");
         return Result.success(transactionService.queryTransactions(userId, request));
     }
 
-    @GetMapping("/{transId}")
-    public Result<TransactionVO> getTransactionDetail(@PathVariable Long transId, HttpServletRequest request) {
+    @PostMapping("/detail")
+    public Result<TransactionVO> getTransactionDetail(@RequestBody Map<String, Long> body, HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
+        Long transId = body.get("transId");
         return Result.success(transactionService.getTransactionDetail(userId, transId));
     }
 

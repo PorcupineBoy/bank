@@ -1,17 +1,18 @@
 import request from '@/utils/request'
 
-export function queryTransactions(params) {
+export function queryTransactions(data) {
   return request({
-    url: '/api/transactions',
-    method: 'get',
-    params
+    url: '/api/transactions/query',
+    method: 'post',
+    data
   })
 }
 
 export function getTransactionDetail(transId) {
   return request({
-    url: `/api/transactions/${transId}`,
-    method: 'get'
+    url: '/api/transactions/detail',
+    method: 'post',
+    data: { transId }
   })
 }
 
