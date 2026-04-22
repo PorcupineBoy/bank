@@ -1,0 +1,29 @@
+# MySQL 8.0 Docker Image for Bank Project
+# This Dockerfile extends the official MySQL 8.0 image and bundles the init schema.
+# Usage:
+#   docker build -f Dockerfile.mysql -t bank-mysql .
+#   docker run -d --name bank-mysql -p 3306:3306 bank-mysql
+
+FROM mysql:8.0
+
+LABEL maintainer="bank-project"
+LABEL description="MySQL 8.0 for Mobile Banking Core System"
+
+# Environment variables
+ENV MYSQL_ROOT_PASSWORD=root
+ENV MYSQL_DATABASE=bank_db
+ENV MYSQL_USER=bank_user
+ENV MYSQL_PASSWORD=bank_pass
+
+# Copy initialization script
+# MySQL official image executes *.sql files in /docker-entrypoint-initdb.d/ on first startup
+COPY sql/init_schema.sql /docker-entrypoint-initdb.d/init_schema.sql
+
+# Expose default MySQL port
+EXPOSE 3306
+
+# Override default command to ensure utf8mb4 charset
+CMD ["mysqld", \
+     "--character-set-server=utf8mb4", \
+     "--collation-server=utf8mb4_unicode_ci", \
+     "--default-authentication-plugin=mysql_native_password"]
