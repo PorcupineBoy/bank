@@ -53,6 +53,12 @@ public class BankCardServiceImpl implements BankCardService {
             throw new BusinessException(3003, "Cardholder name does not match registered name");
         }
 
+        // 四要素验证：身份证号校验
+        String storedIdCard = AESUtil.decrypt(user.getIdCardEncrypted());
+        if (!storedIdCard.equals(request.getIdCard())) {
+            throw new BusinessException(3003, "ID card does not match registered ID card");
+        }
+
         if (!LuhnUtil.validate(request.getCardNo())) {
             throw new BusinessException(3002, "Invalid card number");
         }

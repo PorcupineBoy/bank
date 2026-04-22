@@ -19,16 +19,14 @@ public class SecurityController {
     private SecurityService securityService;
 
     @PostMapping("/trade-password")
-    public Result<Void> setTradePassword(@RequestBody @Validated TradePasswordRequest request, HttpServletRequest httpRequest) {
-        Long userId = (Long) httpRequest.getAttribute("userId");
-        securityService.setTradePassword(userId, request);
+    public Result<Void> setTradePassword(@RequestBody @Validated TradePasswordRequest request) {
+        securityService.setTradePassword(request.getUserId(), request);
         return Result.success();
     }
 
     @PostMapping("/trade-password/modify")
-    public Result<Void> modifyTradePassword(@RequestBody @Validated TradePasswordRequest request, HttpServletRequest httpRequest) {
-        Long userId = (Long) httpRequest.getAttribute("userId");
-        securityService.modifyTradePassword(userId, request);
+    public Result<Void> modifyTradePassword(@RequestBody @Validated TradePasswordRequest request) {
+        securityService.modifyTradePassword(request.getUserId(), request);
         return Result.success();
     }
 
@@ -39,9 +37,8 @@ public class SecurityController {
     }
 
     @PostMapping("/limits/update")
-    public Result<Void> updateLimits(@RequestBody @Validated LimitUpdateRequest request, HttpServletRequest httpRequest) {
-        Long userId = (Long) httpRequest.getAttribute("userId");
-        securityService.updateLimits(userId, request);
+    public Result<Void> updateLimits(@RequestBody @Validated LimitUpdateRequest request) {
+        securityService.updateLimits(request.getUserId(), request);
         return Result.success();
     }
 }

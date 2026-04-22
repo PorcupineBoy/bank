@@ -12,7 +12,7 @@ export function getTransactionDetail(transId) {
   return request({
     url: '/api/transactions/detail',
     method: 'post',
-    data: { transId }
+    data: { transId: transId }
   })
 }
 

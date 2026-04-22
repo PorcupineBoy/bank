@@ -19,7 +19,8 @@ export function unbindCard(cardId, data) {
 export function listCards() {
   return request({
     url: '/api/cards/list',
-    method: 'post'
+    method: 'post',
+    data: {}
   })
 }
 

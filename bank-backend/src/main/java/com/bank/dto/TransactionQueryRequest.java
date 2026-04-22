@@ -3,7 +3,7 @@ package com.bank.dto;
 import lombok.Data;
 
 @Data
-public class TransactionQueryRequest {
+public class TransactionQueryRequest extends ReqBasic {
     private Integer transType;
     private String timeRange;
     private String startDate;

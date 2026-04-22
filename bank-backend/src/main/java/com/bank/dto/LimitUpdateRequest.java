@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data
-public class LimitUpdateRequest {
+public class LimitUpdateRequest extends ReqBasic {
     @NotNull(message = "Single limit is required")
     private BigDecimal singleLimit;
 

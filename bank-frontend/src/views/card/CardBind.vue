@@ -105,9 +105,15 @@ export default {
     if (this.timer) clearInterval(this.timer)
   },
   methods: {
-    onTypeConfirm(item) {
-      this.form.cardType = item.value
-      this.cardTypeText = item.text
+    onTypeConfirm(item, index) {
+      // Vant 2 Picker @confirm: 对象列返回完整对象，取 value/text 字段
+      if (item && typeof item === 'object') {
+        this.form.cardType = item.value
+        this.cardTypeText = item.text
+      } else {
+        this.form.cardType = item
+        this.cardTypeText = this.cardTypeColumns[index] ? this.cardTypeColumns[index].text : ''
+      }
       this.showTypePicker = false
     },
     async sendSmsCode() {

@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Data
-public class CardBindRequest {
+public class CardBindRequest extends ReqBasic {
     @NotBlank(message = "Card number is required")
     @Pattern(regexp = "^\\d{13,19}$", message = "Invalid card number")
     private String cardNo;

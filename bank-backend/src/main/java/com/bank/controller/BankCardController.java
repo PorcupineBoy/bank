@@ -2,6 +2,9 @@ package com.bank.controller;
 
 import com.bank.common.Result;
 import com.bank.dto.CardBindRequest;
+import com.bank.dto.CardIdRequest;
+import com.bank.dto.CardListRequest;
+import com.bank.dto.CardUnbindRequest;
 import com.bank.service.BankCardService;
 import com.bank.vo.BalanceVO;
 import com.bank.vo.BankCardVO;
@@ -9,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -21,44 +22,35 @@ public class BankCardController {
     private BankCardService bankCardService;
 
     @PostMapping("/bind")
-    public Result<Void> bindCard(@RequestBody @Validated CardBindRequest request, HttpServletRequest httpRequest) {
-        Long userId = (Long) httpRequest.getAttribute("userId");
-        bankCardService.bindCard(userId, request);
+    public Result<Void> bindCard(@RequestBody @Validated CardBindRequest request) {
+        bankCardService.bindCard(request.getUserId(), request);
         return Result.success();
     }
 
     @PostMapping("/{cardId}/unbind")
-    public Result<Void> unbindCard(@PathVariable Long cardId, @RequestBody Map<String, String> body, HttpServletRequest httpRequest) {
-        Long userId = (Long) httpRequest.getAttribute("userId");
-        bankCardService.unbindCard(userId, cardId, body.get("tradePassword"));
+    public Result<Void> unbindCard(@PathVariable Long cardId, @RequestBody @Validated CardUnbindRequest request) {
+        bankCardService.unbindCard(request.getUserId(), cardId, request.getTradePassword());
         return Result.success();
     }
 
     @PostMapping("/list")
-    public Result<List<BankCardVO>> listCards(HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        return Result.success(bankCardService.listCards(userId));
+    public Result<List<BankCardVO>> listCards(@RequestBody CardListRequest request) {
+        return Result.success(bankCardService.listCards(request.getUserId()));
     }
 
     @PostMapping("/detail")
-    public Result<BankCardVO> getCardDetail(@RequestBody Map<String, Long> body, HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        Long cardId = body.get("cardId");
-        return Result.success(bankCardService.getCardDetail(userId, cardId));
+    public Result<BankCardVO> getCardDetail(@RequestBody @Validated CardIdRequest request) {
+        return Result.success(bankCardService.getCardDetail(request.getUserId(), request.getCardId()));
     }
 
     @PostMapping("/default")
-    public Result<Void> setDefaultCard(@RequestBody Map<String, Long> body, HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        Long cardId = body.get("cardId");
-        bankCardService.setDefaultCard(userId, cardId);
+    public Result<Void> setDefaultCard(@RequestBody @Validated CardIdRequest request) {
+        bankCardService.setDefaultCard(request.getUserId(), request.getCardId());
         return Result.success();
     }
 
     @PostMapping("/balance")
-    public Result<BalanceVO> queryBalance(@RequestBody Map<String, Long> body, HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        Long cardId = body.get("cardId");
-        return Result.success(bankCardService.queryBalance(userId, cardId));
+    public Result<BalanceVO> queryBalance(@RequestBody @Validated CardIdRequest request) {
+        return Result.success(bankCardService.queryBalance(request.getUserId(), request.getCardId()));
     }
 }

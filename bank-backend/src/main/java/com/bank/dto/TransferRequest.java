@@ -8,7 +8,7 @@ import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 @Data
-public class TransferRequest {
+public class TransferRequest extends ReqBasic {
     @NotNull(message = "Card ID is required")
     private Long cardId;
 
