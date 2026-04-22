@@ -38,4 +38,4 @@ bank:
     secret: bank-mobile-jwt-secret-key-2026
     expiration: 1800000
   aes:
-    key: bank-mobile-aes-256-key-2026!!
+    key: bank-mobile-aes-256-secret-key!!

@@ -152,8 +152,8 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Daily limit check
         String dailyKey = Constants.REDIS_DAILY_TRANSFER_KEY + userId + ":" + LocalDate.now();
-        BigDecimal dailyUsed = (BigDecimal) redisTemplate.opsForValue().get(dailyKey);
-        if (dailyUsed == null) dailyUsed = BigDecimal.ZERO;
+        String dailyUsedStr = (String) redisTemplate.opsForValue().get(dailyKey);
+        BigDecimal dailyUsed = dailyUsedStr == null ? BigDecimal.ZERO : new BigDecimal(dailyUsedStr);
         if (dailyUsed.add(request.getAmount()).compareTo(user.getDailyLimit()) > 0) {
             BigDecimal remaining = user.getDailyLimit().subtract(dailyUsed);
             throw new BusinessException(4003, "Exceeds daily limit, remaining: " + remaining);
@@ -192,7 +192,7 @@ public class TransactionServiceImpl implements TransactionService {
         transactionMapper.insert(transaction);
 
         // Update daily used
-        redisTemplate.opsForValue().set(dailyKey, dailyUsed.add(request.getAmount()), 1, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(dailyKey, dailyUsed.add(request.getAmount()).toPlainString(), 1, TimeUnit.DAYS);
 
         // Clear trade password fail count on success
         redisTemplate.delete(failKey);
