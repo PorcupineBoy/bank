@@ -22,9 +22,8 @@ public class BankCardController {
     private BankCardService bankCardService;
 
     @PostMapping("/bind")
-    public Result<Void> bindCard(@RequestBody @Validated CardBindRequest request) {
-        bankCardService.bindCard(request.getUserId(), request);
-        return Result.success();
+    public Result<BankCardVO> bindCard(@RequestBody @Validated CardBindRequest request) {
+        return Result.success(bankCardService.bindCard(request.getUserId(), request));
     }
 
     @PostMapping("/{cardId}/unbind")

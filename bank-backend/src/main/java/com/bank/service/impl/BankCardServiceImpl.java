@@ -43,7 +43,7 @@ public class BankCardServiceImpl implements BankCardService {
 
     @Override
     @Transactional
-    public void bindCard(Long userId, CardBindRequest request) {
+    public BankCardVO bindCard(Long userId, CardBindRequest request) {
         User user = userMapper.selectById(userId);
         if (user == null) {
             throw new BusinessException(404, "User not found");
@@ -100,6 +100,8 @@ public class BankCardServiceImpl implements BankCardService {
 
         bankCardMapper.insert(card);
         redisTemplate.delete(smsKey);
+
+        return convertToVO(card);
     }
 
     @Override

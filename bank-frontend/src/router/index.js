@@ -28,14 +28,14 @@ const routes = [
     component: () => import('@/views/card/CardList.vue')
   },
   {
-    path: '/cards/:cardId',
-    name: 'CardDetail',
-    component: () => import('@/views/card/CardDetail.vue')
-  },
-  {
     path: '/cards/bind',
     name: 'CardBind',
     component: () => import('@/views/card/CardBind.vue')
+  },
+  {
+    path: '/cards/:cardId',
+    name: 'CardDetail',
+    component: () => import('@/views/card/CardDetail.vue')
   },
   {
     path: '/transactions',
