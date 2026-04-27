@@ -10,6 +10,7 @@ import com.bank.exception.BusinessException;
 import com.bank.mapper.BankCardMapper;
 import com.bank.mapper.TransactionMapper;
 import com.bank.mapper.UserMapper;
+import com.bank.service.TransactionCategorizationService;
 import com.bank.service.TransactionService;
 import com.bank.util.LuhnUtil;
 import com.bank.util.PasswordUtil;
@@ -45,6 +46,8 @@ public class TransactionServiceImpl implements TransactionService {
     private UserMapper userMapper;
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    private TransactionCategorizationService categorizationService;
 
     @Override
     public IPage<TransactionVO> queryTransactions(Long userId, TransactionQueryRequest request) {
@@ -185,6 +188,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setPayeeCardNoMasked(maskCardNo(request.getPayeeCardNo()));
         transaction.setPayeeBankName(request.getPayeeBankName());
         transaction.setRemark(request.getRemark());
+        transaction.setCategory(categorizationService.categorizeTransaction(request.getPayeeName(), request.getRemark(), Constants.TRANS_TYPE_TRANSFER));
         transaction.setStatus(Constants.TRANS_STATUS_SUCCESS);
         transaction.setCreatedAt(LocalDateTime.now());
         transaction.setCompletedAt(LocalDateTime.now());

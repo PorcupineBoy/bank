@@ -76,6 +76,16 @@ const routes = [
     path: '/security/limit',
     name: 'LimitSetting',
     component: () => import('@/views/security/LimitSetting.vue')
+  },
+  {
+    path: '/ai-chat',
+    name: 'AiChat',
+    component: () => import('@/views/ai/AiChat.vue')
+  },
+  {
+    path: '/consumption-analysis',
+    name: 'ConsumptionAnalysis',
+    component: () => import('@/views/ai/ConsumptionAnalysis.vue')
   }
 ]
 
