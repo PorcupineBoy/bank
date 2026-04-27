@@ -1,5 +1,6 @@
 package com.bank.service.impl;
 
+import com.bank.common.Constants;
 import com.bank.entity.Transaction;
 import com.bank.mapper.TransactionMapper;
 import com.bank.service.TransactionCategorizationService;
@@ -85,7 +86,7 @@ public class TransactionCategorizationServiceImpl implements TransactionCategori
 
         LambdaQueryWrapper<Transaction> wrapper = new LambdaQueryWrapper<Transaction>()
                 .eq(Transaction::getUserId, userId)
-                .lt(Transaction::getAmount, BigDecimal.ZERO)
+                .ne(Transaction::getTransType, Constants.TRANS_TYPE_INCOME)
                 .eq(Transaction::getStatus, 1)
                 .ge(Transaction::getCreatedAt, start)
                 .le(Transaction::getCreatedAt, end);
@@ -156,7 +157,7 @@ public class TransactionCategorizationServiceImpl implements TransactionCategori
 
         LambdaQueryWrapper<Transaction> wrapper = new LambdaQueryWrapper<Transaction>()
                 .eq(Transaction::getUserId, userId)
-                .lt(Transaction::getAmount, BigDecimal.ZERO)
+                .ne(Transaction::getTransType, Constants.TRANS_TYPE_INCOME)
                 .eq(Transaction::getStatus, 1)
                 .ge(Transaction::getCreatedAt, start)
                 .le(Transaction::getCreatedAt, end);

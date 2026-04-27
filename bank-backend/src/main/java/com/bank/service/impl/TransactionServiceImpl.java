@@ -173,12 +173,12 @@ public class TransactionServiceImpl implements TransactionService {
             throw new BusinessException(4001, "Insufficient balance");
         }
 
-        // Anti-replay lock
+        // Anti-replay lock (atomic SETNX)
         String lockKey = Constants.REDIS_TRANSFER_LOCK_KEY + userId + ":" + request.getPayeeCardNo();
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(lockKey))) {
+        Boolean locked = redisTemplate.opsForValue().setIfAbsent(lockKey, "1", Constants.TRANSFER_INTERVAL_SECONDS, TimeUnit.SECONDS);
+        if (Boolean.FALSE.equals(locked)) {
             throw new BusinessException(4004, "Please wait 30 seconds before transferring to the same recipient again");
         }
-        redisTemplate.opsForValue().set(lockKey, "1", Constants.TRANSFER_INTERVAL_SECONDS, TimeUnit.SECONDS);
 
         // Execute transfer
         card.setBalance(card.getBalance().subtract(request.getAmount()));
@@ -322,6 +322,13 @@ public class TransactionServiceImpl implements TransactionService {
         // Balance check
         if (card.getBalance().compareTo(request.getAmount()) < 0) {
             throw new BusinessException(4001, "Insufficient balance");
+        }
+
+        // Anti-replay lock for payment (atomic SETNX)
+        String paymentLockKey = Constants.REDIS_TRANSFER_LOCK_KEY + "payment:" + userId + ":" + request.getAccountNo();
+        Boolean paymentLocked = redisTemplate.opsForValue().setIfAbsent(paymentLockKey, "1", Constants.TRANSFER_INTERVAL_SECONDS, TimeUnit.SECONDS);
+        if (Boolean.FALSE.equals(paymentLocked)) {
+            throw new BusinessException(4004, "Please wait 30 seconds before making the same payment again");
         }
 
         // Execute payment
