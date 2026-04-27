@@ -7,19 +7,19 @@
         <van-field
           v-model="form.phone"
           label="手机号"
-          placeholder="请输入手机号"
-          :rules="[{ required: true, message: '请输入手机号' }, { pattern: /^1[3-9]\d{9}$/, message: '手机号格式错误' }]"
+          placeholder="11位手机号码"
+          :rules="[{ required: true, message: '请输入手机号', trigger: 'onBlur' }, { pattern: /^1[3-9]\d{9}$/, message: '手机号格式错误', trigger: 'onBlur' }]"
         />
         <van-field
           v-model="form.smsCode"
           center
           clearable
           label="验证码"
-          placeholder="请输入验证码"
-          :rules="[{ required: true, message: '请输入验证码' }]"
+          placeholder="6位短信验证码"
+          :rules="[{ required: true, message: '请输入验证码', trigger: 'onBlur' }]"
         >
           <template #button>
-            <van-button size="small" type="primary" :disabled="smsCountdown > 0" @click="sendSmsCode">
+            <van-button size="small" type="primary" native-type="button" :disabled="smsCountdown > 0" @click="sendSmsCode">
               {{ smsCountdown > 0 ? smsCountdown + 's' : '获取验证码' }}
             </van-button>
           </template>
@@ -29,21 +29,21 @@
           :type="showPassword ? 'text' : 'password'"
           label="登录密码"
           placeholder="8-20位，至少两种字符类型"
-          :rules="[{ required: true, message: '请输入密码' }, { validator: validatePassword, message: '密码格式不符合要求' }]"
+          :rules="[{ required: true, message: '请输入密码', trigger: 'onBlur' }, { validator: validatePassword, message: '密码格式不符合要求', trigger: 'onBlur' }]"
           :right-icon="showPassword ? 'eye-o' : 'closed-eye'"
           @click-right-icon="showPassword = !showPassword"
         />
         <van-field
           v-model="form.realName"
           label="真实姓名"
-          placeholder="请输入真实姓名"
-          :rules="[{ required: true, message: '请输入真实姓名' }]"
+          placeholder="与身份证保持一致"
+          :rules="[{ required: true, message: '请输入真实姓名', trigger: 'onBlur' }]"
         />
         <van-field
           v-model="form.idCard"
           label="身份证号"
-          placeholder="请输入身份证号"
-          :rules="[{ required: true, message: '请输入身份证号' }]"
+          placeholder="18位二代身份证号"
+          :rules="[{ required: true, message: '请输入身份证号', trigger: 'onBlur' }]"
         />
 
         <div style="margin: 16px;">
