@@ -63,6 +63,21 @@ const routes = [
     component: () => import('@/views/transfer/TransferResult.vue')
   },
   {
+    path: '/payment',
+    name: 'Payment',
+    component: () => import('@/views/payment/Payment.vue')
+  },
+  {
+    path: '/payment/confirm',
+    name: 'PaymentConfirm',
+    component: () => import('@/views/payment/PaymentConfirm.vue')
+  },
+  {
+    path: '/payment/result',
+    name: 'PaymentResult',
+    component: () => import('@/views/payment/PaymentResult.vue')
+  },
+  {
     path: '/security',
     name: 'SecurityCenter',
     component: () => import('@/views/security/SecurityCenter.vue')
@@ -76,6 +91,16 @@ const routes = [
     path: '/security/limit',
     name: 'LimitSetting',
     component: () => import('@/views/security/LimitSetting.vue')
+  },
+  {
+    path: '/ai-chat',
+    name: 'AiChat',
+    component: () => import('@/views/ai/AiChat.vue')
+  },
+  {
+    path: '/consumption-analysis',
+    name: 'ConsumptionAnalysis',
+    component: () => import('@/views/ai/ConsumptionAnalysis.vue')
   }
 ]
 

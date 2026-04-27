@@ -19,25 +19,26 @@
         type="number"
         label="单笔限额"
         placeholder="100 - 500000"
-        :rules="[{ required: true, message: '请输入单笔限额' }]"
+        :rules="[{ required: true, message: '请输入单笔限额', trigger: 'onBlur' }]"
       />
       <van-field
         v-model="form.dailyLimit"
         type="number"
         label="单日限额"
         placeholder="1000 - 1000000"
-        :rules="[{ required: true, message: '请输入单日限额' }]"
+        :rules="[{ required: true, message: '请输入单日限额', trigger: 'onBlur' }]"
       />
       <van-field
         v-model="form.smsCode"
         center
         clearable
         label="验证码"
-        placeholder="请输入验证码"
-        :rules="[{ required: true, message: '请输入验证码' }]"
+        placeholder="6位短信验证码"
+        maxlength="6"
+        :rules="[{ required: true, message: '请输入验证码', trigger: 'onBlur' }]"
       >
         <template #button>
-          <van-button size="small" type="primary" :disabled="smsCountdown > 0" @click="sendSmsCode">
+          <van-button size="small" type="primary" native-type="button" :disabled="smsCountdown > 0" @click="sendSmsCode">
             {{ smsCountdown > 0 ? smsCountdown + 's' : '获取验证码' }}
           </van-button>
         </template>
@@ -45,10 +46,11 @@
       <van-field
         v-model="form.tradePassword"
         type="password"
+        inputmode="numeric"
         maxlength="6"
         label="交易密码"
-        placeholder="请输入6位交易密码"
-        :rules="[{ required: true, message: '请输入交易密码' }]"
+        placeholder="6位数字交易密码"
+        :rules="[{ required: true, message: '请输入交易密码', trigger: 'onBlur' }]"
       />
 
       <div style="margin: 16px;">

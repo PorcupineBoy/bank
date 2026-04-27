@@ -25,6 +25,7 @@
         :gutter="10"
         :focused="showKeyboard"
         @focus="showKeyboard = true"
+        @click="showKeyboard = true"
       />
     </div>
 
@@ -53,6 +54,9 @@ export default {
       showKeyboard: false,
       submitting: false
     }
+  },
+  mounted() {
+    this.showKeyboard = true
   },
   computed: {
     isLargeAmount() {
@@ -130,5 +134,19 @@ export default {
   margin-bottom: 16px;
   font-size: 14px;
   color: #666;
+}
+.van-password-input {
+  margin: 0 auto;
+  max-width: 300px;
+}
+.van-password-input__item {
+  border: 1px solid #c8c9cc;
+  background: #fafafa;
+  height: 48px;
+  border-radius: 4px;
+}
+.van-password-input__item--focus {
+  border-color: #1989fa;
+  background: #fff;
 }
 </style>

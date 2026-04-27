@@ -1,5 +1,6 @@
 <template>
   <div class="home-page">
+    <!-- Blue Gradient Header -->
     <div class="header">
       <div class="user-info">
         <div class="avatar">
@@ -10,22 +11,68 @@
       <div class="total-assets">
         <div class="label">总资产(元)</div>
         <div class="amount">
-          <span v-if="showBalance">{{ totalAssets.toFixed(2) }}</span>
+          <span v-if="showBalance">{{ formatAmount(totalAssets) }}</span>
           <span v-else>****</span>
-          <van-icon :name="showBalance ? 'eye-o' : 'closed-eye'" @click="toggleBalance" />
+          <van-icon
+            :name="showBalance ? 'eye-o' : 'closed-eye'"
+            class="eye-icon"
+            @click="toggleBalance"
+          />
         </div>
       </div>
     </div>
 
+    <!-- Quick Action Buttons -->
     <div class="quick-actions">
-      <van-grid :column-num="4" :border="false">
-        <van-grid-item icon="balance-pay" text="转账" to="/transfer" />
-        <van-grid-item icon="records" text="交易记录" to="/transactions" />
-        <van-grid-item icon="card" text="银行卡" to="/cards" />
-        <van-grid-item icon="setting-o" text="安全中心" to="/security" />
-      </van-grid>
+      <div class="action-item" @click="$router.push('/transfer')">
+        <div class="action-icon">
+          <van-icon name="balance-pay" size="24" color="#fff" />
+        </div>
+        <span class="action-text">转账</span>
+      </div>
+      <div class="action-item" @click="$router.push('/transactions')">
+        <div class="action-icon">
+          <van-icon name="records" size="24" color="#fff" />
+        </div>
+        <span class="action-text">交易记录</span>
+      </div>
+      <div class="action-item" @click="$router.push('/payment')">
+        <div class="action-icon">
+          <van-icon name="bill-o" size="24" color="#fff" />
+        </div>
+        <span class="action-text">生活缴费</span>
+      </div>
+      <div class="action-item" @click="$router.push('/cards')">
+        <div class="action-icon">
+          <van-icon name="card" size="24" color="#fff" />
+        </div>
+        <span class="action-text">银行卡</span>
+      </div>
+      <div class="action-item" @click="$router.push('/security')">
+        <div class="action-icon">
+          <van-icon name="setting-o" size="24" color="#fff" />
+        </div>
+        <span class="action-text">安全中心</span>
+      </div>
     </div>
 
+    <!-- AI Feature Buttons -->
+    <div class="ai-features">
+      <div class="ai-feature-item" @click="$router.push('/ai-chat')">
+        <div class="ai-icon ai-chat">
+          <van-icon name="chat-o" size="20" color="#fff" />
+        </div>
+        <span class="ai-text">AI助手</span>
+      </div>
+      <div class="ai-feature-item" @click="$router.push('/consumption-analysis')">
+        <div class="ai-icon ai-analysis">
+          <van-icon name="chart-trending-o" size="20" color="#fff" />
+        </div>
+        <span class="ai-text">消费分析</span>
+      </div>
+    </div>
+
+    <!-- Bank Card Section -->
     <div class="card-section">
       <div class="section-title">
         <span>我的银行卡</span>
@@ -36,10 +83,15 @@
           暂无银行卡，<span @click="$router.push('/cards/bind')">去绑定</span>
         </div>
         <div v-else class="card-list">
-          <div v-for="card in cards.slice(0, 3)" :key="card.cardId" class="card-item" @click="$router.push('/cards/' + card.cardId)">
+          <div
+            v-for="card in cards.slice(0, 3)"
+            :key="card.cardId"
+            class="card-item"
+            @click="$router.push('/cards/' + card.cardId)"
+          >
             <div class="card-top">
               <span class="bank-name">{{ card.bankName }}</span>
-              <van-tag v-if="card.isDefault === 1" type="primary" size="mini">默认</van-tag>
+              <van-tag v-if="card.isDefault === 1" color="#4A90E2" text-color="#fff" size="mini">默认</van-tag>
             </div>
             <div class="card-no">{{ card.cardNoMasked }}</div>
             <div class="card-type">{{ card.cardType === 1 ? '借记卡' : '信用卡' }}</div>
@@ -48,8 +100,21 @@
       </van-pull-refresh>
     </div>
 
+    <!-- Logout -->
     <div class="logout-area">
-      <van-button plain hairline type="danger" size="small" @click="onLogout">退出登录</van-button>
+      <van-button
+        round
+        plain
+        color="#4A90E2"
+        size="small"
+        style="width: 120px"
+        @click="onLogout"
+      >退出登录</van-button>
+    </div>
+
+    <!-- AI Floating Button -->
+    <div class="ai-float-btn" @click="$router.push('/ai-chat')">
+      <van-icon name="chat-o" size="28" color="#fff" />
     </div>
   </div>
 </template>
@@ -91,6 +156,9 @@ export default {
     toggleBalance() {
       this.showBalance = !this.showBalance
     },
+    formatAmount(val) {
+      return Number(val).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    },
     async onRefresh() {
       await this.loadData()
       this.refreshing = false
@@ -110,54 +178,116 @@ export default {
 
 <style scoped>
 .home-page {
-  min-height: 100%;
-  background: #f5f5f5;
+  min-height: 100vh;
+  background: #F0F4F8;
   padding-bottom: 20px;
+  position: relative;
 }
 .header {
-  background: linear-gradient(135deg, #1989fa, #3eaf7c);
-  padding: 20px 16px 30px;
+  background: linear-gradient(135deg, #7BB7F0 0%, #4A90E2 100%);
+  padding: 24px 20px 40px;
   color: #fff;
+  border-radius: 0 0 24px 24px;
 }
 .user-info {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 .avatar {
   margin-right: 12px;
 }
 .name {
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: 500;
 }
 .total-assets .label {
-  font-size: 12px;
-  opacity: 0.9;
+  font-size: 13px;
+  opacity: 0.85;
+  margin-bottom: 4px;
 }
 .total-assets .amount {
-  font-size: 32px;
+  font-size: 36px;
   font-weight: bold;
-  margin-top: 4px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
-.total-assets .amount .van-icon {
-  font-size: 20px;
+.eye-icon {
+  font-size: 22px;
   opacity: 0.8;
+  cursor: pointer;
 }
 .quick-actions {
-  margin: -20px 16px 16px;
+  margin: -24px 16px 12px;
   background: #fff;
-  border-radius: 8px;
-  padding: 8px 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-radius: 16px;
+  padding: 20px 16px;
+  display: flex;
+  justify-content: space-around;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+.action-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #4A90E2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+.action-text {
+  font-size: 13px;
+  color: #333;
+}
+.ai-features {
+  margin: 0 16px 12px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  gap: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+.ai-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  background: #F5F8FF;
+  cursor: pointer;
+}
+.ai-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ai-chat { background: linear-gradient(135deg, #7BB7F0, #4A90E2); }
+.ai-analysis { background: linear-gradient(135deg, #A78BFA, #7C3AED); }
+.ai-text {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
 }
 .card-section {
   margin: 0 16px;
   background: #fff;
-  border-radius: 8px;
-  padding: 12px 16px;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
 }
 .section-title {
   display: flex;
@@ -166,15 +296,16 @@ export default {
   margin-bottom: 12px;
   font-size: 16px;
   font-weight: bold;
+  color: #1A1A2E;
 }
 .section-title .more {
   font-size: 13px;
-  color: #1989fa;
+  color: #4A90E2;
   font-weight: normal;
 }
 .card-item {
-  background: linear-gradient(90deg, #1989fa, #3eaf7c);
-  border-radius: 8px;
+  background: linear-gradient(90deg, #5B9BD5, #4A90E2);
+  border-radius: 12px;
   padding: 16px;
   margin-bottom: 10px;
   color: #fff;
@@ -205,10 +336,25 @@ export default {
   font-size: 14px;
 }
 .empty-tip span {
-  color: #1989fa;
+  color: #4A90E2;
 }
 .logout-area {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 24px;
+}
+.ai-float-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 80px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7BB7F0, #4A90E2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(74, 144, 226, 0.4);
+  z-index: 99;
+  cursor: pointer;
 }
 </style>

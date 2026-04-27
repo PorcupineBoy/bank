@@ -47,6 +47,8 @@ CREATE TABLE IF NOT EXISTS `transaction` (
   `payee_card_no_masked` VARCHAR(30) DEFAULT NULL COMMENT '收款卡号（脱敏）',
   `payee_bank_name` VARCHAR(100) DEFAULT NULL COMMENT '收款银行名称',
   `remark` VARCHAR(200) DEFAULT NULL COMMENT '备注',
+  `category` TINYINT DEFAULT 0 COMMENT '消费分类：0-其他，1-餐饮，2-购物，3-交通，4-居住，5-医疗，6-教育，7-娱乐，8-金融，9-人情',
+  `sub_category` VARCHAR(50) DEFAULT NULL COMMENT '分类细项',
   `status` TINYINT NOT NULL DEFAULT 0 COMMENT '状态：0-处理中，1-成功，2-失败',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `completed_at` DATETIME DEFAULT NULL COMMENT '完成时间',
@@ -54,6 +56,20 @@ CREATE TABLE IF NOT EXISTS `transaction` (
   UNIQUE KEY `uk_trans_no` (`trans_no`),
   KEY `idx_user_id` (`user_id`),
   KEY `idx_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `chat_message` (
+  `message_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '消息唯一标识，主键',
+  `user_id` BIGINT NOT NULL COMMENT '所属用户ID',
+  `session_id` VARCHAR(64) NOT NULL COMMENT '会话标识',
+  `role` TINYINT NOT NULL COMMENT '消息角色：1-用户，2-AI',
+  `content` TEXT NOT NULL COMMENT '消息内容',
+  `intent` VARCHAR(50) DEFAULT NULL COMMENT '意图识别结果',
+  `function_called` VARCHAR(50) DEFAULT NULL COMMENT '调用的函数名',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`message_id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_session_id` (`session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `operation_log` (
@@ -68,4 +84,16 @@ CREATE TABLE IF NOT EXISTS `operation_log` (
   PRIMARY KEY (`log_id`),
   KEY `idx_user_id` (`user_id`),
   KEY `idx_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `frequent_payment_account` (
+  `account_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `payment_type` TINYINT NOT NULL COMMENT '缴费类型：1-水费，2-电费，3-燃气费，4-话费',
+  `account_no` VARCHAR(50) NOT NULL COMMENT '缴费户号/手机号',
+  `account_name` VARCHAR(50) DEFAULT NULL COMMENT '户名',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`account_id`),
+  UNIQUE KEY `uk_user_type_account` (`user_id`, `payment_type`, `account_no`),
+  KEY `idx_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

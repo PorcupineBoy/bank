@@ -12,6 +12,7 @@
         :gutter="10"
         :focused="showKeyboard"
         @focus="showKeyboard = true"
+        @click="showKeyboard = true"
       />
       <div class="field-tabs" v-if="isModify">
         <div :class="['tab', { active: activeField === 'old' }]" @click="activeField = 'old'">旧密码</div>
@@ -66,6 +67,14 @@ export default {
   created() {
     this.isModify = this.$route.query.modify === '1'
     this.activeField = this.isModify ? 'old' : 'new'
+  },
+  mounted() {
+    this.showKeyboard = true
+  },
+  watch: {
+    activeField() {
+      this.showKeyboard = true
+    }
   },
   methods: {
     onInput(key) {
@@ -143,5 +152,19 @@ export default {
 .tab.active {
   background: #1989fa;
   color: #fff;
+}
+.van-password-input {
+  margin: 0 auto;
+  max-width: 300px;
+}
+.van-password-input__item {
+  border: 1px solid #c8c9cc;
+  background: #fafafa;
+  height: 48px;
+  border-radius: 4px;
+}
+.van-password-input__item--focus {
+  border-color: #1989fa;
+  background: #fff;
 }
 </style>

@@ -37,6 +37,16 @@ public class Constants {
     public static final int TRANS_STATUS_SUCCESS = 1;
     public static final int TRANS_STATUS_FAILED = 2;
 
+    public static final int PAYMENT_TYPE_WATER = 1;
+    public static final int PAYMENT_TYPE_ELECTRICITY = 2;
+    public static final int PAYMENT_TYPE_GAS = 3;
+    public static final int PAYMENT_TYPE_PHONE = 4;
+
+    public static final java.math.BigDecimal PAYMENT_SINGLE_LIMIT = new java.math.BigDecimal("10000");
+    public static final java.math.BigDecimal PAYMENT_DAILY_LIMIT = new java.math.BigDecimal("200000");
+    public static final String REDIS_DAILY_PAYMENT_KEY = "daily_payment:";
+    public static final int MAX_FREQUENT_PAYMENT_ACCOUNTS = 20;
+
     public static final int DEFAULT_SINGLE_LIMIT = 50000;
     public static final int DEFAULT_DAILY_LIMIT = 200000;
 }
