@@ -85,3 +85,15 @@ CREATE TABLE IF NOT EXISTS `operation_log` (
   KEY `idx_user_id` (`user_id`),
   KEY `idx_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `frequent_payment_account` (
+  `account_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `payment_type` TINYINT NOT NULL COMMENT '缴费类型：1-水费，2-电费，3-燃气费，4-话费',
+  `account_no` VARCHAR(50) NOT NULL COMMENT '缴费户号/手机号',
+  `account_name` VARCHAR(50) DEFAULT NULL COMMENT '户名',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`account_id`),
+  UNIQUE KEY `uk_user_type_account` (`user_id`, `payment_type`, `account_no`),
+  KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

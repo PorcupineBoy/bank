@@ -36,6 +36,12 @@
         </div>
         <span class="action-text">交易记录</span>
       </div>
+      <div class="action-item" @click="$router.push('/payment')">
+        <div class="action-icon">
+          <van-icon name="bill-o" size="24" color="#fff" />
+        </div>
+        <span class="action-text">生活缴费</span>
+      </div>
       <div class="action-item" @click="$router.push('/cards')">
         <div class="action-icon">
           <van-icon name="card" size="24" color="#fff" />
