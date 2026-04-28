@@ -1,0 +1,27 @@
+# IDE configurations
+.idea/
+.vscode/
+
+# Qoder
+.qoder/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+logs/
+
+# Node (root level)
+node_modules/
+package-lock.json
+
+# Maven (backend)
+target/
+*.jar
+*.war
+*.class
+
+# Frontend build
+dist/
