@@ -48,6 +48,29 @@ body {
   background-color: var(--primary-color) !important;
 }
 
+/* ============================================
+ * Vant 组件样式修正
+ * ============================================ */
+
+/* 修复表单校验错误消息前的多余 | 符号 */
+.van-field__error-message::before,
+.van-field__error-message::after {
+    content: none !important;
+}
+.van-field__error-message {
+    padding-left: 0 !important;
+    text-align: left;
+}
+/* 校验错误时，错误消息和输入框之间保持间距 */
+.van-field--error .van-field__body {
+    margin-bottom: 4px;
+}
+
+/* 修复交易密码输入框内边距 */
+.van-dialog .van-field {
+    padding: 8px 16px;
+}
+
 .van-tag--primary {
   background-color: var(--primary-light) !important;
 }

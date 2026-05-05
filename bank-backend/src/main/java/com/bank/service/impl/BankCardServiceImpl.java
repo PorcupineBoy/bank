@@ -206,6 +206,13 @@ public class BankCardServiceImpl implements BankCardService {
     private BankCardVO convertToVO(BankCard card) {
         BankCardVO vo = new BankCardVO();
         BeanUtils.copyProperties(card, vo);
+        // 解密卡号，供前端小眼睛展示完整卡号
+        try {
+            vo.setCardNo(AESUtil.decrypt(card.getCardNoEncrypted()));
+        } catch (Exception e) {
+            log.warn("Failed to decrypt card number for cardId={}", card.getCardId());
+            vo.setCardNo(card.getCardNoMasked());
+        }
         return vo;
     }
 

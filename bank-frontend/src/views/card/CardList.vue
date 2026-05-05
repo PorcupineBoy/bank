@@ -11,7 +11,14 @@
             <span class="bank">{{ card.bankName }}</span>
             <van-tag v-if="card.isDefault === 1" type="primary" size="mini">默认</van-tag>
           </div>
-          <div class="card-number">{{ card.cardNoMasked }}</div>
+          <div class="card-number-row">
+            <span class="card-number">{{ showFullCards[card.cardId] ? card.cardNo : card.cardNoMasked }}</span>
+            <van-icon
+              :name="showFullCards[card.cardId] ? 'eye-o' : 'closed-eye'"
+              class="eye-icon"
+              @click.stop="toggleCardNumber(card.cardId)"
+            />
+          </div>
           <div class="card-meta">{{ card.cardType === 1 ? '借记卡' : '信用卡' }}</div>
         </div>
       </div>
@@ -24,14 +31,15 @@
 </template>
 
 <script>
-import { listCards } from '@/api/card'
+import {listCards} from '@/api/card'
 
 export default {
   name: 'CardList',
   data() {
     return {
       cards: [],
-      refreshing: false
+      refreshing: false,
+      showFullCards: {}
     }
   },
   created() {
@@ -50,6 +58,9 @@ export default {
     },
     goDetail(cardId) {
       this.$router.push('/cards/' + cardId)
+    },
+    toggleCardNumber(cardId) {
+      this.$set(this.showFullCards, cardId, !this.showFullCards[cardId])
     }
   }
 }
@@ -81,10 +92,24 @@ export default {
   font-size: 16px;
   font-weight: bold;
 }
+.card-number-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
 .card-number {
   font-size: 20px;
   letter-spacing: 2px;
-  margin-bottom: 6px;
+  flex: 1;
+}
+.card-number-row .eye-icon {
+  font-size: 18px;
+  padding: 2px 6px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+.card-number-row .eye-icon:active {
+  opacity: 1;
 }
 .card-meta {
   font-size: 12px;
