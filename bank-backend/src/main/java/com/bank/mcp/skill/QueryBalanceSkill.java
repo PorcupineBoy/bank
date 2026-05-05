@@ -26,8 +26,12 @@ import java.util.stream.Collectors;
 @Component
 public class QueryBalanceSkill implements McpSkill {
 
-    @Autowired
     private BankCardService bankCardService;
+
+    @Autowired
+    public void setBankCardService(BankCardService bankCardService) {
+        this.bankCardService = bankCardService;
+    }
 
     @Override
     public SkillMeta getMeta() {

@@ -25,13 +25,17 @@
     >
 
     <div class="password-area">
-      <div class="pwd-label">请输入交易密码</div>
+      <div class="pwd-label">
+        <van-icon name="lock" size="16" style="margin-right:4px;vertical-align:-2px" />
+        请输入6位交易密码
+      </div>
       <van-password-input
         :value="tradePassword"
         :length="6"
         :gutter="10"
         :focused="showKeyboard"
         @focus="showKeyboard = true"
+        @click="showKeyboard = true"
       />
     </div>
 
@@ -87,6 +91,9 @@ export default {
   },
   created() {
     this.loadCards()
+  },
+  mounted() {
+    this.showKeyboard = true
   },
   methods: {
     async loadCards() {
@@ -176,7 +183,22 @@ export default {
 .pwd-label {
   text-align: center;
   margin-bottom: 16px;
-  font-size: 14px;
-  color: #666;
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+}
+.van-password-input {
+  margin: 0 auto;
+  max-width: 300px;
+}
+.van-password-input__item {
+  border: 1px solid #c8c9cc;
+  background: #fafafa;
+  height: 48px;
+  border-radius: 4px;
+}
+.van-password-input__item--focus {
+  border-color: #1989fa;
+  background: #fff;
 }
 </style>

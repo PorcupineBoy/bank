@@ -23,8 +23,8 @@
             @click="$router.push('/transactions/' + item.transId)"
           >
             <template #default>
-              <div :class="['amount', item.transType === 3 ? 'income' : 'expense']">
-                {{ item.transType === 3 ? '+' : '-' }}{{ item.amount.toFixed(2) }}
+              <div :class="['amount', item.amount > 0 ? 'income' : 'expense']">
+                {{ item.amount.toFixed(2) }}
               </div>
               <div class="status">{{ formatStatus(item.status) }}</div>
             </template>

@@ -25,8 +25,12 @@ import java.util.Map;
 @Component
 public class McpGateway {
 
-    @Autowired
     private McpSkillRegistry registry;
+
+    @Autowired
+    public void setRegistry(McpSkillRegistry registry) {
+        this.registry = registry;
+    }
 
     /**
      * 执行指定 Skill

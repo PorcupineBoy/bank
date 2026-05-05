@@ -28,8 +28,12 @@ import java.util.stream.Collectors;
 @Component
 public class QueryTransactionsSkill implements McpSkill {
 
-    @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    public void setTransactionService(TransactionService transactionService) {
+        this.transactionService = transactionService;
+    }
 
     @Override
     public SkillMeta getMeta() {
@@ -114,7 +118,7 @@ public class QueryTransactionsSkill implements McpSkill {
             map.put("transType", t.getTransType());
             map.put("transTypeLabel", getTypeLabel(t.getTransType()));
             map.put("amount", t.getAmount());
-            map.put("amountDisplay", (t.getAmount().compareTo(BigDecimal.ZERO) >= 0 ? "+" : "") + t.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
+            map.put("amountDisplay", (t.getAmount().compareTo(BigDecimal.ZERO) > 0 ? "+" : "") + t.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
             map.put("payeeName", t.getPayeeName());
             map.put("payeeCardNoMasked", t.getPayeeCardNoMasked());
             map.put("remark", t.getRemark());
@@ -129,7 +133,7 @@ public class QueryTransactionsSkill implements McpSkill {
         sb.append("您最近的交易记录（共").append(result.getTotal()).append("笔）：\n\n");
         for (TransactionVO t : result.getRecords()) {
             String typeStr = getTypeLabel(t.getTransType());
-            String amountStr = t.getAmount().compareTo(BigDecimal.ZERO) >= 0
+            String amountStr = t.getAmount().compareTo(BigDecimal.ZERO) > 0
                     ? "+" + t.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)
                     : t.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).toString();
             sb.append("• ").append(t.getCreatedAt() != null ? t.getCreatedAt().format(DateTimeFormatter.ofPattern("MM-dd HH:mm")) : "")

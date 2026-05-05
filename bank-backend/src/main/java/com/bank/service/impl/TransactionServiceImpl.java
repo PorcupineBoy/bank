@@ -189,7 +189,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setUserId(userId);
         transaction.setCardId(card.getCardId());
         transaction.setTransType(Constants.TRANS_TYPE_TRANSFER);
-        transaction.setAmount(request.getAmount());
+        transaction.setAmount(request.getAmount().negate());
         transaction.setPayeeName(request.getPayeeName());
         transaction.setPayeeCardNoMasked(maskCardNo(request.getPayeeCardNo()));
         transaction.setPayeeBankName(request.getPayeeBankName());
@@ -341,7 +341,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setUserId(userId);
         transaction.setCardId(card.getCardId());
         transaction.setTransType(Constants.TRANS_TYPE_BILL);
-        transaction.setAmount(request.getAmount());
+        transaction.setAmount(request.getAmount().negate());
         transaction.setPayeeName(request.getAccountName());
         transaction.setPayeeCardNoMasked(maskPaymentAccountNo(request.getAccountNo()));
         transaction.setPayeeBankName(typeName);

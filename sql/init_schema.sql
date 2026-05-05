@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `chat_message` (
   `role` TINYINT NOT NULL COMMENT '消息角色：1-用户，2-AI',
   `content` TEXT NOT NULL COMMENT '消息内容',
   `intent` VARCHAR(50) DEFAULT NULL COMMENT '意图识别结果',
-  `function_called` VARCHAR(50) DEFAULT NULL COMMENT '调用的函数名',
+  `function_called` TEXT DEFAULT NULL COMMENT 'MCP-Skill 调用结果（纯字符串或 SkillResult JSON）',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`message_id`),
   KEY `idx_user_id` (`user_id`),
@@ -97,3 +97,13 @@ CREATE TABLE IF NOT EXISTS `frequent_payment_account` (
   UNIQUE KEY `uk_user_type_account` (`user_id`, `payment_type`, `account_no`),
   KEY `idx_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- V2.2 数据迁移：MCP-Skill 架构升级
+-- 操作人：AI 需求评审
+-- 操作时间：2026-05-06
+-- ============================================================
+
+-- 1. function_called 字段扩展为 TEXT，支持 SkillResult JSON 存储
+ALTER TABLE `chat_message`
+  MODIFY COLUMN `function_called` TEXT DEFAULT NULL COMMENT 'MCP-Skill 调用结果（纯字符串或 SkillResult JSON）';

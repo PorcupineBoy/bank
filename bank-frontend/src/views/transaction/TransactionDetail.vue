@@ -7,7 +7,7 @@
         <van-icon :name="detail.status === 1 ? 'success' : 'warning-o'" :color="detail.status === 1 ? '#07c160' : '#ff976a'" size="48" />
       </div>
       <div class="status-text">{{ detail.status === 1 ? '交易成功' : (detail.status === 0 ? '处理中' : '交易失败') }}</div>
-      <div class="amount">-{{ detail.amount.toFixed(2) }} 元</div>
+      <div class="amount">{{ detail.amount.toFixed(2) }} 元</div>
     </div>
 
     <van-cell-group v-if="detail">
