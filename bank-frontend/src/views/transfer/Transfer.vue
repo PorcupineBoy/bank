@@ -178,7 +178,7 @@ export default {
     onSelectLookupResult(item) {
       // 选中结果后自动填充收款信息
       this.form.payeeName = item.realName
-      this.form.payeeCardNo = ''
+      this.form.payeeCardNo = item.cardNoMasked
       this.form.payeeBankName = item.bankName
       this.showLookupPopup = false
       this.$toast('已选择 ' + item.realName + ' 的 ' + item.bankName + ' 卡')
