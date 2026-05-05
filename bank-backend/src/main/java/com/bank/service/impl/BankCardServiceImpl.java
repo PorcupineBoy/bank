@@ -14,6 +14,7 @@ import com.bank.util.AESUtil;
 import com.bank.util.LuhnUtil;
 import com.bank.util.PasswordUtil;
 import com.bank.vo.BalanceVO;
+import com.bank.vo.BankCardLookupVO;
 import com.bank.vo.BankCardVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -201,6 +202,11 @@ public class BankCardServiceImpl implements BankCardService {
         vo.setBankName(card.getBankName());
         vo.setBalance(card.getBalance());
         return vo;
+    }
+
+    @Override
+    public List<BankCardLookupVO> lookupCardsByName(String name) {
+        return bankCardMapper.lookupByName(name);
     }
 
     private BankCardVO convertToVO(BankCard card) {

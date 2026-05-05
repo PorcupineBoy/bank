@@ -49,18 +49,23 @@ body {
 }
 
 /* ============================================
- * Vant 组件样式修正
+ * Vant 表单校验样式修正
  * ============================================ */
 
-/* 修复表单校验错误消息前的多余 | 符号 */
-.van-field__error-message::before,
-.van-field__error-message::after {
-    content: none !important;
+/* 校验错误时输入框占位符保持灰色，避免与红色错误消息重复 */
+/* 必须同时覆盖 color + -webkit-text-fill-color，因为 Vant 默认 CSS 使用 -webkit-text-fill-color 渲染 */
+.van-field--error .van-field__control::placeholder,
+.van-field--error input::placeholder {
+    color: #c8c9cc !important;
+    -webkit-text-fill-color: #c8c9cc !important;
 }
-.van-field__error-message {
-    padding-left: 0 !important;
-    text-align: left;
+
+/* 校验错误时，隐藏可能由表单重复验证产生的额外错误消息
+   确保每个字段只显示一条错误消息 */
+.van-field--error .van-field__error-message + .van-field__error-message {
+    display: none !important;
 }
+
 /* 校验错误时，错误消息和输入框之间保持间距 */
 .van-field--error .van-field__body {
     margin-bottom: 4px;
@@ -69,6 +74,11 @@ body {
 /* 修复交易密码输入框内边距 */
 .van-dialog .van-field {
     padding: 8px 16px;
+}
+
+/* 表单内 van-cell-group 去掉外阴影 */
+.van-cell-group {
+    margin-bottom: 12px;
 }
 
 .van-tag--primary {

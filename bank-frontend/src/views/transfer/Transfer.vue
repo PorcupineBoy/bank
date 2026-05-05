@@ -9,7 +9,7 @@
           label="付款卡"
           readonly
           placeholder="请选择付款银行卡"
-          :rules="[{ required: true, message: '请选择付款卡' }]"
+          :rules="[{ required: true, message: '请选择付款卡', trigger: 'onBlur' }]"
           @click="showCardPicker = true"
         />
       </van-cell-group>
@@ -18,20 +18,23 @@
         <van-field
           v-model="form.payeeName"
           label="收款人姓名"
-          placeholder="请输入收款人姓名"
-          :rules="[{ required: true, message: '请输入收款人姓名' }]"
+          :rules="[{ required: true, message: '请输入收款人姓名', trigger: 'onBlur' }]"
+          clearable
+          placeholder="输入姓名自动查询银行卡"
+          @clear="onPayeeNameClear"
+          @input="onPayeeNameInput"
         />
         <van-field
           v-model="form.payeeCardNo"
           label="收款卡号"
           placeholder="请输入收款银行卡号"
-          :rules="[{ required: true, message: '请输入收款卡号' }, { pattern: /^\d{13,19}$/, message: '卡号格式错误' }]"
+          :rules="[{ required: true, message: '请输入收款卡号', trigger: 'onBlur' }, { pattern: /^\d{13,19}$/, message: '卡号格式错误', trigger: 'onBlur' }]"
         />
         <van-field
           v-model="form.payeeBankName"
           label="收款银行"
           placeholder="请输入收款银行"
-          :rules="[{ required: true, message: '请输入收款银行' }]"
+          :rules="[{ required: true, message: '请输入收款银行', trigger: 'onBlur' }]"
         />
       </van-cell-group>
 
@@ -41,7 +44,7 @@
           type="number"
           label="金额"
           placeholder="请输入转账金额"
-          :rules="[{ required: true, message: '请输入金额' }]"
+          :rules="[{ required: true, message: '请输入金额', trigger: 'onBlur' }]"
         />
         <van-field
           v-model="form.remark"
@@ -55,6 +58,7 @@
       </div>
     </van-form>
 
+    <!-- 付款卡选择器 -->
     <van-popup v-model="showCardPicker" position="bottom">
       <van-picker
         show-toolbar
@@ -63,11 +67,34 @@
         @cancel="showCardPicker = false"
       />
     </van-popup>
+
+    <!-- 收款人银行卡查询结果 -->
+    <van-popup
+      v-model="showLookupPopup"
+      closeable
+      position="bottom"
+      round
+      title="选择收款卡"
+      @closed="lookupResults = []"
+    >
+      <div class="lookup-title">请选择收款银行卡</div>
+      <van-cell
+        v-for="item in lookupResults"
+        :key="item.cardId"
+        :label="item.bankName + ' ' + item.cardNoMasked"
+        :title="item.realName"
+        is-link
+        @click="onSelectLookupResult(item)"
+      />
+      <div v-if="lookupResults.length === 0" class="lookup-empty">
+        未找到匹配的银行卡
+      </div>
+    </van-popup>
   </div>
 </template>
 
 <script>
-import { listCards } from '@/api/card'
+import {listCards, lookupCardsByName} from '@/api/card'
 
 export default {
   name: 'Transfer',
@@ -84,11 +111,17 @@ export default {
       },
       selectedCardText: '',
       showCardPicker: false,
-      cardColumns: []
+      cardColumns: [],
+      showLookupPopup: false,
+      lookupResults: [],
+      lookupTimer: null
     }
   },
   created() {
     this.loadCards()
+  },
+  beforeDestroy() {
+    if (this.lookupTimer) clearTimeout(this.lookupTimer)
   },
   methods: {
     async loadCards() {
@@ -111,6 +144,45 @@ export default {
       this.selectedCardText = item.text
       this.showCardPicker = false
     },
+    onPayeeNameInput() {
+      // 防抖：用户停止输入 300ms 后发起查询
+      if (this.lookupTimer) clearTimeout(this.lookupTimer)
+      this.lookupTimer = setTimeout(() => {
+        this.doLookup()
+      }, 300)
+    },
+    onPayeeNameClear() {
+      // 清空收款人姓名时，同时清空卡号和银行
+      this.form.payeeCardNo = ''
+      this.form.payeeBankName = ''
+      this.lookupResults = []
+      this.showLookupPopup = false
+    },
+    async doLookup() {
+      const name = (this.form.payeeName || '').trim()
+      if (name.length < 2) {
+        this.showLookupPopup = false
+        return
+      }
+      try {
+        const res = await lookupCardsByName(name)
+        this.lookupResults = res || []
+        if (this.lookupResults.length > 0) {
+          this.showLookupPopup = true
+        }
+      } catch (e) {
+        this.lookupResults = []
+        this.showLookupPopup = false
+      }
+    },
+    onSelectLookupResult(item) {
+      // 选中结果后自动填充收款信息
+      this.form.payeeName = item.realName
+      this.form.payeeCardNo = ''
+      this.form.payeeBankName = item.bankName
+      this.showLookupPopup = false
+      this.$toast('已选择 ' + item.realName + ' 的 ' + item.bankName + ' 卡')
+    },
     onNext() {
       this.$router.push({
         path: '/transfer/confirm',
@@ -125,5 +197,18 @@ export default {
 .transfer-page {
   min-height: 100%;
   background: #f5f5f5;
+}
+.lookup-title {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  padding: 16px 0 8px;
+}
+.lookup-empty {
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+  padding: 24px 0;
 }
 </style>
