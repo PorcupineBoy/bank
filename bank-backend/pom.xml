@@ -58,6 +58,16 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
         </dependency>
+        <!-- Java 11+ 缺少 javax.xml.bind，jjwt 0.9.1 依赖它 -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>

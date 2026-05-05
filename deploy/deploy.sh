@@ -234,8 +234,8 @@ fi
 # 10. 部署 nginx 配置
 # =====================
 info "部署 nginx 配置..."
-NGINX_SRC="$PROJECT_DIR/deploy/nginx/bank.conf"
-NGINX_TARGET="$NGINX_CONF_DIR/bank.conf"
+NGINX_SRC="$PROJECT_DIR/deploy/nginx/bank-locations.config"
+NGINX_TARGET="$NGINX_CONF_DIR/bank-locations.config"
 
 if [ -d "$NGINX_CONF_DIR" ]; then
     info "部署 nginx 配置..."
