@@ -38,15 +38,50 @@ source "$ENV_FILE"
 ok "已加载 .env 配置文件"
 
 # =====================
-# 2. 检查依赖
+# 2. 检查 & 自动安装依赖
 # =====================
 info "检查依赖..."
-command -v java   >/dev/null 2>&1 || err "需要 Java 8+，请先安装 openjdk-8-jre"
-command -v javac  >/dev/null 2>&1 || err "需要 JDK，请先安装 openjdk-8-jdk"
-command -v mvn    >/dev/null 2>&1 || err "需要 Maven，请先安装 maven"
-command -v node   >/dev/null 2>&1 || err "需要 Node.js，请先安装 nodejs"
-command -v npm    >/dev/null 2>&1 || err "需要 npm，请先安装 npm"
-ok "依赖检查通过"
+
+# 检测包管理器
+PKG_MANAGER=""
+INSTALL_CMD=""
+if command -v dnf &>/dev/null; then
+    PKG_MANAGER="dnf"; INSTALL_CMD="sudo dnf install -y"
+elif command -v yum &>/dev/null; then
+    PKG_MANAGER="yum"; INSTALL_CMD="sudo yum install -y"
+elif command -v apt &>/dev/null; then
+    PKG_MANAGER="apt"; INSTALL_CMD="sudo apt install -y"
+    sudo apt update -y 2>/dev/null || true
+fi
+
+# 检查并自动安装
+# 用法: ensure <命令> [包名1 包名2 ...]
+ensure() {
+    local cmd=$1; shift
+    if ! command -v "$cmd" &>/dev/null; then
+        info "缺少 $cmd，正在安装..."
+        if [ -n "$INSTALL_CMD" ]; then
+            $INSTALL_CMD "$@" || err "安装 $cmd 失败，请手动安装"
+            command -v "$cmd" &>/dev/null || err "安装 $cmd 后仍未检测到，请检查"
+            ok "$cmd 已安装"
+        else
+            err "需要 $cmd，请手动安装：
+  CentOS: dnf install -y $*
+  Ubuntu: apt install -y $*"
+        fi
+    else
+        ok "$cmd 已存在"
+    fi
+}
+
+ensure java   java-11-openjdk-devel
+ensure javac  java-11-openjdk-devel
+ensure mvn    maven
+ensure node   nodejs
+ensure npm    npm
+
+# 如果 npm 还没装上（某些 CentOS 需要单独装 npm 包）
+command -v npm &>/dev/null || ensure npm npm
 
 # =====================
 # 3. 选择部署模式
@@ -202,17 +237,21 @@ NGINX_SRC="$PROJECT_DIR/deploy/nginx/bank.conf"
 NGINX_TARGET="$NGINX_CONF_DIR/bank.conf"
 
 if [ -d "$NGINX_CONF_DIR" ]; then
-    info "=============================="
-    info "nginx 配置需手动添加到你的 cloud.conf"
-    info "配置内容参考: $NGINX_SRC"
-    info ""
-    info "执行以下命令查看并复制 location 片段："
-    info "  cat $NGINX_SRC"
-    info ""
-    info "复制后，将 = /bank、^~ /bank/、^~ /bank/api/ 三个 location"
-    info "粘贴到 cloud.conf 的 server 块中，然后执行："
-    info "  sudo nginx -t && sudo systemctl reload nginx"
-    info "=============================="
+    info "部署 nginx 配置..."
+    sudo cp "$NGINX_SRC" "$NGINX_TARGET"
+    # 替换前端文件路径
+    sudo sed -i "s|/var/www/bank/dist|${FRONTEND_DIR}/dist|g" "$NGINX_TARGET"
+    # 替换后端代理端口
+    sudo sed -i "s|proxy_pass http://127.0.0.1:8080/api/|proxy_pass http://127.0.0.1:${BACKEND_PORT}/api/|g" "$NGINX_TARGET"
+
+    # 检查 nginx 配置
+    if sudo nginx -t 2>&1 | grep -q "syntax is ok"; then
+        sudo systemctl reload nginx || sudo nginx -s reload || true
+        ok "nginx 配置已生效"
+    else
+        warn "nginx 配置测试失败，请手动检查: sudo nginx -t"
+        warn "如果与 cloud.conf 冲突（重复 server_name），请手动合并 location"
+    fi
 else
     warn "未找到 nginx 配置目录 ($NGINX_CONF_DIR)，请手动配置 nginx"
     warn "参考文件: $NGINX_SRC"
