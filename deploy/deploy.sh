@@ -150,6 +150,7 @@ info "后端目录: $BACKEND_DIR"
 # 创建目录（需要 sudo）
 sudo mkdir -p "$FRONTEND_DIR/dist"
 sudo mkdir -p "$BACKEND_DIR"
+sudo mkdir -p /opt/bank/log
 
 # =====================
 # 7. 部署前端
