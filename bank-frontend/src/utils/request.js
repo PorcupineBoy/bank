@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { Toast } from 'vant'
-import { getToken, removeToken } from './auth'
+import {Toast} from 'vant'
+import {getToken, removeToken} from './auth'
 
 const request = axios.create({
   baseURL: process.env.VUE_APP_BASE_API || '',
@@ -27,7 +27,9 @@ request.interceptors.response.use(
       Toast.fail(res.message || 'Error')
       if (res.code === 401) {
         removeToken()
-        window.location.href = '/#/login'
+        // 从 VUE_APP_BASE_API 推导前端根路径（生产环境下为 /bank）
+        const basePath = (process.env.VUE_APP_BASE_API || '').replace(/\/api$/, '')
+        window.location.href = basePath + '/#/login'
       }
       return Promise.reject(new Error(res.message || 'Error'))
     }
