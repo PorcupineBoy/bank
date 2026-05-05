@@ -111,7 +111,7 @@ cd "$PROJECT_DIR/bank-frontend"
 
 if [ ! -d "node_modules" ]; then
     info "安装 npm 依赖..."
-    npm install --production
+    npm install
     ok "npm 依赖安装完成"
 fi
 
