@@ -109,7 +109,7 @@ fi
 info "===== 构建前端 ====="
 cd "$PROJECT_DIR/bank-frontend"
 
-if [ ! -d "node_modules" ]; then
+if [ ! -f "node_modules/.bin/vue-cli-service" ]; then
     info "安装 npm 依赖..."
     npm install
     ok "npm 依赖安装完成"
