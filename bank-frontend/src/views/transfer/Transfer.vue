@@ -28,7 +28,7 @@
           v-model="form.payeeCardNo"
           label="收款卡号"
           placeholder="请输入收款银行卡号"
-          :rules="[{ required: true, message: '请输入收款卡号', trigger: 'onBlur' }, { pattern: /^\d{13,19}$/, message: '卡号格式错误', trigger: 'onBlur' }]"
+          :rules="[{ required: true, message: '请输入收款卡号', trigger: 'onBlur' }, { pattern: /^(\d{13,19}|\*{4}[\s\*]*\d{4})$/, message: '卡号格式错误', trigger: 'onBlur' }]"
         />
         <van-field
           v-model="form.payeeBankName"

@@ -1,7 +1,10 @@
 package com.bank.service.impl;
 
 import com.bank.common.Constants;
-import com.bank.dto.*;
+import com.bank.dto.PaymentQueryRequest;
+import com.bank.dto.PaymentRequest;
+import com.bank.dto.TransactionQueryRequest;
+import com.bank.dto.TransferRequest;
 import com.bank.entity.BankCard;
 import com.bank.entity.FrequentPaymentAccount;
 import com.bank.entity.Transaction;
@@ -142,9 +145,17 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         // Luhn check on payee card
-        if (!LuhnUtil.validate(request.getPayeeCardNo())) {
+        // 支持脱敏卡号格式（如 **** **** **** 8888），提取数字部分后校验
+        String payeeCardDigits = request.getPayeeCardNo().replaceAll("\\D", "");
+        if (payeeCardDigits.length() >= 13) {
+            if (!LuhnUtil.validate(payeeCardDigits)) {
+                throw new BusinessException(3002, "Invalid payee card number");
+            }
+        } else if (!request.getPayeeCardNo().startsWith("****")) {
+            // 非脱敏格式且数字部分不足13位，报错
             throw new BusinessException(3002, "Invalid payee card number");
         }
+        // 脱敏格式（****xxxx）跳过 Luhn 校验，仅用于交易记录展示
 
         // Amount check
         if (request.getAmount().compareTo(new BigDecimal("0.01")) < 0) {
