@@ -2,6 +2,11 @@
 -- 手机银行 测试用户初始化脚本
 -- 执行方式：mysql -u root -p bank_db < sql/init_user.sql
 -- 密码规则：8-20位，至少包含大写/小写/数字中的两种，无3连相同字符
+--
+-- 注意：
+--   password_hash 使用 BCrypt(12) 加密，$2a$ 前缀与 jbcrypt 兼容
+--   card_no_encrypted 为占位符，应用启动时 BankCardDataFixer
+--   会自动检测并替换为真实的 AES 加密值，无需手动替换
 -- ============================================================
 
 USE bank_db;
