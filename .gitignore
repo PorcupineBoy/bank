@@ -25,3 +25,6 @@ target/
 
 # Frontend build
 dist/
+
+# Deploy env (contains production credentials)
+deploy/.env

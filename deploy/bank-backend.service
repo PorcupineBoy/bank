@@ -1,0 +1,29 @@
+# ============================================
+# 银行后端 Systemd 服务单元
+# 部署方式：
+#   sudo cp deploy/bank-backend.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable bank-backend
+#   sudo systemctl start bank-backend
+# ============================================
+
+[Unit]
+Description=Bank Backend Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/bank-backend
+ExecStart=/usr/bin/java -Xms256m -Xmx512m -Djava.security.egd=file:/dev/./urandom \
+    -jar /opt/bank-backend/app.jar \
+    --spring.profiles.active=prod \
+    --spring.config.additional-location=/opt/bank-backend/application-prod.yml
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

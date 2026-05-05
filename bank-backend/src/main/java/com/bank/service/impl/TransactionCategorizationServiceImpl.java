@@ -36,6 +36,7 @@ public class TransactionCategorizationServiceImpl implements TransactionCategori
         CATEGORY_NAMES.put(7, "休闲娱乐");
         CATEGORY_NAMES.put(8, "金融理财");
         CATEGORY_NAMES.put(9, "人情往来");
+        CATEGORY_NAMES.put(10, "生活缴费");
         CATEGORY_NAMES.put(0, "其他");
     }
 
@@ -50,13 +51,16 @@ public class TransactionCategorizationServiceImpl implements TransactionCategori
         RULES.add(new CategoryRule(7, "娱乐", Arrays.asList("电影", "影院", "KTV", "游戏", "旅游", "酒店", "景点", "门票", "会员", "视频", "音乐", "直播", "酒吧")));
         RULES.add(new CategoryRule(8, "金融", Arrays.asList("理财", "保险", "基金", "股票", "还款", "信用卡", "贷款", "利息", "手续费", "余额宝", "定投")));
         RULES.add(new CategoryRule(9, "人情", Arrays.asList("红包", "礼金", "份子", "请客", "礼物", "鲜花", "慰问", "拜年", "结婚", "生日")));
+        RULES.add(new CategoryRule(10, "缴费", Arrays.asList("电费", "水费", "燃气费", "话费", "宽带费", "物业费", "供暖费", "缴费", "水电", "煤气", "固话", "网费", "有线电视")));
     }
 
     @Override
     public Integer categorizeTransaction(String payeeName, String remark, Integer transType) {
-        if (transType != null && transType == 3) {
-            return 8;
+        // Bill payments (水电煤话费) → 生活缴费
+        if (transType != null && transType == Constants.TRANS_TYPE_BILL) {
+            return 10;
         }
+
         String text = (payeeName != null ? payeeName : "") + " " + (remark != null ? remark : "");
         String lower = text.toLowerCase();
 
@@ -94,6 +98,7 @@ public class TransactionCategorizationServiceImpl implements TransactionCategori
         List<Transaction> transactions = transactionMapper.selectList(wrapper);
 
         ConsumptionAnalysisVO analysis = new ConsumptionAnalysisVO();
+        analysis.setDimension("month");
         analysis.setMonth(month.format(DateTimeFormatter.ofPattern("yyyy年MM月")));
 
         if (transactions == null || transactions.isEmpty()) {
@@ -107,9 +112,76 @@ public class TransactionCategorizationServiceImpl implements TransactionCategori
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         analysis.setTotalExpense(totalExpense.setScale(2, RoundingMode.HALF_UP));
 
+        List<ConsumptionCategoryVO> categoryList = buildCategoryList(transactions, totalExpense);
+        analysis.setCategoryList(categoryList);
+
+        BigDecimal prevExpense = calculatePrevMonthExpense(userId, month);
+        if (prevExpense != null && prevExpense.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal ratio = totalExpense.subtract(prevExpense)
+                    .multiply(new BigDecimal("100"))
+                    .divide(prevExpense, 1, RoundingMode.HALF_UP);
+            analysis.setMonthOverMonthRatio(ratio);
+        }
+
+        analysis.setAiInsight(generateInsight(categoryList, totalExpense, analysis.getMonthOverMonthRatio(), null, "month"));
+        return analysis;
+    }
+
+    @Override
+    public ConsumptionAnalysisVO analyzeConsumptionByYear(Long userId, Integer year) {
+        LocalDateTime start = LocalDate.of(year, 1, 1).atStartOfDay();
+        LocalDateTime end = LocalDate.of(year, 12, 31).atTime(23, 59, 59);
+
+        LambdaQueryWrapper<Transaction> wrapper = new LambdaQueryWrapper<Transaction>()
+                .eq(Transaction::getUserId, userId)
+                .ne(Transaction::getTransType, Constants.TRANS_TYPE_INCOME)
+                .eq(Transaction::getStatus, 1)
+                .ge(Transaction::getCreatedAt, start)
+                .le(Transaction::getCreatedAt, end);
+
+        List<Transaction> transactions = transactionMapper.selectList(wrapper);
+
+        ConsumptionAnalysisVO analysis = new ConsumptionAnalysisVO();
+        analysis.setDimension("year");
+        analysis.setYear(year + "年");
+
+        if (transactions == null || transactions.isEmpty()) {
+            analysis.setTotalExpense(BigDecimal.ZERO);
+            analysis.setCategoryList(new ArrayList<>());
+            return analysis;
+        }
+
+        BigDecimal totalExpense = transactions.stream()
+                .map(t -> t.getAmount().abs())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        analysis.setTotalExpense(totalExpense.setScale(2, RoundingMode.HALF_UP));
+
+        List<ConsumptionCategoryVO> categoryList = buildCategoryList(transactions, totalExpense);
+        analysis.setCategoryList(categoryList);
+
+        BigDecimal prevExpense = calculatePrevYearExpense(userId, year);
+        if (prevExpense != null && prevExpense.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal ratio = totalExpense.subtract(prevExpense)
+                    .multiply(new BigDecimal("100"))
+                    .divide(prevExpense, 1, RoundingMode.HALF_UP);
+            analysis.setYearOverYearRatio(ratio);
+        }
+
+        analysis.setAiInsight(generateInsight(categoryList, totalExpense, null, analysis.getYearOverYearRatio(), "year"));
+        return analysis;
+    }
+
+    /**
+     * 构建分类消费列表
+     */
+    private List<ConsumptionCategoryVO> buildCategoryList(List<Transaction> transactions, BigDecimal totalExpense) {
         Map<Integer, List<Transaction>> grouped = new HashMap<>();
         for (Transaction t : transactions) {
             Integer cat = t.getCategory() != null ? t.getCategory() : 0;
+            // On-the-fly recategorization: category=0 + transType=bill → 生活缴费
+            if (cat == 0 && t.getTransType() != null && t.getTransType() == Constants.TRANS_TYPE_BILL) {
+                cat = 10;
+            }
             grouped.computeIfAbsent(cat, k -> new ArrayList<>()).add(t);
         }
 
@@ -136,18 +208,7 @@ public class TransactionCategorizationServiceImpl implements TransactionCategori
         }
 
         categoryList.sort((a, b) -> b.getAmount().compareTo(a.getAmount()));
-        analysis.setCategoryList(categoryList);
-
-        BigDecimal prevExpense = calculatePrevMonthExpense(userId, month);
-        if (prevExpense != null && prevExpense.compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal ratio = totalExpense.subtract(prevExpense)
-                    .multiply(new BigDecimal("100"))
-                    .divide(prevExpense, 1, RoundingMode.HALF_UP);
-            analysis.setMonthOverMonthRatio(ratio);
-        }
-
-        analysis.setAiInsight(generateInsight(categoryList, totalExpense, analysis.getMonthOverMonthRatio()));
-        return analysis;
+        return categoryList;
     }
 
     private BigDecimal calculatePrevMonthExpense(Long userId, LocalDate month) {
@@ -155,6 +216,18 @@ public class TransactionCategorizationServiceImpl implements TransactionCategori
         LocalDateTime start = prev.withDayOfMonth(1).atStartOfDay();
         LocalDateTime end = prev.withDayOfMonth(prev.lengthOfMonth()).atTime(23, 59, 59);
 
+        return queryExpenseByDateRange(userId, start, end);
+    }
+
+    private BigDecimal calculatePrevYearExpense(Long userId, Integer year) {
+        Integer prevYear = year - 1;
+        LocalDateTime start = LocalDate.of(prevYear, 1, 1).atStartOfDay();
+        LocalDateTime end = LocalDate.of(prevYear, 12, 31).atTime(23, 59, 59);
+
+        return queryExpenseByDateRange(userId, start, end);
+    }
+
+    private BigDecimal queryExpenseByDateRange(Long userId, LocalDateTime start, LocalDateTime end) {
         LambdaQueryWrapper<Transaction> wrapper = new LambdaQueryWrapper<Transaction>()
                 .eq(Transaction::getUserId, userId)
                 .ne(Transaction::getTransType, Constants.TRANS_TYPE_INCOME)
@@ -167,12 +240,15 @@ public class TransactionCategorizationServiceImpl implements TransactionCategori
         return list.stream().map(t -> t.getAmount().abs()).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private String generateInsight(List<ConsumptionCategoryVO> categories, BigDecimal total, BigDecimal mom) {
+    private String generateInsight(List<ConsumptionCategoryVO> categories, BigDecimal total, BigDecimal mom, BigDecimal yoy, String dimension) {
         if (categories == null || categories.isEmpty()) return null;
 
         StringBuilder sb = new StringBuilder();
         ConsumptionCategoryVO top = categories.get(0);
-        sb.append("您本月最大支出为").append(top.getCategoryName())
+
+        String periodLabel = "year".equals(dimension) ? "本年度" : "本月";
+
+        sb.append("您").append(periodLabel).append("最大支出为").append(top.getCategoryName())
           .append("，占比").append(top.getPercentage()).append("%");
 
         if (mom != null) {
@@ -182,6 +258,14 @@ public class TransactionCategorizationServiceImpl implements TransactionCategori
                 sb.append("；总支出较上月减少").append(mom.abs()).append("%，储蓄习惯良好");
             } else {
                 sb.append("；支出水平与上月基本持平");
+            }
+        } else if (yoy != null) {
+            if (yoy.compareTo(new BigDecimal("20")) > 0) {
+                sb.append("；总支出较上年增长").append(yoy.abs()).append("%，建议关注支出结构");
+            } else if (yoy.compareTo(new BigDecimal("-20")) < 0) {
+                sb.append("；总支出较上年减少").append(yoy.abs()).append("%，储蓄习惯良好");
+            } else {
+                sb.append("；支出水平与上年基本持平");
             }
         }
         sb.append("。");

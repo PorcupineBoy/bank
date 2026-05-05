@@ -1,10 +1,10 @@
 package com.bank.service.impl;
 
 import com.bank.entity.ChatMessage;
+import com.bank.mapper.ChatMessageMapper;
 import com.bank.mcp.McpGateway;
 import com.bank.mcp.McpSkillRegistry;
 import com.bank.mcp.SkillResult;
-import com.bank.mapper.ChatMessageMapper;
 import com.bank.service.AiChatService;
 import com.bank.service.BankCardService;
 import com.bank.service.TransactionCategorizationService;
@@ -19,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -159,6 +160,23 @@ public class AiChatServiceImpl implements AiChatService {
             return executeAndBuildResult(userId, "query_balance", params);
         }
 
+        // 消费分析（月度/年度）—— 必须在交易查询之前，因 "消费" 关键词被交易查询共用
+        if (matchAny(lower, "分析", "消费分析", "消费报告", "月度报告", "花了什么", "消费结构", "年度分析", "年消费", "年度消费")) {
+            // 检测是否按年分析
+            String yearStr = extractYear(content);
+            if (yearStr != null) {
+                return handleConsumptionAnalysisByYear(userId, Integer.parseInt(yearStr));
+            }
+            if (matchAny(lower, "年度", "年消费", "今年", "去年")) {
+                Integer year = LocalDate.now().getYear();
+                if (matchAny(lower, "去年")) {
+                    year = year - 1;
+                }
+                return handleConsumptionAnalysisByYear(userId, year);
+            }
+            return handleConsumptionAnalysis(userId);
+        }
+
         // 查询交易 → 路由到 query_transactions Skill
         if (matchAny(lower, "交易", "账单", "消费", "支出", "花了多少", "最近交易", "转账记录")) {
             Map<String, Object> params = extractTransactionParams(content);
@@ -174,11 +192,6 @@ public class AiChatServiceImpl implements AiChatService {
         if (matchAny(lower, "转账", "转钱", "转给", "汇款", "打钱")) {
             Map<String, Object> params = extractTransferParams(content);
             return executeAndBuildResult(userId, "transfer_prepare", params);
-        }
-
-        // 消费分析
-        if (matchAny(lower, "分析", "消费分析", "消费报告", "月度报告", "花了什么", "消费结构")) {
-            return handleConsumptionAnalysis(userId);
         }
 
         // 未识别的意图
@@ -314,6 +327,33 @@ public class AiChatServiceImpl implements AiChatService {
         return buildMcpResult("CONSUMPTION_ANALYSIS", "analyzeConsumption", sb.toString().trim());
     }
 
+    private ChatResult handleConsumptionAnalysisByYear(Long userId, Integer year) {
+        com.bank.vo.ConsumptionAnalysisVO analysis = categorizationService.analyzeConsumptionByYear(userId, year);
+        if (analysis == null || analysis.getTotalExpense() == null || analysis.getTotalExpense().compareTo(java.math.BigDecimal.ZERO) == 0) {
+            return buildMcpResult("CONSUMPTION_ANALYSIS", "analyzeConsumptionByYear", year + "年暂无消费记录。消费后将自动生成分析报告。");
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("【").append(analysis.getYear()).append("消费分析】\n\n");
+        sb.append("总支出：¥").append(analysis.getTotalExpense()).append("\n");
+        if (analysis.getYearOverYearRatio() != null) {
+            String trend = analysis.getYearOverYearRatio().compareTo(java.math.BigDecimal.ZERO) > 0 ? "↑" : "↓";
+            sb.append("同比：").append(trend).append(analysis.getYearOverYearRatio().abs()).append("%\n");
+        }
+        sb.append("\n消费结构：\n");
+        if (analysis.getCategoryList() != null) {
+            for (var cat : analysis.getCategoryList()) {
+                sb.append("• ").append(cat.getCategoryName())
+                  .append("：¥").append(cat.getAmount())
+                  .append(" (").append(cat.getPercentage()).append("%)\n");
+            }
+        }
+        if (analysis.getAiInsight() != null) {
+            sb.append("\n💡 ").append(analysis.getAiInsight());
+        }
+        sb.append("\n\n可进入\"消费分析\"页面查看完整图表。");
+        return buildMcpResult("CONSUMPTION_ANALYSIS", "analyzeConsumptionByYear", sb.toString().trim());
+    }
+
     private String extractName(String content) {
         Pattern p = Pattern.compile("转(?:账|给|钱|款)(?:给|至|往)?([\\u4e00-\\u9fa5]{2,4})");
         Matcher m = p.matcher(content);
@@ -323,6 +363,16 @@ public class AiChatServiceImpl implements AiChatService {
 
     private String extractAmount(String content) {
         Pattern p = Pattern.compile("(\\d+(?:\\.\\d{1,2})?)[ ]*(?:元|块|万)");
+        Matcher m = p.matcher(content);
+        if (m.find()) return m.group(1);
+        return null;
+    }
+
+    /**
+     * 从消息中提取年份（如 "2025年分析"）
+     */
+    private String extractYear(String content) {
+        Pattern p = Pattern.compile("(20\\d{2})\\s*年");
         Matcher m = p.matcher(content);
         if (m.find()) return m.group(1);
         return null;

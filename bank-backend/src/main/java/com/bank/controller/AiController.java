@@ -3,6 +3,7 @@ package com.bank.controller;
 import com.bank.common.Result;
 import com.bank.dto.ChatHistoryRequest;
 import com.bank.dto.ChatSendRequest;
+import com.bank.dto.ConsumptionAnalysisRequest;
 import com.bank.dto.ReqBasic;
 import com.bank.mcp.McpGateway;
 import com.bank.mcp.SkillMeta;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -49,8 +53,47 @@ public class AiController {
     }
 
     @PostMapping("/consumption/analysis")
-    public Result<ConsumptionAnalysisVO> analyzeConsumption(@RequestBody ReqBasic request) {
-        return Result.success(categorizationService.analyzeConsumption(request.getUserId(), LocalDate.now()));
+    public Result<ConsumptionAnalysisVO> analyzeConsumption(@RequestBody @Validated ConsumptionAnalysisRequest request) {
+        String dimension = request.getDimension() != null ? request.getDimension() : "month";
+
+        try {
+            if ("year".equals(dimension)) {
+                Integer year;
+                if (request.getDate() != null && !request.getDate().isEmpty()) {
+                    year = Integer.parseInt(request.getDate());
+                    if (year < 1900 || year > 2100) {
+                        return Result.error("年份必须在 1900~2100 之间");
+                    }
+                } else {
+                    year = LocalDate.now().getYear();
+                }
+                // 边界检查：不允许查询未来年份
+                if (year > LocalDate.now().getYear()) {
+                    return Result.error("不能查询未来的年份");
+                }
+                return Result.success(categorizationService.analyzeConsumptionByYear(request.getUserId(), year));
+            } else {
+                LocalDate month;
+                if (request.getDate() != null && !request.getDate().isEmpty()) {
+                    try {
+                        month = YearMonth.parse(request.getDate(), DateTimeFormatter.ofPattern("yyyy-MM")).atDay(1);
+                    } catch (DateTimeParseException e) {
+                        return Result.error("日期格式错误，按月请使用 yyyy-MM 格式（如 2026-05）");
+                    }
+                } else {
+                    month = LocalDate.now().withDayOfMonth(1);
+                }
+                // 边界检查：不允许查询未来月份
+                YearMonth target = YearMonth.from(month);
+                YearMonth current = YearMonth.from(LocalDate.now());
+                if (target.isAfter(current)) {
+                    return Result.error("不能查询未来的月份");
+                }
+                return Result.success(categorizationService.analyzeConsumption(request.getUserId(), month));
+            }
+        } catch (NumberFormatException e) {
+            return Result.error("日期参数格式不正确，按年请使用 yyyy 格式（如 2026）");
+        }
     }
 
     // ======================== MCP-Skill 接口 ========================
