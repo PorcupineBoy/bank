@@ -116,7 +116,7 @@ if [ ! -f "node_modules/.bin/vue-cli-service" ]; then
 fi
 
 info "构建前端..."
-VUE_APP_BASE_API=/bank/api npm run build
+VUE_APP_BASE_API=/bank npm run build
 ok "前端构建完成 (bank-frontend/dist/)"
 
 # =====================
