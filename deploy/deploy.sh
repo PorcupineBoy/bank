@@ -126,7 +126,7 @@ info "===== 构建后端 ====="
 cd "$PROJECT_DIR/bank-backend"
 
 info "Maven 打包 (跳过测试)..."
-mvn clean package -DskipTests -q
+mvn clean package -Dmaven.test.skip=true -q
 ok "后端构建完成"
 
 # 定位 JAR

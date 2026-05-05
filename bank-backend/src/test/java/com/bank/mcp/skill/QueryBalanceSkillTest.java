@@ -1,5 +1,6 @@
 package com.bank.mcp.skill;
 
+import com.bank.mcp.SkillMeta;
 import com.bank.mcp.SkillResult;
 import com.bank.service.BankCardService;
 import com.bank.vo.BankCardVO;
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 /**
  * 余额查询 Skill 单元测试
