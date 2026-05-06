@@ -25,6 +25,7 @@
         </div>
         <div class="msg-bubble">
           <pre class="msg-text">{{ msg.content }}</pre>
+          <div class="msg-time">{{ formatMsgTime(msg.createdAt) }}</div>
 
           <!-- MCP-Skill 结构化卡片渲染 -->
           <div v-if="msg.role === 2 && msg.functionCalled && msg.functionCalled.startsWith('{')" class="mcp-cards">
@@ -265,6 +266,22 @@ export default {
       if (!timeStr) return ''
       return timeStr.substring(0, 10)
     },
+    formatMsgTime(timeStr) {
+      if (!timeStr) return ''
+      // timeStr format: "2026-05-06T14:30:00" or "2026-05-06T14:30:00.000"
+      const d = new Date(timeStr)
+      if (isNaN(d.getTime())) return timeStr.substring(0, 16)
+      const pad = n => String(n).padStart(2, '0')
+      const now = new Date()
+      const isToday = d.getFullYear() === now.getFullYear() &&
+                      d.getMonth() === now.getMonth() &&
+                      d.getDate() === now.getDate()
+      if (isToday) {
+        return pad(d.getHours()) + ':' + pad(d.getMinutes())
+      }
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' +
+             pad(d.getHours()) + ':' + pad(d.getMinutes())
+    },
     goTransfer(data) {
       if (!data) {
         this.$router.push('/transfer')
@@ -297,9 +314,6 @@ export default {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
 }
 .welcome-msg {
   display: flex;
@@ -356,6 +370,15 @@ export default {
   white-space: pre-wrap;
   font-family: inherit;
   line-height: 1.6;
+}
+.msg-time {
+  font-size: 11px;
+  color: #999;
+  margin-top: 6px;
+  text-align: right;
+}
+.msg-row.user .msg-time {
+  color: rgba(255,255,255,0.7);
 }
 .msg-action {
   margin-top: 8px;
