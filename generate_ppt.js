@@ -2,50 +2,41 @@ const pptxgen = require("pptxgenjs");
 const fs = require("fs");
 
 // ============================================================
-// 样式常量（匹配原PPT风格）
+// 样式常量
 // ============================================================
-const COLORS = {
-  darkBlue: "1A3A5C",     // 封面深蓝背景
-  primaryBlue: "1A5276",  // 主要蓝色
-  accentBlue: "4A90E2",   // 强调蓝
-  lightBlue: "5DADE2",    // 浅蓝
-  white: "FFFFFF",
-  titleGray: "2C3E50",    // 标题深灰
-  bodyGray: "34495E",     // 正文深灰
-  subtitleGray: "7F8C8D", // 副标题灰
-  lightBg: "EBF5FB",      // 浅蓝背景
-  highlight: "E74C3C",    // 强调红
-  green: "27AE60",        // 绿色
-  orange: "E67E22",       // 橙色
-  divider: "4A90E2",      // 分隔线蓝
-  cardBg: "F8FAFC",       // 卡片背景
-  borderGray: "D5D8DC",   // 边框灰
-  badgeGray: "E8E8E8",    // 标签灰
+const C = {
+  darkBlue: "1A3A5C", primaryBlue: "1A5276", accentBlue: "4A90E2",
+  white: "FFFFFF", titleGray: "2C3E50", bodyGray: "34495E",
+  subtitleGray: "7F8C8D", lightBg: "EBF5FB", highlight: "E74C3C",
+  green: "27AE60", orange: "E67E22", cardBg: "F8FAFC",
+  borderGray: "D5D8DC",
 };
-
-const FONTS = {
-  title: "Arial",
-  body: "Arial",
-  cn: "Microsoft YaHei",  // 中文字体
-};
+const F = { title: "Arial", body: "Arial", cn: "Microsoft YaHei" };
 
 // ============================================================
-// 辅助函数
+// 通用辅助函数
 // ============================================================
-function hexToRGB(hex) {
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  return { r, g, b };
+function addSlideHeader(slide, pptx, title, subtitle) {
+  slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 13.33, h: 0.08, fill: { color: C.accentBlue } });
+  slide.addText(title, { x: 0.8, y: 0.3, w: 5, h: 0.7, fontSize: 28, fontFace: F.title, color: C.titleGray, bold: true });
+  if (subtitle) slide.addText(subtitle, { x: 5.5, y: 0.4, w: 7.03, h: 0.5, fontSize: 12, fontFace: F.body, color: C.subtitleGray, align: "right", valign: "middle" });
+  slide.addShape(pptx.ShapeType.rect, { x: 0.8, y: 0.95, w: 1.2, h: 0.04, fill: { color: C.accentBlue } });
+}
+
+function addCard(slide, pptx, x, y, w, h) {
+  slide.addShape(pptx.ShapeType.roundRect, { x, y, w, h, fill: { color: C.cardBg }, cornerRadius: 0.12, line: { color: C.borderGray, width: 0.5 } });
+}
+
+function addTransition(slide, pptx, text) {
+  slide.addText(text, { x: 8.0, y: 6.85, w: 4.53, h: 0.3, fontSize: 10, fontFace: F.body, color: C.subtitleGray, align: "right" });
+  slide.addText("\u2192", { x: 12.5, y: 6.85, w: 0.3, h: 0.3, fontSize: 12, fontFace: F.body, color: C.accentBlue, align: "left" });
 }
 
 // ============================================================
-// 生成器
+// 生成器主函数
 // ============================================================
 async function generatePPT() {
   const pptx = new pptxgen();
-
-  // 页面设置：宽屏 13.33 x 7.5
   pptx.layout = "LAYOUT_WIDE";
   pptx.defineLayout({ name: "WIDE", width: 13.33, height: 7.5 });
   pptx.layout = "WIDE";
@@ -53,1345 +44,592 @@ async function generatePPT() {
   // ============================================================
   // SLIDE 1: 封面
   // ============================================================
-  const slide1 = pptx.addSlide();
-  // 深蓝背景
-  slide1.background = { color: COLORS.darkBlue };
+  const s1 = pptx.addSlide();
+  s1.background = { color: C.darkBlue };
+  s1.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 13.33, h: 0.04, fill: { color: C.accentBlue } });
 
-  // 顶部装饰线
-  slide1.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 13.33, h: 0.04, fill: { color: COLORS.accentBlue },
+  s1.addText("\u6E90\u4E8E\u7ADE\u8D5B\uFF0C\u4E0D\u6B62\u4E8E\u7ADE\u8D5B", {
+    x: 0.8, y: 1.6, w: 11.73, h: 1.0, fontSize: 44, fontFace: F.title, color: C.white, bold: true, align: "center",
+  });
+  s1.addText("AI\u539F\u751F\u7814\u53D1\u7684\u8BA4\u77E5\u8DC3\u8FC1", {
+    x: 0.8, y: 2.6, w: 11.73, h: 0.8, fontSize: 32, fontFace: F.title, color: C.white, align: "center",
+  });
+  s1.addShape(pptx.ShapeType.rect, { x: 4.5, y: 3.6, w: 4.33, h: 0.04, fill: { color: C.accentBlue } });
+  s1.addText("\u4EE5\u624B\u673A\u94F6\u884C\u4E3A\u8F7D\u4F53\u7684\u8C03\u6559\u5B9E\u5F55", {
+    x: 0.8, y: 3.9, w: 11.73, h: 0.6, fontSize: 16, fontFace: F.body, color: "AABBCC", align: "center",
+  });
+  s1.addText("\u624B\u673A\u94F6\u884C\u6838\u5FC3\u4E1A\u52A1\u7CFB\u7EDF \u00B7 \u9879\u76EE\u5C55\u793A", {
+    x: 0.8, y: 5.6, w: 11.73, h: 0.5, fontSize: 14, fontFace: F.body, color: "8899AA", align: "center",
   });
 
-  // 主标题
-  slide1.addText("AI原生研发赋能", {
-    x: 0.8, y: 1.8, w: 11.73, h: 1.0,
-    fontSize: 44, fontFace: FONTS.title, color: COLORS.white, bold: true,
-    align: "center", valign: "middle",
-  });
-  slide1.addText("手机银行核心业务", {
-    x: 0.8, y: 2.7, w: 11.73, h: 0.9,
-    fontSize: 40, fontFace: FONTS.title, color: COLORS.white, bold: true,
-    align: "center", valign: "middle",
-  });
-
-  // 分隔线
-  slide1.addShape(pptx.ShapeType.rect, {
-    x: 4.5, y: 3.8, w: 4.33, h: 0.04, fill: { color: COLORS.accentBlue },
-  });
-
-  // 副标题
-  slide1.addText("基于 MCP-Skill 架构的智能银行系统", {
-    x: 0.8, y: 4.1, w: 11.73, h: 0.6,
-    fontSize: 18, fontFace: FONTS.body, color: "AABBCC",
-    align: "center", valign: "middle",
-  });
-
-  // 底部信息
-  slide1.addText("手机银行核心业务系统 · 项目展示", {
-    x: 0.8, y: 5.6, w: 11.73, h: 0.5,
-    fontSize: 14, fontFace: FONTS.body, color: "8899AA",
-    align: "center", valign: "middle",
-  });
-
-  // Speaker Notes
-  slide1.addNotes(`【开场白，1分钟】
-各位评委老师好！今天我为大家带来的项目是"AI原生研发赋能·手机银行核心业务"。
-
-这个项目的核心思想是：利用AI技术贯穿整个研发周期，构建一套安全、完整的手机银行系统。
-我们不仅用AI来写代码，更用AI来设计架构、治理文档、保障安全。
-
-接下来，我会从项目目标、背景需求、AI研发过程、创新点与难点、成果与收获几个方面为大家做介绍。`);
+  s1.addNotes(`【开场白，1分钟】
+各位评委好！今天我带来的分享，标题叫"源于竞赛，不止于竞赛"。
+这个项目表面上是参加AI竞赛构建手机银行，但过程中我们发现——真正的收获不是系统本身，而是对AI原生研发的认知升级。
+接下来我用一条主线串起这12页：从为什么做，到发现了什么，怎么做的，学到了什么，最后留一个思考给大家。`);
 
   // ============================================================
-  // SLIDE 2: 目录
+  // SLIDE 2: 目录——叙事主线
   // ============================================================
-  const slide2 = pptx.addSlide();
-  slide2.background = { color: COLORS.white };
+  const s2 = pptx.addSlide();
+  s2.background = { color: C.white };
+  addSlideHeader(s2, pptx, "\u76EE\u5F55", "\u4E00\u6761\u4E3B\u7EBF\u4E32\u8D77\u5168\u90E8\u5185\u5BB9");
 
-  // 顶部蓝色条
-  slide2.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 13.33, h: 0.08, fill: { color: COLORS.accentBlue },
-  });
-
-  slide2.addText("目  录", {
-    x: 0.8, y: 0.4, w: 4, h: 0.8,
-    fontSize: 32, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-    align: "left", valign: "middle",
-  });
-  slide2.addShape(pptx.ShapeType.rect, {
-    x: 0.8, y: 1.1, w: 1.5, h: 0.04, fill: { color: COLORS.accentBlue },
-  });
-
-  const tocItems = [
-    { num: "01", title: "项目目标", desc: "公司战略视角：场景验证·能力沉淀·价值探索", color: COLORS.accentBlue },
-    { num: "02", title: "背景与需求", desc: "行业痛点、竞赛要求与功能需求", color: COLORS.green },
-    { num: "03", title: "AI 研发过程", desc: "AI原生研发全流程、技术架构与MCP-Skill创新", color: COLORS.orange },
-    { num: "04", title: "创新点与难点", desc: "真实困难：意图识别·代码校验·前后端集成", color: "8E44AD" },
-    { num: "05", title: "成果与收获", desc: "项目成果、个人成长与可复用打法", color: COLORS.highlight },
-    { num: "06", title: "总结与展望", desc: "AI研发的认知升级与推广建议", color: COLORS.primaryBlue },
-  ];
-
-  tocItems.forEach((item, i) => {
-    const row = Math.floor(i / 2);
-    const col = i % 2;
-    const x = 0.8 + col * 6.2;
-    const y = 1.6 + row * 1.8;
-
-    // 数字圈
-    slide2.addShape(pptx.ShapeType.ellipse, {
-      x: x, y: y + 0.1, w: 0.6, h: 0.6,
-      fill: { color: item.color },
-    });
-    slide2.addText(item.num, {
-      x: x, y: y + 0.1, w: 0.6, h: 0.6,
-      fontSize: 16, fontFace: FONTS.title, color: COLORS.white, bold: true,
-      align: "center", valign: "middle",
-    });
-
-    // 标题
-    slide2.addText(item.title, {
-      x: x + 0.8, y: y, w: 4.8, h: 0.45,
-      fontSize: 20, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-      align: "left", valign: "middle",
-    });
-
-    // 描述
-    slide2.addText(item.desc, {
-      x: x + 0.8, y: y + 0.45, w: 4.8, h: 0.4,
-      fontSize: 12, fontFace: FONTS.body, color: COLORS.subtitleGray,
-      align: "left", valign: "top",
-    });
-
-    // 分隔线
-    if (col === 0) {
-      slide2.addShape(pptx.ShapeType.rect, {
-        x: x + 0.8, y: y + 0.95, w: 5.2, h: 0.01, fill: { color: COLORS.borderGray },
-      });
-    }
-  });
-
-  slide2.addNotes(`【目录，0.5分钟】
-本次汇报分六个部分：
-
-第一，项目目标——从公司战略视角，定位这个项目的核心目标是什么；
-第二，背景与需求——以手机银行为场景载体的原因和竞赛要求；
-第三，AI研发过程——AI如何贯穿每一个环节，以及我们沉淀的技术架构；
-第四，创新点与难点——真实遇到的困难和我们的解决方案；
-第五，成果与收获——不仅是项目数据，更是个人和团队的认知升级；
-最后是总结与展望。
-
-整个汇报大约15分钟，下面我们进入第一部分。`);
-
- // ============================================================
-  // SLIDE 3: 项目目标
-  // ============================================================
-  const slide3 = pptx.addSlide();
-  slide3.background = { color: COLORS.white };
-
-  // 顶部蓝色条
-  slide3.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 13.33, h: 0.08, fill: { color: COLORS.accentBlue },
-  });
-
-  slide3.addText("项目目标", {
-    x: 0.8, y: 0.3, w: 4, h: 0.7,
-    fontSize: 28, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-    align: "left", valign: "middle",
-  });
-  slide3.addShape(pptx.ShapeType.rect, {
-    x: 0.8, y: 0.95, w: 1.2, h: 0.04, fill: { color: COLORS.accentBlue },
-  });
-
-  // 核心定位说明
-  slide3.addShape(pptx.ShapeType.roundRect, {
-    x: 0.8, y: 1.3, w: 11.73, h: 0.85,
-    fill: { color: COLORS.lightBg },
-    cornerRadius: 0.15,
-    line: { color: COLORS.accentBlue, width: 0.5 },
-  });
-  slide3.addText(`项目定位：以手机银行为场景载体，完整经历AI原生研发全流程，验证可复用、可推广的AI研发打法`, {
-    x: 1.2, y: 1.3, w: 10.93, h: 0.85,
-    fontSize: 15, fontFace: FONTS.body, color: COLORS.primaryBlue, bold: true,
-    align: "center", valign: "middle",
-  });
-
-  // 四个战略目标
-  const goals = [
-    { icon: "🎯", title: "场景验证——跑通全流程", desc: "以手机银行业务为真实场景，从需求分析→架构设计→编码→测试→文档→部署，完整走完AI原生研发的全生命周期，验证各环节的可行性与效率提升" },
-    { icon: "🧩", title: "能力沉淀——形成可复用架构", desc: "通过MCP-Skill架构的设计与落地，验证AI能力的标准化封装、动态注册、安全分级机制是否具备跨场景复用的条件，形成可推广的技术组件" },
-    { icon: "💡", title: "价值探索——评估落地可行性", desc: "在消费分析、意图识别、结构化卡片交互等AI功能中，评估哪些具备实际业务落地价值，哪些仍需优化——为公司AI投入提供决策依据" },
-    { icon: "📋", title: "组织赋能——沉淀研发打法", desc: "总结AI原生研发中的经验与教训，形成提示词工程规范、AI代码校验流程、文档治理标准——让下一支团队可以复用这套方法论" },
-  ];
-
-  goals.forEach((g, i) => {
-    const x = 0.8 + (i % 2) * 6.0;
-    const y = 2.5 + Math.floor(i / 2) * 2.2;
-
-    // 卡片背景
-    slide3.addShape(pptx.ShapeType.roundRect, {
-      x: x, y: y, w: 5.7, h: 1.95,
-      fill: { color: COLORS.cardBg },
-      cornerRadius: 0.12,
-      line: { color: COLORS.borderGray, width: 0.5 },
-    });
-
-    // 图标
-    slide3.addText(g.icon, {
-      x: x + 0.3, y: y + 0.2, w: 0.6, h: 0.6,
-      fontSize: 28, align: "center", valign: "middle",
-    });
-
-    // 标题
-    slide3.addText(g.title, {
-      x: x + 1.1, y: y + 0.15, w: 4.2, h: 0.45,
-      fontSize: 15, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-      align: "left", valign: "middle",
-    });
-
-    // 描述
-    slide3.addText(g.desc, {
-      x: x + 1.1, y: y + 0.6, w: 4.2, h: 1.15,
-      fontSize: 11, fontFace: FONTS.body, color: COLORS.bodyGray,
-      align: "left", valign: "top",
-      lineSpacingMultiple: 1.3,
-    });
-  });
-
-  slide3.addNotes(`【项目目标，2分钟】
-这个项目我给自己定了四个目标，它不是从产品需求出发，而是从公司战略视角出发：
-
-第一，场景验证。手机银行只是载体，我的真实目的是完整走一遍AI原生研发全流程，验证每个环节能不能跑通，效率提升多少——这是我们判断AI研发是否可行的第一步。
-
-第二，能力沉淀。光跑通不够，还要看沉淀下来的东西能不能复用。MCP-Skill架构就是我设计的标准化AI能力框架——如果它在这个场景能用，换一个场景应该也能用。
-
-第三，价值探索。消费分析、意图识别这些AI功能，到底哪些是真的有价值的，哪些还只是噱头。我需要给公司一个真实的评估。
-
-第四，组织赋能。最终要沉淀出一套打法——提示词怎么写、AI代码怎么校验、文档怎么管——让后面的人不用从头再来。
-
-这四个目标层层递进，从"能不能做"到"能不能推广"。`);
-
-  // ============================================================
-  // SLIDE 4: 背景与需求
-  // ============================================================
-  const slide4 = pptx.addSlide();
-  slide4.background = { color: COLORS.white };
-
-  slide4.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 13.33, h: 0.08, fill: { color: COLORS.accentBlue },
-  });
-
-  slide4.addText("背景与需求", {
-    x: 0.8, y: 0.3, w: 4, h: 0.7,
-    fontSize: 28, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-  });
-  slide4.addShape(pptx.ShapeType.rect, {
-    x: 0.8, y: 0.95, w: 1.2, h: 0.04, fill: { color: COLORS.accentBlue },
-  });
-
-  // 左侧：行业痛点
-  slide4.addText("行业痛点", {
-    x: 0.8, y: 1.3, w: 3, h: 0.4,
-    fontSize: 16, fontFace: FONTS.title, color: COLORS.primaryBlue, bold: true,
-  });
-
-  const pains = [
-    "信息孤岛，系统间数据难以打通",
-    "响应滞后，人工处理时效性差",
-    "重复劳动，80%咨询为标准化问题",
-    "风险识别不及时，事后补救成本高",
-    "人力成本刚性上升，效率瓶颈突出",
-  ];
-  pains.forEach((p, i) => {
-    slide4.addText(`• ${p}`, {
-      x: 1.0, y: 1.8 + i * 0.4, w: 5.2, h: 0.35,
-      fontSize: 11, fontFace: FONTS.body, color: COLORS.bodyGray,
-      align: "left", valign: "middle",
-    });
-  });
-
-  // 右侧：竞赛需求
-  slide4.addShape(pptx.ShapeType.roundRect, {
-    x: 6.8, y: 1.2, w: 5.73, h: 5.5,
-    fill: { color: COLORS.lightBg },
-    cornerRadius: 0.15,
-    line: { color: COLORS.borderGray, width: 0.5 },
-  });
-  slide4.addText("竞赛需求：手机银行核心业务", {
-    x: 7.1, y: 1.35, w: 5.2, h: 0.4,
-    fontSize: 14, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-  });
-
-  const modules = [
-    { icon: "🔐", title: "账户与登录", items: "注册 / 密码登录 / 短信验证码登录\n会话管理 / 单设备控制 / 密码找回" },
-    { icon: "💳", title: "银行卡管理", items: "四要素验证绑卡 / 解绑\n默认卡设置 / 余额查询" },
-    { icon: "💰", title: "交易与查询", items: "转账汇款 / 生活缴费\n账单查询 / 常用收款方管理" },
-    { icon: "🛡️", title: "基础安全", items: "交易密码 / 限额控制\n风险提示 / 二次确认 / 操作日志" },
-  ];
-
-  modules.forEach((m, i) => {
-    const y = 1.9 + i * 1.2;
-    slide4.addText(m.icon, {
-      x: 7.3, y: y, w: 0.5, h: 0.5,
-      fontSize: 22, align: "center", valign: "middle",
-    });
-    slide4.addText(m.title, {
-      x: 7.8, y: y, w: 2, h: 0.5,
-      fontSize: 13, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-      align: "left", valign: "middle",
-    });
-    slide4.addText(m.items, {
-      x: 7.8, y: y + 0.45, w: 4.4, h: 0.6,
-      fontSize: 10, fontFace: FONTS.body, color: COLORS.bodyGray,
-      align: "left", valign: "top",
-      lineSpacingMultiple: 1.2,
-    });
-  });
-
-  slide4.addNotes(`【背景与需求，1.5分钟】
-先看行业背景。当前银行系统面临五大痛点：信息孤岛、响应滞后、重复劳动、风险识别不及时、人力成本刚性上升。
-
-这也正是我们做这个项目的驱动力。
-
-竞赛需求方面，要求构建一套简易手机银行核心业务系统，涵盖四大模块：
-
-第一，账户与登录——注册、密码登录、验证码登录，以及会话管理和单设备控制；
-第二，银行卡管理——重点是绑卡时的四要素验证；
-第三，交易与查询——转账、缴费、账单查询，这是最核心的业务流；
-第四，基础安全——交易密码、限额控制、风险提示和操作日志。
-
-每个模块背后都有严格的金融安全要求，这决定了我们后续的技术选型和架构设计。`);
-
-  // ============================================================
-  // SLIDE 5: AI原生研发全流程
-  // ============================================================
-  const slide5 = pptx.addSlide();
-  slide5.background = { color: COLORS.white };
-
-  slide5.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 13.33, h: 0.08, fill: { color: COLORS.accentBlue },
-  });
-
-  slide5.addText("AI原生研发全流程", {
-    x: 0.8, y: 0.3, w: 5, h: 0.7,
-    fontSize: 28, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-  });
-  slide5.addText("从需求分析到部署运维，AI深度参与研发的每一个环节", {
-    x: 5.5, y: 0.4, w: 7.03, h: 0.5,
-    fontSize: 12, fontFace: FONTS.body, color: COLORS.subtitleGray,
-    align: "right", valign: "middle",
-  });
-  slide5.addShape(pptx.ShapeType.rect, {
-    x: 0.8, y: 0.95, w: 1.2, h: 0.04, fill: { color: COLORS.accentBlue },
-  });
-
-  // 流程卡片 - 用圆形流程展示
   const stages = [
-    { num: "1", title: "需求分析", items: "AI辅助解析PRD\n梳理业务规则与约束\n产出技术方案文档", color: COLORS.accentBlue },
-    { num: "2", title: "架构设计", items: "AI驱动架构决策\n定义MCP-Skill规范\n设计安全防护体系", color: COLORS.green },
-    { num: "3", title: "编码实现", items: "AI生成核心业务代码\n后端Service+Controller\n前端Vue组件+API层", color: COLORS.orange },
-    { num: "4", title: "测试验证", items: "AI辅助编写单元测试\n接口自动化校验\n业务流程端到端验证", color: "8E44AD" },
-    { num: "5", title: "文档治理", items: "AI撰写7份专业文档\n版本化修订管控\n交叉引用一致性", color: COLORS.highlight },
-    { num: "6", title: "部署交付", items: "Docker容器化打包\nDocker Compose编排\n配置外部化+环境隔离", color: COLORS.primaryBlue },
+    { num: "\u7F18\u8D77", desc: "\u4E3A\u4EC0\u4E48\u505A\u8FD9\u4E2A\u9879\u76EE", color: C.accentBlue },
+    { num: "\u53D1\u73B0", desc: "\u8C03\u6559\u4E2D\u7684\u987F\u609F\u65F6\u523B", color: C.orange },
+    { num: "\u65B9\u6CD5", desc: "\u8C03\u6559\u600E\u4E48\u505A\uFF0C\u539F\u5219\u662F\u4EC0\u4E48", color: C.green },
+    { num: "\u9A8C\u8BC1", desc: "\u6280\u672F\u80FD\u5426\u652F\u6491\u8FD9\u5957\u65B9\u6CD5", color: "8E44AD" },
+    { num: "\u53CD\u601D", desc: "\u8E29\u4E86\u4EC0\u4E48\u5751\uFF0C\u5B66\u5230\u4E86\u4EC0\u4E48", color: C.highlight },
+    { num: "\u5C55\u671B", desc: "\u4F60\u7684\u89D2\u8272\u8BE5\u600E\u4E48\u53D8", color: C.primaryBlue },
   ];
 
-  // 顶部流程线
-  slide5.addShape(pptx.ShapeType.rect, {
-    x: 1.3, y: 1.5, w: 11.2, h: 0.04, fill: { color: COLORS.borderGray },
+  // 顶部引导语
+  s2.addText("6\u6B65\u8D70\u5B8C\u4ECE\u201C\u7F16\u7801\u8005\u201D\u5230\u201C\u8C03\u6559\u5E08\u201D\u7684\u8BA4\u77E5\u5347\u7EA7\u4E4B\u65C5", {
+    x: 0.8, y: 1.2, w: 11.73, h: 0.5, fontSize: 18, fontFace: F.body, color: C.primaryBlue, bold: true, align: "center",
   });
 
-  stages.forEach((s, i) => {
-    const x = 0.7 + i * 2.1;
-
-    // 数字圆
-    slide5.addShape(pptx.ShapeType.ellipse, {
-      x: x + 0.6, y: 1.2, w: 0.65, h: 0.65,
-      fill: { color: s.color },
-    });
-    slide5.addText(s.num, {
-      x: x + 0.6, y: 1.2, w: 0.65, h: 0.65,
-      fontSize: 22, fontFace: FONTS.title, color: COLORS.white, bold: true,
-      align: "center", valign: "middle",
-    });
-
-    // 标题
-    slide5.addText(s.title, {
-      x: x, y: 2.0, w: 1.85, h: 0.4,
-      fontSize: 14, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-      align: "center", valign: "middle",
-    });
-
-    // 内容卡片
-    slide5.addShape(pptx.ShapeType.roundRect, {
-      x: x, y: 2.5, w: 1.85, h: 1.6,
-      fill: { color: COLORS.cardBg },
-      cornerRadius: 0.1,
-      line: { color: COLORS.borderGray, width: 0.3 },
-    });
-    slide5.addText(s.items, {
-      x: x + 0.1, y: 2.6, w: 1.65, h: 1.4,
-      fontSize: 9, fontFace: FONTS.body, color: COLORS.bodyGray,
-      align: "center", valign: "middle",
-      lineSpacingMultiple: 1.4,
-    });
-  });
-
-  // 底部AI贯穿标注
-  slide5.addShape(pptx.ShapeType.roundRect, {
-    x: 3.5, y: 4.5, w: 6.33, h: 0.55,
-    fill: { color: COLORS.lightBg },
-    cornerRadius: 0.1,
-    line: { color: COLORS.accentBlue, width: 0.5, dashType: "dash" },
-  });
-  slide5.addText("AI  协  同  贯  穿", {
-    x: 3.5, y: 4.5, w: 6.33, h: 0.55,
-    fontSize: 14, fontFace: FONTS.body, color: COLORS.accentBlue, bold: true,
-    align: "center", valign: "middle",
-    letterSpacing: 6,
-  });
-
-  // AI参与度指标
-  slide5.addText("AI参与度覆盖研发全生命周期  |  代码AI生成率 ≥70%  |  文档AI撰写率 100%", {
-    x: 0.8, y: 5.4, w: 11.73, h: 0.4,
-    fontSize: 11, fontFace: FONTS.body, color: COLORS.subtitleGray,
-    align: "center", valign: "middle",
-  });
-
-  // 底部装饰
-  slide5.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 5.9, w: 13.33, h: 0.04, fill: { color: COLORS.accentBlue },
-  });
-
-  slide5.addNotes(`【AI研发过程，2分钟】
-这是我们项目最大的亮点——AI原生研发。
-
-我们把它定义为六个环节，环环相扣：
-
-第一，需求分析阶段——AI辅助解析PRD文档，自动梳理业务规则，产出技术方案文档；
-第二，架构设计阶段——AI辅助我们设计了核心的MCP-Skill架构和安全防护体系；
-第三，编码实现阶段——AI生成了70%以上的核心代码，从后端Service到前端Vue组件；
-第四，测试验证阶段——AI辅助编写JUnit单元测试和接口校验；
-第五，文档治理阶段——AI撰写7份专业文档并保持版本一致性和交叉引用；
-第六，部署交付阶段——Docker容器化、环境隔离，一键部署。
-
-AI不是替代人，而是作为强大辅助，让我们聚焦在架构设计和业务逻辑这些真正创造价值的事情上。
-整个生命周期中，AI代码生成率超过70%，文档全部由AI参与撰写。`);
-
-  // ============================================================
-  // SLIDE 6: 系统技术架构总览
-  // ============================================================
-  const slide6 = pptx.addSlide();
-  slide6.background = { color: COLORS.white };
-
-  slide6.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 13.33, h: 0.08, fill: { color: COLORS.accentBlue },
-  });
-
-  slide6.addText("系统技术架构总览", {
-    x: 0.8, y: 0.3, w: 5, h: 0.7,
-    fontSize: 28, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-  });
-  slide6.addText("Spring Boot 2.7 + Vue 2 + MySQL 8.0 + Redis 7.x", {
-    x: 5.5, y: 0.4, w: 7.03, h: 0.5,
-    fontSize: 12, fontFace: FONTS.body, color: COLORS.subtitleGray,
-    align: "right", valign: "middle",
-  });
-  slide6.addShape(pptx.ShapeType.rect, {
-    x: 0.8, y: 0.95, w: 1.2, h: 0.04, fill: { color: COLORS.accentBlue },
-  });
-
-  // 六层架构 - 从底向上
-  const layers = [
-    { label: "⑥ 客户端层", title: "Vue 2 + Vant 2（移动端H5）", desc: "路由懒加载 · 组件按需加载 · Axios拦截器 · Vant UI组件库", color: "8E44AD" },
-    { label: "⑤ 接入层", title: "Nginx + Spring Boot Controller", desc: "统一JSON响应 · JWT令牌校验 · ReqBasic请求基类 · 全局异常处理", color: COLORS.accentBlue },
-    { label: "④ AI推理层", title: "AiChatService（MCP-Skill 意图引擎）", desc: "意图识别（关键词+正则）· 参数提取 · McpGateway路由调用", color: COLORS.orange },
-    { label: "③ 业务服务层", title: "6大核心Service（P0需求全覆盖）", desc: "AuthService · BankCardService · TransactionService · SecurityService · UserService · AiChatService", color: COLORS.green },
-    { label: "② 数据持久层", title: "MyBatis-Plus + MySQL + Redis", desc: "参数化查询 · 敏感数据AES-256加密 · Redis会话缓存 · 原子计数防重放", color: COLORS.primaryBlue },
-    { label: "① 基础设施层", title: "Docker + Docker Compose", desc: "MySQL 8.0容器 · Redis 7.x容器 · 数据卷持久化 · AOF持久化", color: COLORS.titleGray },
-  ];
-
-  layers.forEach((layer, i) => {
-    const y = 1.2 + i * 0.95;
-
-    // 层背景
-    slide6.addShape(pptx.ShapeType.roundRect, {
-      x: 0.6, y: y, w: 12.13, h: 0.8,
-      fill: { color: layer.color },
-      cornerRadius: 0.08,
-    });
-
-    // 左标签
-    slide6.addText(layer.label, {
-      x: 0.8, y: y, w: 1.6, h: 0.8,
-      fontSize: 11, fontFace: FONTS.title, color: COLORS.white, bold: true,
-      align: "left", valign: "middle",
-    });
-
-    // 中标题
-    slide6.addText(layer.title, {
-      x: 2.5, y: y, w: 4.5, h: 0.5,
-      fontSize: 12, fontFace: FONTS.title, color: COLORS.white, bold: true,
-      align: "left", valign: "middle",
-    });
-
-    // 下描述
-    slide6.addText(layer.desc, {
-      x: 2.5, y: y + 0.4, w: 7.5, h: 0.4,
-      fontSize: 9, fontFace: FONTS.body, color: "E8E8E8",
-      align: "left", valign: "top",
-    });
-
-    // 右侧技术标签
-    if (i === 0) {
-      slide6.addText("Docker", {
-        x: 10.5, y: y + 0.15, w: 1.8, h: 0.5,
-        fontSize: 10, fontFace: FONTS.body, color: COLORS.white,
-        align: "center", valign: "middle",
-      });
-    }
-  });
-
-  slide6.addNotes(`【技术架构，1.5分钟】
-这是我们的六层技术架构，从下往上看：
-
-第一层，基础设施——MySQL和Redis全部容器化，Docker Compose一键启动；
-第二层，数据持久层——MyBatis-Plus操作数据库，Redis做会话缓存和防重放，敏感字段AES-256加密；
-第三层，业务服务层——6大核心Service，Auth、BankCard、Transaction、Security、User、AiChat，P0需求全覆盖；
-第四层，AI推理层——这是最核心的创新，AiChatService作为MCP-Skill意图引擎，做意图识别和路由调用；
-第五层，接入层——Nginx反向代理，JWT统一校验，全局异常处理；
-第六层，客户端层——Vue 2 + Vant 2适配移动端，组件按需加载。
-
-整体是经典的分层架构，但AI推理层的引入是我们的特色。`);
-
-  // ============================================================
-  // SLIDE 7: 核心创新：MCP-Skill 架构
-  // ============================================================
-  const slide7 = pptx.addSlide();
-  slide7.background = { color: COLORS.white };
-
-  slide7.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 13.33, h: 0.08, fill: { color: COLORS.accentBlue },
-  });
-
-  slide7.addText("核心创新：MCP-Skill 架构", {
-    x: 0.8, y: 0.3, w: 6, h: 0.7,
-    fontSize: 28, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-  });
-  slide7.addText(`大模型只负责"理解与推理"，实际业务操作通过 Skill 委托给后端 API 执行`, {
-    x: 0.8, y: 0.9, w: 11.73, h: 0.4,
-    fontSize: 12, fontFace: FONTS.body, color: COLORS.subtitleGray,
-    align: "left", valign: "middle",
-  });
-  slide7.addShape(pptx.ShapeType.rect, {
-    x: 0.8, y: 1.3, w: 11.73, h: 0.02, fill: { color: COLORS.borderGray },
-  });
-
-  // 六大特性 - 2行3列
-  const features = [
-    { num: "01", title: "标准化接口", desc: "McpSkill接口定义统一契约\n• getMeta() 暴露元数据\n• execute() 执行业务逻辑", color: COLORS.accentBlue },
-    { num: "02", title: "动态注册机制", desc: "@Component自动扫描注册\n• ConcurrentHashMap热插拔\n• 新增Skill零代码侵入", color: COLORS.green },
-    { num: "03", title: "安全分级控制", desc: "QUERY级：查询类直接返回\n• OPERATION级：两阶段确认\n• 资金操作必须跳转密码页", color: COLORS.orange },
-    { num: "04", title: "结构化返回", desc: "SkillResult = 回复文本\n• + 结构化数据(前端卡片渲染)\n• + 动作导航(跳转/确认)", color: "8E44AD" },
-    { num: "05", title: "LLM无关设计", desc: "当前关键词匹配→未来可切LLM\n• MCP网关和Skill层无需改动\n• 渐进式智能升级路径", color: COLORS.highlight },
-    { num: "06", title: "可扩展生态", desc: "新增能力仅需三步：\n① 新建类 ② 实现McpSkill接口\n③ @Component注解", color: COLORS.primaryBlue },
-  ];
-
-  features.forEach((f, i) => {
+  stages.forEach((st, i) => {
     const col = i % 3;
     const row = Math.floor(i / 3);
-    const x = 0.6 + col * 4.2;
-    const y = 1.5 + row * 2.7;
+    const x = 0.5 + col * 4.2;
+    const y = 2.0 + row * 2.0;
 
-    // 卡片
-    slide7.addShape(pptx.ShapeType.roundRect, {
-      x: x, y: y, w: 3.9, h: 2.4,
-      fill: { color: COLORS.cardBg },
-      cornerRadius: 0.12,
-      line: { color: COLORS.borderGray, width: 0.5 },
-    });
-
-    // 顶部色条
-    slide7.addShape(pptx.ShapeType.rect, {
-      x: x, y: y, w: 3.9, h: 0.06, fill: { color: f.color },
-    });
-
-    // 编号
-    slide7.addText(f.num, {
-      x: x + 0.2, y: y + 0.2, w: 0.5, h: 0.5,
-      fontSize: 18, fontFace: FONTS.title, color: f.color, bold: true,
-      align: "left", valign: "middle",
-    });
-
-    // 标题
-    slide7.addText(f.title, {
-      x: x + 0.7, y: y + 0.2, w: 3, h: 0.5,
-      fontSize: 15, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-      align: "left", valign: "middle",
-    });
-
-    // 描述
-    slide7.addText(f.desc, {
-      x: x + 0.2, y: y + 0.8, w: 3.5, h: 1.4,
-      fontSize: 10, fontFace: FONTS.body, color: COLORS.bodyGray,
-      align: "left", valign: "top",
-      lineSpacingMultiple: 1.5,
-    });
+    addCard(s2, pptx, x, y, 3.8, 1.6);
+    s2.addShape(pptx.ShapeType.roundRect, { x, y, w: 3.8, h: 0.55, fill: { color: st.color }, cornerRadius: 0 });
+    s2.addText(st.num, { x, y, w: 3.8, h: 0.55, fontSize: 18, fontFace: F.title, color: C.white, bold: true, align: "center", valign: "middle" });
+    s2.addText(st.desc, { x: x + 0.3, y: y + 0.7, w: 3.2, h: 0.6, fontSize: 13, fontFace: F.body, color: C.bodyGray, align: "center", valign: "middle" });
   });
 
-  slide7.addNotes(`【MCP-Skill架构，3分钟——这是重点】
-MCP-Skill架构是我们项目最核心的技术创新。
+  // 底部连接线标注
+  s2.addText("\u7F18\u8D77 \u2192 \u53D1\u73B0 \u2192 \u65B9\u6CD5 \u2192 \u9A8C\u8BC1 \u2192 \u53CD\u601D \u2192 \u5C55\u671B", {
+    x: 2.0, y: 6.3, w: 9.33, h: 0.4, fontSize: 11, fontFace: F.body, color: C.subtitleGray, align: "center", letterSpacing: 3,
+  });
 
-核心理念：大模型只负责"理解与推理"，实际业务操作通过Skill委托给后端API执行。
-这样做的好处是——大模型不需要知道业务细节，它只需要做自然语言理解。
-
-它有六大特性：
-
-第一，标准化接口——所有Skill都实现McpSkill接口，保证统一契约；
-第二，动态注册机制——加一个@Component就能注册新Skill，完全零侵入；
-第三，安全分级控制——查询类直接返回，资金操作必须两阶段确认；
-第四，结构化返回——不只是返回文本，还返回结构化数据，前端可以自动渲染卡片；
-第五，LLM无关设计——现在用关键词匹配，将来切换到大模型不需要改任何代码；
-第六，可扩展生态——新增能力仅需三步：新建类、实现接口、加注解。
-
-这个架构最大的价值：让AI能力变得可管理、可扩展、安全可控。`);
+  s2.addNotes(`【目录，30秒】
+整场分享分为六个篇章，从"缘起"到"展望"。
+请注意这个逻辑：它不是六个并列话题，而是一个从发现问题到找到方法再到反思升级的完整心路历程。
+你可以把它理解为一个研发人员接触AI原生开发后的认知进化路径。`);
 
   // ============================================================
-  // SLIDE 8: 落地实践：三个MCP Skill
+  // SLIDE 3: 项目简介
   // ============================================================
-  const slide8 = pptx.addSlide();
-  slide8.background = { color: COLORS.white };
+  const s3 = pptx.addSlide();
+  s3.background = { color: C.white };
+  addSlideHeader(s3, pptx, "\u672C\u6B21\u9879\u76EE", "\u4EE5\u624B\u673A\u94F6\u884C\u4E3A\u8F7D\u4F53\uFF0C\u9A8C\u8BC1AI\u539F\u751F\u7814\u53D1\u5168\u6D41\u7A0B");
 
-  slide8.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 13.33, h: 0.08, fill: { color: COLORS.accentBlue },
-  });
-
-  slide8.addText("落地实践：三个 MCP Skill", {
-    x: 0.8, y: 0.3, w: 6, h: 0.7,
-    fontSize: 28, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-  });
-  slide8.addText("目前已实现3个核心Skill，覆盖智能客服助手主要场景", {
-    x: 0.8, y: 0.85, w: 11.73, h: 0.4,
-    fontSize: 12, fontFace: FONTS.body, color: COLORS.subtitleGray,
-    align: "left", valign: "middle",
-  });
-  slide8.addShape(pptx.ShapeType.rect, {
-    x: 0.8, y: 1.2, w: 11.73, h: 0.02, fill: { color: COLORS.borderGray },
+  // 项目描述
+  s3.addShape(pptx.ShapeType.roundRect, { x: 0.8, y: 1.3, w: 11.73, h: 1.0, fill: { color: C.lightBg }, cornerRadius: 0.12, line: { color: C.accentBlue, width: 0.5 } });
+  s3.addText("\u201C\u4E00\u4E2A\u624B\u673A\u94F6\u884C\u6838\u5FC3\u4E1A\u52A1\u7CFB\u7EDF\uFF0C\u6DB5\u76D6\u767B\u5F55\u6CE8\u518C\u3001\u94F6\u884C\u5361\u7BA1\u7406\u3001\u8D26\u6237\u4F59\u987D\u67E5\u8BE2\u3001\u8F6C\u8D26\u3001\u652F\u4ED8\u3001\u4EA4\u6613\u8BB0\u5F55\u3001\u5B89\u5168\u8BBE\u7F6E\u3001\u667A\u80FD\u5BA2\u670D\u7B4910\u5927\u529F\u80FD\u6A21\u57475\u3002\u4F46\u8FD9\u4E0D\u662F\u91CD\u70B9\u3002\u91CD\u70B9\u662F\uFF1A\u6574\u4E2A\u8FC7\u7A0B\u5B8C\u5168\u4F7F\u7528AI\u539F\u751F\u7814\u53D1\u65B9\u5F0F\u5B8C\u6210\u3002\u201D", {
+    x: 1.2, y: 1.4, w: 10.93, h: 0.8, fontSize: 14, fontFace: F.body, color: C.bodyGray, valign: "middle", lineSpacingMultiple: 1.4,
   });
 
-  const skills = [
-    {
-      icon: "💰", title: "QueryBalance", tag: "查询类", tagColor: COLORS.green,
-      trigger: '用户说："查余额"\n"工商银行卡还有多少钱"',
-      action: "查询所有银行卡余额，支持按银行筛选",
-      params: "query_balance(bank_name='工商银行')",
-      render: "balance_card 卡片 ▶ AI回复各卡余额+总资产",
-    },
-    {
-      icon: "📋", title: "QueryTransactions", tag: "查询类", tagColor: COLORS.green,
-      trigger: '用户说："最近交易"\n"我上个月花了多少"',
-      action: "查询交易记录，支持按类型和时间筛选",
-      params: "query_transactions(trans_type='transfer', time_range='7d')",
-      render: "transaction_list 卡片 ▶ AI回复最近交易摘要",
-    },
-    {
-      icon: "🔄", title: "TransferPrepare", tag: "操作类", tagColor: COLORS.orange,
-      trigger: '用户说："转给张三500元"\n"给妈妈转账1000"',
-      action: "转账预执行——提取参数，生成确认卡片",
-      params: "transfer_prepare(payee_name='张三', amount=500)",
-      render: "transfer_preview 卡片 ▶ 用户确认后跳转密码页执行",
-    },
+  // 三个核心信息
+  const facts = [
+    { num: "30+", label: "API\u63A5\u53E3", sub: "6\u5927\u6838\u5FC3\u4E1A\u52A1\u6A21\u5757", color: C.accentBlue },
+    { num: "24", label: "\u524D\u7AEF\u9875\u9762", sub: "\u5B8C\u6574\u4EA4\u4E92\u4F53\u9A8C", color: C.orange },
+    { num: "7", label: "\u4E13\u4E1A\u6587\u6863", sub: "\u5168\u6D41\u7A0B\u53EF\u8FFD\u6EAF", color: C.green },
   ];
 
-  skills.forEach((s, i) => {
-    const x = 0.6 + i * 4.2;
-    const y = 1.4;
-
-    // 卡片背景
-    slide8.addShape(pptx.ShapeType.roundRect, {
-      x: x, y: y, w: 3.9, h: 5.4,
-      fill: { color: COLORS.cardBg },
-      cornerRadius: 0.12,
-      line: { color: COLORS.borderGray, width: 0.5 },
-    });
-
-    // 头部色块
-    slide8.addShape(pptx.ShapeType.roundRect, {
-      x: x, y: y, w: 3.9, h: 0.9,
-      fill: { color: s.tagColor },
-      cornerRadius: 0.0,
-    });
-
-    // 图标+标题
-    slide8.addText(`${s.icon} ${s.title}`, {
-      x: x, y: y, w: 3.9, h: 0.9,
-      fontSize: 16, fontFace: FONTS.title, color: COLORS.white, bold: true,
-      align: "center", valign: "middle",
-    });
-
-    // 标签
-    slide8.addShape(pptx.ShapeType.roundRect, {
-      x: x + 0.2, y: y + 1.0, w: 1.0, h: 0.35,
-      fill: { color: s.tagColor },
-      cornerRadius: 0.05,
-    });
-    slide8.addText(s.tag, {
-      x: x + 0.2, y: y + 1.0, w: 1.0, h: 0.35,
-      fontSize: 9, fontFace: FONTS.body, color: COLORS.white, bold: true,
-      align: "center", valign: "middle",
-    });
-
-    // 触发条件
-    slide8.addText("📌 用户触发", {
-      x: x + 0.2, y: y + 1.5, w: 3.5, h: 0.3,
-      fontSize: 10, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-    });
-    slide8.addText(s.trigger, {
-      x: x + 0.2, y: y + 1.8, w: 3.5, h: 0.65,
-      fontSize: 9, fontFace: FONTS.body, color: COLORS.bodyGray,
-      lineSpacingMultiple: 1.3,
-    });
-
-    // 行为
-    slide8.addText("⚙️ AI动作", {
-      x: x + 0.2, y: y + 2.5, w: 3.5, h: 0.3,
-      fontSize: 10, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-    });
-    slide8.addText(s.action, {
-      x: x + 0.2, y: y + 2.8, w: 3.5, h: 0.4,
-      fontSize: 9, fontFace: FONTS.body, color: COLORS.bodyGray,
-    });
-
-    // 参数
-    slide8.addText("📝 调用参数", {
-      x: x + 0.2, y: y + 3.2, w: 3.5, h: 0.3,
-      fontSize: 10, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-    });
-    slide8.addShape(pptx.ShapeType.roundRect, {
-      x: x + 0.2, y: y + 3.5, w: 3.5, h: 0.45,
-      fill: { color: "F5F5F5" },
-      cornerRadius: 0.05,
-    });
-    slide8.addText(s.params, {
-      x: x + 0.3, y: y + 3.5, w: 3.3, h: 0.45,
-      fontSize: 8, fontFace: "Courier New", color: COLORS.primaryBlue,
-      align: "left", valign: "middle",
-    });
-
-    // 渲染
-    slide8.addText("🎨 前端渲染", {
-      x: x + 0.2, y: y + 4.1, w: 3.5, h: 0.3,
-      fontSize: 10, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-    });
-    slide8.addText(s.render, {
-      x: x + 0.2, y: y + 4.4, w: 3.5, h: 0.55,
-      fontSize: 9, fontFace: FONTS.body, color: COLORS.bodyGray,
-      lineSpacingMultiple: 1.3,
-    });
-
-    // 安全提示
-    if (i === 2) {
-      slide8.addShape(pptx.ShapeType.roundRect, {
-        x: x + 0.2, y: y + 4.9, w: 3.5, h: 0.35,
-        fill: { color: "FDEDEC" },
-        cornerRadius: 0.05,
-      });
-      slide8.addText("⚠️ 仅提取参数，不执行转账", {
-        x: x + 0.2, y: y + 4.9, w: 3.5, h: 0.35,
-        fontSize: 8, fontFace: FONTS.body, color: COLORS.highlight, bold: true,
-        align: "center", valign: "middle",
-      });
-    }
+  facts.forEach((f, i) => {
+    const y = 2.7 + i * 1.1;
+    addCard(s3, pptx, 0.8, y, 11.73, 0.85);
+    s3.addShape(pptx.ShapeType.rect, { x: 0.8, y, w: 0.06, h: 0.85, fill: { color: f.color } });
+    s3.addText(f.num, { x: 1.2, y, w: 1.2, h: 0.85, fontSize: 28, fontFace: F.title, color: f.color, bold: true, valign: "middle" });
+    s3.addText(f.label, { x: 2.5, y, w: 1.5, h: 0.85, fontSize: 14, fontFace: F.title, color: C.titleGray, bold: true, valign: "middle" });
+    s3.addText(f.sub, { x: 4.2, y, w: 3, h: 0.85, fontSize: 11, fontFace: F.body, color: C.subtitleGray, valign: "middle" });
   });
 
-  slide8.addNotes(`【Skill演示，1.5分钟】
-这是我们实际落地的三个Skill：
+  // 底部定位
+  s3.addShape(pptx.ShapeType.roundRect, { x: 2.0, y: 6.2, w: 9.33, h: 0.5, fill: { color: C.lightBg }, cornerRadius: 0.1, line: { color: C.accentBlue, width: 0.5, dashType: "dash" } });
+  s3.addText("\u6838\u5FC3\u5B9A\u4F4D\uFF1A\u4E0D\u662F\u4EA4\u4ED8\u7CFB\u7EDF\uFF0C\u662F\u63A2\u7D22AI\u539F\u751F\u7814\u53D1\u7684\u53EF\u884C\u6027\u4E0E\u65B9\u6CD5\u8BBA", {
+    x: 2.2, y: 6.2, w: 8.93, h: 0.5, fontSize: 13, fontFace: F.body, color: C.primaryBlue, bold: true, align: "center", valign: "middle",
+  });
 
-第一个，QueryBalance——用户说"查余额"或"工商银行卡还有多少钱"，
-AI自动调用这个Skill查询所有银行卡余额，前端渲染成余额卡片，展示各卡余额和总资产。
+  addTransition(s3, pptx, "\u4F46\u4F20\u7EDF\u7814\u53D1\u65B9\u5F0F\u9047\u5230\u4E86\u4E09\u4E2A\u771F\u5B9E\u7684\u75DB\u70B9");
 
-第二个，QueryTransactions——用户说"最近交易"或"上个月花了多少"，
-返回交易列表卡片，每笔交易的金额、类型、时间都清晰展示，支持按类型和时间筛选。
-
-第三个，TransferPrepare——这个最特殊，它是操作级Skill。
-用户说"转给张三500元"，AI提取参数生成转账预览卡片，
-用户点击"去转账"后跳转到标准确认页，输入交易密码后才真正执行。
-
-这就是两阶段确认——AI只做参数提取，不执行实际资金操作。
-这保证了资金安全，也符合金融监管要求。`);
+  s3.addNotes(`【项目简介，1分钟】
+这个项目做的是一个手机银行核心系统——功能列表不细讲了，不是重点。
+重点就一句话：整个过程完全用AI原生研发完成。
+但注意我们的核心定位——不是交付系统，是探索AI研发的方法。
+接下来我讲三个痛点，就是我们为什么觉得传统做法有问题。`);
 
   // ============================================================
-  // SLIDE 9: 金融级安全防护体系
+  // SLIDE 4: 痛点驱动
   // ============================================================
-  const slide9 = pptx.addSlide();
-  slide9.background = { color: COLORS.white };
+  const s4 = pptx.addSlide();
+  s4.background = { color: C.white };
+  addSlideHeader(s4, pptx, "\u75DB\u70B9\u9A71\u52A8", "\u4F20\u7EDF\u7814\u53D1\u4E2D\u4EB2\u8EAB\u7ECF\u5386\u7684\u4E09\u4E2A\u95EE\u9898");
 
-  slide9.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 13.33, h: 0.08, fill: { color: COLORS.accentBlue },
-  });
-
-  slide9.addText("金融级安全防护体系", {
-    x: 0.8, y: 0.3, w: 6, h: 0.7,
-    fontSize: 28, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-  });
-  slide9.addText("银行系统的核心是安全。我们构建了四层安全防护矩阵", {
-    x: 0.8, y: 0.85, w: 11.73, h: 0.4,
-    fontSize: 12, fontFace: FONTS.body, color: COLORS.subtitleGray,
-  });
-  slide9.addShape(pptx.ShapeType.rect, {
-    x: 0.8, y: 1.2, w: 11.73, h: 0.02, fill: { color: COLORS.borderGray },
-  });
-
-  const secLayers = [
-    {
-      icon: "🛡️", title: "身份认证层", color: COLORS.accentBlue,
-      items: [
-        "JWT令牌签发 + 拦截器统一校验",
-        "单设备登录（Redis覆盖旧令牌）",
-        "滑动窗口30分钟续期",
-        "无操作15分钟自动退出",
-      ],
-    },
-    {
-      icon: "🔒", title: "数据安全层", color: COLORS.green,
-      items: [
-        "密码 bcrypt 加盐哈希（cost≥12）",
-        "身份证/银行卡号 AES-256 加密",
-        "全链路 HTTPS / TLS 1.2+",
-        "前端脱敏展示（仅显示后四位）",
-      ],
-    },
-    {
-      icon: "⛔", title: "防攻击层", color: COLORS.orange,
-      items: [
-        "登录5次错误 → 锁定30分钟",
-        "交易密码5次错误 → 冻结24小时",
-        "同一收款方30秒防重复（原子SETNX）",
-        "验证码60s频率 + 日限10条",
-      ],
-    },
-    {
-      icon: "📋", title: "审计合规层", color: "8E44AD",
-      items: [
-        "AOP切面自动记录操作日志",
-        "敏感信息脱敏后记录",
-        "操作类型全覆盖（登录/转账/绑卡等）",
-        "日志保留≥5年，满足审计要求",
-      ],
-    },
+  const pains = [
+    { p: "\u9700\u6C42\u4E00\u53D8\u66F4\uFF0C\u4EE3\u7801\u548C\u6587\u6863\u7ACB\u523B\u5206\u88C2\uFF0C\u7EF4\u62A4\u6210\u672C\u98D9\u5347", s: "\u6587\u6863\u5373\u4EE3\u7801\uFF1A\u6539\u6587\u6863\u63CF\u8FFD=\u6539\u7CFB\u7EDF\u884C\u4E3A\uFF0C\u5929\u7136\u4E00\u81F4" },
+    { p: "\u5927\u90E8\u5206\u65F6\u95F4\u82B1\u5728\u91CD\u590D CRUD\uFF0C\u67B6\u6784\u601D\u8003\u7684\u65F6\u95F4\u88AB\u538B\u7F29", s: "AI\u4EE3\u519970%\u4EE3\u7801\uFF0C\u4EBA\u805A\u7126\u67B6\u6784\u8BBE\u8BA1\u4E0EAI\u8C03\u6559" },
+    { p: "\u6C9F\u901A\u94FE\u6761\uFF1A\u4EA7\u54C1\u2192\u6587\u6863\u2192\u5F00\u53D1\uFF0C\u5C42\u5C42\u7406\u89E3\u504F\u5DEE", s: "\u6587\u6863\u76F4\u63A5\u9762\u5411AI\uFF0C\u4EBA-AI\u4E4B\u95F4\u6CA1\u6709\u7406\u89E3\u635F\u8017" },
   ];
 
-  secLayers.forEach((layer, i) => {
-    const col = i % 2;
-    const row = Math.floor(i / 2);
-    const x = 0.6 + col * 6.2;
-    const y = 1.5 + row * 2.7;
-
-    // 卡片
-    slide9.addShape(pptx.ShapeType.roundRect, {
-      x: x, y: y, w: 5.9, h: 2.4,
-      fill: { color: COLORS.cardBg },
-      cornerRadius: 0.12,
-      line: { color: COLORS.borderGray, width: 0.5 },
-    });
-
-    // 左侧色条
-    slide9.addShape(pptx.ShapeType.rect, {
-      x: x, y: y, w: 0.08, h: 2.4, fill: { color: layer.color },
-    });
-
-    // 图标
-    slide9.addText(layer.icon, {
-      x: x + 0.3, y: y + 0.15, w: 0.5, h: 0.5,
-      fontSize: 22, align: "center", valign: "middle",
-    });
-
-    // 标题
-    slide9.addText(layer.title, {
-      x: x + 0.85, y: y + 0.15, w: 3, h: 0.5,
-      fontSize: 16, fontFace: FONTS.title, color: layer.color, bold: true,
-      align: "left", valign: "middle",
-    });
-
-    // 分项
-    slide9.addText(layer.items.map((item, idx) => `• ${item}`).join("\n"), {
-      x: x + 0.4, y: y + 0.7, w: 5.2, h: 1.5,
-      fontSize: 11, fontFace: FONTS.body, color: COLORS.bodyGray,
-      align: "left", valign: "top",
-      lineSpacingMultiple: 1.5,
-    });
+  s4.addText("\u4F20\u7EDF\u7814\u53D1\u7684\u75DB\u70B9", { x: 0.8, y: 1.3, w: 5.5, h: 0.4, fontSize: 16, fontFace: F.title, color: C.highlight, bold: true });
+  pains.forEach((item, i) => {
+    const y = 1.9 + i * 1.6;
+    addCard(s4, pptx, 0.8, y, 5.5, 1.3);
+    s4.addText(`\u26A0\uFE0F  \u75DB\u70B9 ${i + 1}`, { x: 1.0, y: y + 0.1, w: 5.1, h: 0.35, fontSize: 11, fontFace: F.title, color: C.highlight, bold: true });
+    s4.addText(item.p, { x: 1.0, y: y + 0.5, w: 5.1, h: 0.6, fontSize: 11, fontFace: F.body, color: C.bodyGray, valign: "top" });
   });
 
-  slide9.addNotes(`【安全体系，2分钟】
-银行系统的安全不是功能，是底线。我们构建了四层防护：
+  s4.addText("AI\u539F\u751F\u7814\u53D1\u7684\u56DE\u7B54", { x: 7.0, y: 1.3, w: 5.5, h: 0.4, fontSize: 16, fontFace: F.title, color: C.green, bold: true });
+  pains.forEach((item, i) => {
+    const y = 1.9 + i * 1.6;
+    addCard(s4, pptx, 7.0, y, 5.5, 1.3);
+    s4.addShape(pptx.ShapeType.rect, { x: 7.0, y: y, w: 0.08, h: 1.3, fill: { color: C.green } });
+    s4.addText(item.s, { x: 7.3, y: y + 0.2, w: 5.0, h: 0.9, fontSize: 11, fontFace: F.body, color: C.bodyGray, valign: "middle", lineSpacingMultiple: 1.4 });
+  });
 
-第一层，身份认证——JWT统一校验、单设备登录控制，同一个账号在新设备登录后，旧设备会立刻退出。
+  s4.addText("\u203B MVP = \u6700\u5C0F\u53EF\u884C\u4EA7\u54C1\uFF1BP0/P1/P2 = \u9700\u6C42\u4F18\u5148\u7EA7\u7B49\u7EA7", {
+    x: 0.8, y: 6.9, w: 11.73, h: 0.3, fontSize: 9, fontFace: F.body, color: C.subtitleGray, italic: true,
+  });
 
-第二层，数据安全——密码用bcrypt加盐哈希，cost≥12；身份证和银行卡号用AES-256加密；全链路HTTPS；前端展示全部脱敏。
+  addTransition(s4, pptx, "\u6240\u4EE5\u6211\u4EEC\u51B3\u5B9A\u7528AI\u539F\u751F\u7814\u53D1\u6D4B\u8BD5\u4E00\u4E0B");
 
-第三层，防攻击——登录5次错误锁定30分钟，交易密码5次错误冻结24小时，同一收款方30秒内不能重复转账——这些都是真实银行系统验证过的策略。
-
-第四层，审计合规——所有操作通过AOP切面自动记录，敏感信息脱敏后写入，保留超过5年，满足金融监管审计要求。`);
+  s4.addNotes(`【痛点驱动，1.5分钟】
+三个痛点，不多展开。重点看右边对应的AI解法。
+痛点1：文档和代码分裂——AI的回答是"文档即代码"。
+痛点2：重复CRUD——AI代写70%。
+痛点3：沟通损耗——文档直接面对AI。
+这三个痛点也解释了为什么我们决定尝试AI原生研发。`);
 
   // ============================================================
-  // SLIDE 10: AI能力亮点
+  // SLIDE 5: 认知拐点
   // ============================================================
-  const slide10 = pptx.addSlide();
-  slide10.background = { color: COLORS.white };
+  const s5 = pptx.addSlide();
+  s5.background = { color: C.white };
+  addSlideHeader(s5, pptx, "\u8BA4\u77E5\u62D0\u70B9", "\u4E00\u6B21\u8C03\u6559\u4E2D\u7684\u987F\u609F\u65F6\u523B");
 
-  slide10.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 13.33, h: 0.08, fill: { color: COLORS.accentBlue },
+  // Before
+  addCard(s5, pptx, 0.6, 1.2, 5.8, 5.2);
+  s5.addShape(pptx.ShapeType.rect, { x: 0.6, y: 1.2, w: 5.8, h: 0.06, fill: { color: C.highlight } });
+  s5.addText("Before\uFF1A\u4EE3\u7801\u4F18\u5148", { x: 0.8, y: 1.4, w: 5.4, h: 0.45, fontSize: 18, fontFace: F.title, color: C.highlight, bold: true });
+  s5.addText([
+    "1. \u62FF\u5230\u9700\u6C42 -> \u8BA9AI\u5199\u4EE3\u7801",
+    "2. \u51FABUG -> \u76F4\u63A5\u6539\u4EE3\u7801\u4FEE\u590D",
+    "3. \u65B0\u9700\u6C42 -> AI\u91CD\u65B0\u751F\u6210",
+    "4. \u8001BUG\u518D\u73B0\u2014\u2014\u56E0\u4E3A\u6587\u6863\u6CA1\u6709\u540C\u6B65\u4FEE\u6539",
+  ].join("\n\n"), { x: 1.0, y: 2.0, w: 5.0, h: 3.0, fontSize: 12, fontFace: F.body, color: C.bodyGray, lineSpacingMultiple: 1.6, valign: "top" });
+  s5.addText("\u8FD9\u4E0D\u662F\u4EE3\u7801\u7684\u95EE\u9898\uFF0C\u662F\u6587\u6863\u7684\u95EE\u9898\u3002", { x: 1.0, y: 5.3, w: 5.0, h: 0.5, fontSize: 12, fontFace: F.body, color: C.highlight, bold: true, italic: true });
+
+  // After
+  addCard(s5, pptx, 6.9, 1.2, 5.8, 5.2);
+  s5.addShape(pptx.ShapeType.rect, { x: 6.9, y: 1.2, w: 5.8, h: 0.06, fill: { color: C.green } });
+  s5.addText("After\uFF1A\u6587\u6863\u5148\u884C", { x: 7.1, y: 1.4, w: 5.4, h: 0.45, fontSize: 18, fontFace: F.title, color: C.green, bold: true });
+  s5.addText([
+    "1. \u62FF\u5230\u9700\u6C42 -> \u5148\u4FEE\u6539\u6587\u6863",
+    "2. \u8BA9AI\u6309\u65B0\u6587\u6863\u751F\u6210\u4EE3\u7801",
+    "3. Review -> \u53D1\u73B0\u8BED\u4E49\u504F\u5DEE",
+    "4. \u56DE\u5934\u4FEE\u6539\u6587\u6863\u63CF\u8FF0 -> \u518D\u751F\u6210",
+    "5. \u4EE3\u7801\u53D8\u66F4\u662F\u6587\u6863\u53D8\u66F4\u7684\u201C\u7F16\u8BD1\u7ED3\u679C\u201D",
+  ].join("\n\n"), { x: 7.3, y: 2.0, w: 5.0, h: 3.5, fontSize: 12, fontFace: F.body, color: C.bodyGray, lineSpacingMultiple: 1.6, valign: "top" });
+
+  // 转折标注
+  s5.addShape(pptx.ShapeType.ellipse, { x: 5.8, y: 3.2, w: 1.73, h: 0.6, fill: { color: C.orange } });
+  s5.addText("\u987F\u609F", { x: 5.8, y: 3.2, w: 1.73, h: 0.6, fontSize: 16, fontFace: F.title, color: C.white, bold: true, align: "center", valign: "middle" });
+
+  s5.addShape(pptx.ShapeType.roundRect, { x: 2.5, y: 6.6, w: 8.33, h: 0.5, fill: { color: C.lightBg }, cornerRadius: 0.1, line: { color: C.accentBlue, width: 0.5, dashType: "dash" } });
+  s5.addText("\u6587\u6863\u4E0D\u662F\u8BF4\u660E\u4E66\uFF0C\u6587\u6863\u662F\u6E90\u4EE3\u7801\u3002\u4EE3\u7801\u53D8\u66F4\u53EA\u662F\u6587\u6863\u53D8\u66F4\u7684\u7F16\u8BD1\u7ED3\u679C\u3002", {
+    x: 2.7, y: 6.6, w: 7.93, h: 0.5, fontSize: 13, fontFace: F.body, color: C.primaryBlue, bold: true, align: "center", valign: "middle",
   });
 
-  slide10.addText("AI 能力亮点", {
-    x: 0.8, y: 0.3, w: 5, h: 0.7,
-    fontSize: 28, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-  });
-  slide10.addText("不只是智能客服——消费分析、智能分类、洞察引擎全面覆盖", {
-    x: 0.8, y: 0.85, w: 11.73, h: 0.4,
-    fontSize: 12, fontFace: FONTS.body, color: COLORS.subtitleGray,
-  });
-  slide10.addShape(pptx.ShapeType.rect, {
-    x: 0.8, y: 1.2, w: 11.73, h: 0.02, fill: { color: COLORS.borderGray },
-  });
+  addTransition(s5, pptx, "\u90A3\u5177\u4F53\u600E\u4E48\u8C03\u6559\uFF1F");
 
-  // 三大能力
-  const capabilities = [
-    {
-      icon: "🤖", title: "智能客服助手", color: COLORS.accentBlue,
-      desc: "自然语言对话完成银行业务",
-      features: [
-        "关键词+正则表达式意图识别",
-        "McpGateway路由到对应Skill",
-        "结构化数据→前端卡片渲染",
-        "⚠️ 资金操作两阶段确认",
-      ],
-    },
-    {
-      icon: "📊", title: "智能消费分析", color: COLORS.orange,
-      desc: "交易自动分类 + 月度消费报告",
-      features: [
-        "10大分类、200+关键词匹配规则引擎",
-        "月度总支出+环比趋势+分类占比",
-        "AI自动生成洞察文案",
-        "用户可手动修正，反哺规则优化",
-      ],
-    },
-    {
-      icon: "🧠", title: "AI洞察引擎", color: "8E44AD",
-      desc: "自动生成消费洞察与建议",
-      features: [
-        "规则模板生成分析文案",
-        "Top1分类提示+环比增长率",
-        "支出结构建议",
-        '示例："您本月餐饮占比37.6%，建议关注支出结构"',
-      ],
-    },
+  s5.addNotes(`【认知拐点，2分钟——最关键一页】
+这个页面是我做这个项目过程中最重要的一个顿悟。
+最开始的做法是"拿到需求->让AI写代码->出BUG直接改代码"。
+但问题来了：下一次让AI生成新功能的时候，之前修过的BUG又回来了。
+我花了一天才发现：AI不是基于我改完的代码理解需求的——它是基于文档。
+文档没改，AI永远按旧逻辑生成。
+从此改了规矩：先改文档，再让AI按新文档生成。代码变更只是文档变更的编译结果。
+这个认知拐点，改变了后面所有的工作方式。`);
+
+  // ============================================================
+  // SLIDE 6: 调教方法论 + 五条纪律
+  // ============================================================
+  const s6 = pptx.addSlide();
+  s6.background = { color: C.white };
+  addSlideHeader(s6, pptx, "\u8C03\u6559\u65B9\u6CD5\u8BBA", "\u95ED\u73AF\u8FED\u4EE3 + \u4E94\u6761\u7EAA\u5F8B");
+
+  // 上半：闭环图
+  s6.addShape(pptx.ShapeType.ellipse, { x: 5.2, y: 1.3, w: 2.8, h: 1.0, fill: { color: C.accentBlue } });
+  s6.addText("\u6587\u6863", { x: 5.2, y: 1.3, w: 2.8, h: 1.0, fontSize: 26, fontFace: F.title, color: C.white, bold: true, align: "center", valign: "middle" });
+
+  const loopPts = [
+    { label: "\u8C03\u6559\uFF08\u4FEE\u6539\u6587\u6863\uFF09", x: 4.8, y: 0.4, color: C.orange },
+    { label: "AI\u751F\u6210\u4EE3\u7801", x: 9.3, y: 1.8, color: C.green },
+    { label: "\u4EE3\u7801Review", x: 4.8, y: 3.2, color: C.primaryBlue },
+    { label: "\u53D1\u73B0\u95EE\u9898", x: 0.4, y: 1.8, color: C.highlight },
   ];
 
-  capabilities.forEach((cap, i) => {
-    const x = 0.6 + i * 4.2;
-    const y = 1.4;
-
-    // 卡片
-    slide10.addShape(pptx.ShapeType.roundRect, {
-      x: x, y: y, w: 3.9, h: 5.0,
-      fill: { color: COLORS.cardBg },
-      cornerRadius: 0.12,
-      line: { color: COLORS.borderGray, width: 0.5 },
-    });
-
-    // 顶部色块
-    slide10.addShape(pptx.ShapeType.roundRect, {
-      x: x, y: y, w: 3.9, h: 1.2,
-      fill: { color: cap.color },
-      cornerRadius: 0.0,
-    });
-
-    // 图标+标题
-    slide10.addText(`${cap.icon} ${cap.title}`, {
-      x: x, y: y + 0.1, w: 3.9, h: 0.6,
-      fontSize: 18, fontFace: FONTS.title, color: COLORS.white, bold: true,
-      align: "center", valign: "middle",
-    });
-    slide10.addText(cap.desc, {
-      x: x, y: y + 0.65, w: 3.9, h: 0.4,
-      fontSize: 10, fontFace: FONTS.body, color: "E8E8E8",
-      align: "center", valign: "middle",
-    });
-
-    // 特性列表
-    cap.features.forEach((f, fi) => {
-      const fy = y + 1.5 + fi * 0.8;
-      slide10.addShape(pptx.ShapeType.roundRect, {
-        x: x + 0.2, y: fy, w: 3.5, h: 0.65,
-        fill: { color: i === 0 ? "EBF5FB" : i === 1 ? "FEF5E7" : "F4ECF7" },
-        cornerRadius: 0.06,
-      });
-      slide10.addText(f, {
-        x: x + 0.3, y: fy, w: 3.3, h: 0.65,
-        fontSize: 10, fontFace: FONTS.body, color: COLORS.bodyGray,
-        align: "left", valign: "middle",
-        lineSpacingMultiple: 1.2,
-      });
-    });
+  loopPts.forEach(p => {
+    s6.addShape(pptx.ShapeType.roundRect, { x: p.x, y: p.y, w: 3.2, h: 0.5, fill: { color: p.color }, cornerRadius: 0.08 });
+    s6.addText(p.label, { x: p.x, y: p.y, w: 3.2, h: 0.5, fontSize: 10, fontFace: F.body, color: C.white, bold: true, align: "center", valign: "middle" });
   });
 
-  slide10.addNotes(`【AI能力亮点，2分钟】
-除了智能客服，我们还有两个值得一提的AI能力：
+  s6.addText("\u5931\u8D25\u6BD4\u4F8B > \u6210\u529F\u6BD4\u4F8B\uFF1A\u6BCF\u6B21\u6210\u529F\u8C03\u6559\u80CC\u540E\u67093-4\u6B21\u5931\u8D25\u63CF\u8FF0\u5C1D\u8BD5", {
+    x: 0.8, y: 3.9, w: 6.0, h: 0.3, fontSize: 9, fontFace: F.body, color: C.highlight,
+  });
 
-第一，智能消费分析——实现了规则引擎，对交易自动分类，餐饮、购物、交通等10个大类，超过200个关键词匹配。生成月度消费报告，包含总支出、环比趋势和AI洞察文案。
+  // 下半：五条纪律
+  s6.addShape(pptx.ShapeType.rect, { x: 0.8, y: 4.3, w: 11.73, h: 0.02, fill: { color: C.borderGray } });
 
-第二，AI洞察引擎——不是简单的大模型生成，而是通过规则模板加数据分析自动产生洞察。比如"您本月餐饮占比37.6%，建议关注支出结构"。
+  const disciplines = [
+    { num: "01", title: "\u6587\u6863\u5148\u884C", desc: "\u5148\u6539\u6587\u6863\u518D\u6539\u4EE3\u7801\u3002\u6587\u6863\u662F\u201C\u8C03\u6559\u53C2\u6570\u201D\uFF0C\u4EE3\u7801\u662F\u8F93\u51FA\u3002" },
+    { num: "02", title: "\u589E\u91CF\u53D8\u66F4", desc: "\u6539\u4E00\u5904\u751F\u6210\u4E00\u5904\uFF0C\u4E0D\u5168\u91CF\u8986\u76D6\u3002" },
+    { num: "03", title: "\u4E0D\u6539\u65E7\u4EE3\u7801", desc: "\u5DF2\u8C03\u597D\u7684\u903B\u8F91\u4E0D\u52A8\uFF0C\u53EA\u901A\u8FC7\u6539\u6587\u6863\u89E6\u53D1\u65B0\u751F\u6210\u3002" },
+    { num: "04", title: "\u8BB0\u5F55\u53D8\u66F4", desc: "\u6BCF\u6B21\u8C03\u6559\u8BB0\u5F55\uFF1A\u6539\u4E86\u5565\u2192\u4E3A\u4EC0\u4E48\u2192\u7ED3\u679C\u3002" },
+    { num: "05", title: "\u540C\u6B65\u66F4\u65B0", desc: "\u8C03\u6559\u4E2D\u6C89\u6DC0\u7684\u89C4\u5219\u5373\u65F6\u5199\u56DE\u6587\u6863\u3002" },
+  ];
 
-这里强调一个设计原则：所有资金操作类意图，AI只做参数提取和确认卡片展示，实际转账必须跳转到标准密码输入页。这在金融场景中非常关键。`);
+  disciplines.forEach((d, i) => {
+    const x = 0.5 + i * 2.5;
+    const y = 4.6;
+
+    s6.addShape(pptx.ShapeType.ellipse, { x: x + 0.15, y, w: 0.4, h: 0.4, fill: { color: C.accentBlue } });
+    s6.addText(d.num, { x: x + 0.15, y, w: 0.4, h: 0.4, fontSize: 12, fontFace: F.title, color: C.white, bold: true, align: "center", valign: "middle" });
+    s6.addText(d.title, { x: x + 0.7, y, w: 1.8, h: 0.4, fontSize: 12, fontFace: F.title, color: C.titleGray, bold: true, valign: "middle" });
+    s6.addText(d.desc, { x: x + 0.15, y: y + 0.5, w: 2.2, h: 0.6, fontSize: 9, fontFace: F.body, color: C.bodyGray, valign: "top", lineSpacingMultiple: 1.3 });
+  });
+
+  // 角色转变
+  s6.addShape(pptx.ShapeType.roundRect, { x: 2.0, y: 5.9, w: 9.33, h: 0.45, fill: { color: C.lightBg }, cornerRadius: 0.1, line: { color: C.accentBlue, width: 0.5, dashType: "dash" } });
+  s6.addText("\u4EE5\u524D\u6211\u662F\u7F16\u7801\u8005\uFF0C\u73B0\u5728\u6211\u662F\u8C03\u6559\u5E08", {
+    x: 2.0, y: 5.9, w: 9.33, h: 0.45, fontSize: 13, fontFace: F.body, color: C.accentBlue, bold: true, align: "center", valign: "middle", letterSpacing: 2,
+  });
+
+  // 调教日志快照（小）
+  s6.addShape(pptx.ShapeType.roundRect, { x: 0.8, y: 6.4, w: 11.73, h: 0.6, fill: { color: "F5F5F5" }, cornerRadius: 0.06 });
+  s6.addText("\u8C03\u6559\u65E5\u5FD7\u8282\u9009\uFF1A[2026-04-25] \u9700\u6C42F-TRANS-003 | \u8F6C\u8D26\u91D1\u989D\u7B26\u53F7\u95EE\u9898 | \u6587\u6863\u63CF\u8FF0\u4ECE\u201C\u6B63\u6570\u6536\u5165\u8D1F\u6570\u652F\u51FA\u201D\u6539\u4E3A\u201C\u4EA4\u6613\u91D1\u989D\u4EE5\u65B9\u5411\u7B26\u53F7\u6807\u8BC6\uFF0C\u6536\u5165=+\u652F\u51FA=-\u201D | AI\u4EE3\u7801\u6B63\u786E\u533A\u5206", {
+    x: 1.0, y: 6.4, w: 11.33, h: 0.6, fontSize: 9, fontFace: "Courier New", color: C.subtitleGray, valign: "middle",
+  });
+
+  addTransition(s6, pptx, "\u8FD9\u6837\u8C03\u6559\u8DDF\u4F20\u7EDF\u5F00\u53D1\u6709\u4EC0\u4E48\u672C\u8D28\u4E0D\u540C\uFF1F");
+
+  s6.addNotes(`【调教方法论，2分钟】
+核心是这个闭环：以文档为中心，不断迭代。
+注意"失败比例>成功比例"这个标注——每次成功调教背后有3-4次失败的描述尝试。这是真实的体验。
+下面是五条纪律——从挑战中沉淀的方法论。注意第三和第四条特别重要：不改旧代码，记录每一次变更。
+底部是真实的调教日志节选——这就是我们项目的交付物之一。`);
 
   // ============================================================
-  // SLIDE 11: 项目难点与技术突破
+  // SLIDE 7: 传统 vs AI原生
   // ============================================================
-  const slide11 = pptx.addSlide();
-  slide11.background = { color: COLORS.white };
+  const s7 = pptx.addSlide();
+  s7.background = { color: C.white };
+  addSlideHeader(s7, pptx, "AI\u539F\u751F vs \u4F20\u7EDF\u7814\u53D1", "\u4E00\u573A\u98CE\u9669\u7684\u9006\u8F6C\u4E0E\u89D2\u8272\u7684\u91CD\u5851");
 
-  slide11.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 13.33, h: 0.08, fill: { color: COLORS.accentBlue },
+  const colX = [0.8, 3.5, 7.5];
+  const colW = [2.5, 3.8, 5.0];
+  const hdrY = 1.3;
+
+  // 表头
+  ["\u7EF4\u5EA6", "\u4F20\u7EDF\u7814\u53D1", "AI\u539F\u751F\u7814\u53D1"].forEach((c, i) => {
+    s7.addShape(pptx.ShapeType.roundRect, { x: colX[i], y: hdrY, w: colW[i], h: 0.5, fill: { color: i === 0 ? C.titleGray : i === 1 ? "95A5A6" : C.accentBlue }, cornerRadius: 0.06 });
+    s7.addText(c, { x: colX[i], y: hdrY, w: colW[i], h: 0.5, fontSize: 13, fontFace: F.title, color: C.white, bold: true, align: "center", valign: "middle" });
   });
 
-  slide11.addText("项目难点与技术突破", {
-    x: 0.8, y: 0.3, w: 6, h: 0.7,
-    fontSize: 28, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
+  // 对比行
+  const rows = [
+    ["\u6838\u5FC3\u4EA7\u7269", "\u4EE3\u7801", "\u6587\u6863"],
+    ["\u4EBA\u7684\u89D2\u8272", "\u7F16\u7801\u8005", "\u8C03\u6559\u5E08 / \u89C4\u683C\u5DE5\u7A0B\u5E08"],
+    ["Debug\u5BF9\u8C61", "\u8BED\u6CD5\u9519\u8BEF / \u903B\u8F91BUG", "\u8BED\u4E49\u6B67\u4E49 / AI\u7406\u89E3\u504F\u5DEE"],
+    ["\u53D8\u66F4\u65B9\u5F0F", "\u6539\u4EE3\u7801 \u2192 \u8865\u6587\u6863", "\u6539\u6587\u6863 \u2192 \u518D\u751F\u4EE3\u7801"],
+    ["\u6267\u884C\u98CE\u9669", "\u9AD8\uFF08\u80FD\u4E0D\u80FD\u8DD1\u901A\uFF09", "\u4F4E\uFF08AI\u5199\u7684\u8BED\u6CD5\u4E00\u5B9A\u5BF9\uFF09"],
+    ["\u8BBE\u8BA1\u98CE\u9669", "\u4F4E\uFF08\u8981\u505A\u4EC0\u4E48\u5F88\u6E05\u695A\uFF09", "\u9AD8\uFF08\u6700\u96BE\u662F\u7CBE\u786E\u544A\u8BC9AI\uFF09"],
+  ];
+
+  rows.forEach((r, i) => {
+    const y = 1.95 + i * 0.7;
+    const bgColor = i % 2 === 0 ? C.white : C.lightBg;
+    r.forEach((cell, j) => {
+      s7.addShape(pptx.ShapeType.roundRect, { x: colX[j], y, w: colW[j], h: 0.6, fill: { color: bgColor }, cornerRadius: 0.04, line: { color: C.borderGray, width: 0.3 } });
+      const isSpecial = (i >= 4 && j >= 1);
+      s7.addText(cell, {
+        x: colX[j], y, w: colW[j], h: 0.6, fontSize: 11, fontFace: F.body,
+        color: (j === 0 ? C.titleGray : isSpecial && j === 1 ? C.highlight : isSpecial && j === 2 ? C.orange : C.bodyGray),
+        bold: (j === 0 || isSpecial), align: "center", valign: "middle",
+      });
+    });
   });
-  slide11.addText("在实现过程中面临的核心挑战及我们的解决方案", {
-    x: 0.8, y: 0.85, w: 11.73, h: 0.4,
-    fontSize: 12, fontFace: FONTS.body, color: COLORS.subtitleGray,
+
+  s7.addShape(pptx.ShapeType.roundRect, { x: 2.0, y: 6.3, w: 9.33, h: 0.55, fill: { color: C.lightBg }, cornerRadius: 0.1, line: { color: C.accentBlue, width: 0.5, dashType: "dash" } });
+  s7.addText("\u5982\u679C\u6267\u884C\u98CE\u9669\u964D\u4E3A\u96F6\uFF0C\u90A3\u4F60\u7684\u6838\u5FC3\u7ADE\u4E89\u529B\u5728\u54EA\u91CC\uFF1F", {
+    x: 2.0, y: 6.3, w: 9.33, h: 0.55, fontSize: 14, fontFace: F.body, color: C.primaryBlue, bold: true, align: "center", valign: "middle",
   });
-  slide11.addShape(pptx.ShapeType.rect, {
-    x: 0.8, y: 1.2, w: 11.73, h: 0.02, fill: { color: COLORS.borderGray },
+
+  addTransition(s7, pptx, "\u8FD9\u5957\u65B9\u6CD5\u9700\u8981\u4EC0\u4E48\u6280\u672F\u652F\u6491\uFF1F");
+
+  s7.addNotes(`【传统 vs AI原生，2分钟】
+这张对比表的核心是最后两行——风险反转了。
+传统开发最怕代码跑不通，但AI生成的代码语法永远是对的，执行风险降到几乎为零。
+但设计风险飙高了——最难的是"怎么精确告诉AI你要什么"。
+底部这句话是留给评委的引子。`);
+
+  // ============================================================
+  // SLIDE 8: 技术框架——调教的技术基石
+  // ============================================================
+  const s8 = pptx.addSlide();
+  s8.background = { color: C.white };
+  addSlideHeader(s8, pptx, "\u6280\u672F\u6846\u67B6", "\u8C03\u6559\u7684\u6280\u672F\u57FA\u77F3");
+
+  // 左半：架构（6层，压缩）
+  s8.addText("\u7CFB\u7EDF\u67B6\u6784", { x: 0.8, y: 1.2, w: 4, h: 0.35, fontSize: 13, fontFace: F.title, color: C.titleGray, bold: true });
+
+  const layers = [
+    { label: "6. \u5BA2\u6237\u7AEF", desc: "Vue 2 + Vant 2 H5", color: "8E44AD" },
+    { label: "5. \u63A5\u5165\u5C42", desc: "JWT\u7EDF\u4E00\u6821\u9A8C", color: C.accentBlue },
+    { label: "4. \u610F\u56FE\u63A8\u7406\u5C42", desc: "MCP-Skill \u5F15\u64CE\u203B", color: C.orange },
+    { label: "3. \u4E1A\u52A1\u670D\u52A1\u5C42", desc: "6\u5927\u6838\u5FC3Service", color: C.green },
+    { label: "2. \u6570\u636E\u6301\u4E45\u5C42", desc: "MyBatis-Plus + MySQL\u52A0\u5BC6", color: C.primaryBlue },
+    { label: "1. \u57FA\u7840\u8BBE\u65BD", desc: "Docker\u5BB9\u5668\u5316", color: C.titleGray },
+  ];
+
+  layers.forEach((l, i) => {
+    const y = 1.6 + i * 0.6;
+    s8.addShape(pptx.ShapeType.roundRect, { x: 0.8, y, w: 5.5, h: 0.48, fill: { color: l.color }, cornerRadius: 0.06 });
+    s8.addText(l.label, { x: 1.0, y, w: 1.5, h: 0.48, fontSize: 9, fontFace: F.title, color: C.white, bold: true, valign: "middle" });
+    s8.addText(l.desc, { x: 2.6, y, w: 3.5, h: 0.48, fontSize: 8, fontFace: F.body, color: "E8E8E8", valign: "middle" });
   });
+
+  // 右半上：MCP-Skill
+  s8.addText("MCP-Skill \u6838\u5FC3\u7279\u6027", { x: 6.8, y: 1.2, w: 5.73, h: 0.35, fontSize: 13, fontFace: F.title, color: C.titleGray, bold: true });
+
+  const feats = [
+    "\u2460 \u6807\u51C6\u5316\u63A5\u53E3\uFF1AMcpSkill\u7EDF\u4E00\u5951\u7EA6",
+    "\u2461 \u52A8\u6001\u6CE8\u518C\uFF1A\u65B0\u589ESkill\u96F6\u4EE3\u7801\u4FB5\u5165",
+    "\u2462 \u5B89\u5168\u5206\u7EA7\uFF1AQUERY/OPERATION\u4E24\u9636\u6BB5",
+    "\u2463 \u7ED3\u6784\u5316\u8FD4\u56DE\uFF1A\u56DE\u590D+\u6570\u636E+\u5BFC\u822A",
+  ];
+
+  feats.forEach((f, i) => {
+    const y = 1.65 + i * 0.45;
+    s8.addText(f, { x: 6.8, y, w: 5.73, h: 0.4, fontSize: 10, fontFace: F.body, color: C.bodyGray, valign: "middle" });
+  });
+
+  // 安全
+  s8.addText("\u5B89\u5168\u4FDD\u62A4", { x: 6.8, y: 3.6, w: 5.73, h: 0.35, fontSize: 13, fontFace: F.title, color: C.titleGray, bold: true });
+  s8.addText("\u8EAB\u4EFD\u8BA4\u8BC1 | \u6570\u636E\u52A0\u5BC6(bcrypt+AES) | \u9632\u653B\u51FB(\u9501\u5B9A+30s\u9632\u91CD\u590D) | \u5BA1\u8BA1\u65E5\u5FD7(AOP)", {
+    x: 6.8, y: 3.95, w: 5.73, h: 0.4, fontSize: 9, fontFace: F.body, color: C.bodyGray, valign: "middle",
+  });
+
+  // AI能力
+  s8.addText("AI\u80FD\u529B", { x: 6.8, y: 4.5, w: 5.73, h: 0.35, fontSize: 13, fontFace: F.title, color: C.titleGray, bold: true });
+  s8.addText("\u667A\u80FD\u5BA2\u670D | \u6D88\u8D39\u5206\u6790(10\u7C7BB+\u6708\u5EA6\u62A5\u544A) | AI\u6D1E\u5BDF\u5F15\u64CE", {
+    x: 6.8, y: 4.85, w: 5.73, h: 0.4, fontSize: 9, fontFace: F.body, color: C.bodyGray, valign: "middle",
+  });
+
+  // 调教回看
+  s8.addShape(pptx.ShapeType.roundRect, { x: 0.8, y: 5.3, w: 11.73, h: 0.35, fill: { color: "FFF8E1" }, cornerRadius: 0.06 });
+  s8.addText("\u8C03\u6559\u56DE\u770B\uFF1A\u67B6\u6784\u6BCF\u5C42\u7684\u6587\u6863\u63CF\u8FFD\u8FED\u4EE3\u4E863-5\u7248\u624D\u8FBE\u5230\u7A33\u5B9A\uFF0C\u5C24\u5176\u662FMCP-Skill\u7684\u8FB9\u754C\u5B9A\u4E49", {
+    x: 1.0, y: 5.3, w: 11.33, h: 0.35, fontSize: 9, fontFace: F.body, color: C.orange, valign: "middle",
+  });
+
+  // 术语简注
+  s8.addText("\u203B MCP-Skill = \u6211\u4EEC\u81EA\u7814\u7684AI\u80FD\u529B\u5C01\u88C5\u6846\u67B6\uFF1A\u5C06\u610F\u56FE\u63A8\u7406\u4E0E\u4E1A\u52A1\u6267\u884C\u89E3\u8026", {
+    x: 0.8, y: 5.75, w: 11.73, h: 0.3, fontSize: 9, fontFace: F.body, color: C.subtitleGray, italic: true,
+  });
+
+  // 余额正负号案例
+  s8.addShape(pptx.ShapeType.roundRect, { x: 0.8, y: 6.15, w: 11.73, h: 0.8, fill: { color: "FFF8E1" }, cornerRadius: 0.1, line: { color: C.orange, width: 0.5 } });
+  s8.addText("\u4FE1\u4EFB\u9677\u9631\u6848\u4F8B\uFF1A\u4F59\u989D\u6B63\u8D1F\u53F7", { x: 1.0, y: 6.2, w: 5, h: 0.3, fontSize: 10, fontFace: F.title, color: C.orange, bold: true });
+  s8.addText("\u201C\u6B63\u8D1F\u53F7\u201D\u5728\u4E2D\u6587\u8D22\u52A1\u8BED\u5883\u4E2D\u4E0D\u662F\u6570\u5B66\u6B63\u8D1F\u2014\u2014\u201C\u6536\u5165\u4E3A\u6B63\u3001\u652F\u51FA\u4E3A\u8D1F\u201D\u3002AI\u6309\u4F59\u989D\u5B57\u6BB5\u7684\u539F\u59CB\u6570\u5B66\u7B26\u53F7\u5904\u7406\uFF0C\u5BFC\u81F4\u90E8\u5206\u6536\u5165\u573A\u666F\u663E\u793A\u4E3A\u7EA2\u8272\uFF08\u9519\u8BEF\uFF09\u3002\u7ECF\u8FC73\u6B21\u4FEE\u6539\u6587\u6863\u4E2D\u201C\u91D1\u989D\u65B9\u5411\u201D\u7684\u63CF\u8FF0\u540E\u624D\u6B63\u786E\u533A\u5206\u3002", {
+    x: 1.0, y: 6.45, w: 11.33, h: 0.4, fontSize: 8, fontFace: F.body, color: C.bodyGray, valign: "top", lineSpacingMultiple: 1.3,
+  });
+
+  addTransition(s8, pptx, "\u6280\u672F\u6846\u67B6\u642D\u597D\u4E86\uFF0C\u4F46\u771F\u6B63\u505A\u8D77\u6765\u624D\u53D1\u73B0");
+
+  s8.addNotes(`【技术框架，1.5分钟——快速过】
+这一页把架构、MCP-Skill核心特性、安全、AI能力全放在一页上。
+重点不是技术细节，而是底部的"调教回看"和"信任陷阱"案例——每次技术选择背后的调教故事。
+特别是余额正负号案例：AI代码语法完全正确，但业务语义错了。这就是"信任陷阱"——代码太漂亮反而更容易被过度信任。`);
+
+  // ============================================================
+  // SLIDE 9: 真实挑战
+  // ============================================================
+  const s9 = pptx.addSlide();
+  s9.background = { color: C.white };
+  addSlideHeader(s9, pptx, "\u771F\u5B9E\u6311\u6218", "\u8C03\u6559\u4E2D\u8E29\u8FC7\u7684\u5751");
 
   const challenges = [
     {
-      icon: "🎯", title: "AI意图识别精度", color: COLORS.accentBlue,
-      challenge: `用户自然语言输入千变万化\n"查余额"和"看看我还有多少钱"是同一意图\n边界情况持续出现，规则引擎永远有盲区`,
-      solution: "关键词+正则双模式匹配+兜底引导\n支持银行名/金额/人名的参数提取\n持续补充边界规则，覆盖率达90%+",
+      icon: "A", title: "AI\u610F\u56FE\u8BC6\u522B\u7CBE\u5EA6", color: C.accentBlue,
+      challenge: "\u7528\u6237\u8BF4\u201C\u67E5\u4F59\u989D\u201D\u548C\u201C\u770B\u770B\u6211\u8FD8\u6709\u591A\u5C11\u94B1\u201D\u662F\u540C\u4E00\u610F\u56FE\uFF0C\u4F46\u6B63\u5219\u600E\u4E48\u5199\u90FD\u4E0D\u5168\u3002\u8FB9\u754C\u60C5\u51B5\u5C42\u51FA\u4E0D\u7A77\u3002",
+      solution: "\u5173\u952E\u8BCD+\u6B63\u5219\u53CC\u6A21\u5F0F+\u515C\u5E95\u5F15\u5BFC\u3002\u6210\u529F\u8C03\u65591\u4E2A\u610F\u56FE\uFF0C\u5E73\u5747\u5931\u8D25\u4E863-4\u6B21\u63CF\u8FF0\u5C1D\u8BD5\u3002",
     },
     {
-      icon: "🔍", title: "AI生成代码的业务校验", color: COLORS.orange,
-      challenge: "AI代码语法正确但业务语义错误\n金额符号存反、字段溢出、分类规则漏匹配\n——运行时才暴露，人工Review难发现",
-      solution: "建立AI代码校验清单：金额符号→分类规则→字段长度\n前后端契约测试：参数名→路径→响应结构\n提示词中精确描述业务约束，减少歧义",
+      icon: "B", title: "AI\u4EE3\u7801\u7684\u4E1A\u52A1\u6821\u9A8C", color: C.orange,
+      challenge: "AI\u4EE3\u7801\u8BED\u6CD5\u5B8C\u7F8E\u3001\u6CE8\u91CA\u9F50\u5168\uFF0C\u6B63\u56E0\u5982\u6B64\u66F4\u5BB9\u6613\u88AB\u4FE1\u4EFB\u3002\u4F46\u4E1A\u52A1\u8BED\u4E49\u53EF\u80FD\u662F\u9519\u7684\uFF0C\u5982\u91D1\u989D\u7B26\u53F7\u53CD\u4E86\u3001\u5B57\u6BB5\u6EA2\u51FA\u3002",
+      solution: "\u5EFA\u7ACB\u6821\u9A8C\u6E05\u5355\uFF1A\u91D1\u989D\u7B26\u53F7\u2192\u5B57\u6BB5\u957F\u5EA6\u2192\u5206\u7C7B\u89C4\u5219\u3002\u6BCF\u4E00\u5C42\u90FD\u6709\u68C0\u67E5\u70B9\u3002",
     },
     {
-      icon: "🔗", title: "前后端集成契约对齐", color: COLORS.highlight,
-      challenge: "前端和后端由AI独立生成，天然存在契约断裂\nAPI路径不一致、参数命名不匹配、响应结构预期差异",
-      solution: "统一API契约规范（ReqBase/统一响应格式）\n前端组件与后端接口结对生成\n集成测试前置，尽早暴露契约问题",
+      icon: "C", title: "\u524D\u540E\u7AEF\u5951\u7EA6\u5BF9\u9F50", color: C.highlight,
+      challenge: "\u524D\u7AEF\u548C\u540E\u7AEF\u7531AI\u72EC\u7ACB\u751F\u6210\uFF0C\u5929\u7136\u5B58\u5728\u5951\u7EA6\u65AD\u88C2\u3002",
+      solution: "\u7EDF\u4E00ReqBase\u89C4\u8303 + \u524D\u540E\u7AEF\u7ED3\u5BF9\u751F\u6210 + \u96C6\u6210\u6D4B\u8BD5\u524D\u7F6E\u3002",
     },
   ];
 
   challenges.forEach((c, i) => {
     const x = 0.6 + i * 4.2;
-    const y = 1.4;
+    const y = 1.3;
 
-    // 卡片
-    slide11.addShape(pptx.ShapeType.roundRect, {
-      x: x, y: y, w: 3.9, h: 5.4,
-      fill: { color: COLORS.cardBg },
-      cornerRadius: 0.12,
-      line: { color: COLORS.borderGray, width: 0.5 },
-    });
+    addCard(s9, pptx, x, y, 3.9, 5.2);
+    s9.addShape(pptx.ShapeType.roundRect, { x, y, w: 3.9, h: 0.7, fill: { color: c.color }, cornerRadius: 0 });
+    s9.addText(`${c.icon} ${c.title}`, { x, y, w: 3.9, h: 0.7, fontSize: 14, fontFace: F.title, color: C.white, bold: true, align: "center", valign: "middle" });
 
-    // 顶部色块
-    slide11.addShape(pptx.ShapeType.roundRect, {
-      x: x, y: y, w: 3.9, h: 0.9,
-      fill: { color: c.color },
-      cornerRadius: 0.0,
-    });
+    s9.addText("\u6311\u6218", { x: x + 0.2, y: y + 0.9, w: 3.5, h: 0.3, fontSize: 11, fontFace: F.title, color: C.highlight, bold: true });
+    s9.addShape(pptx.ShapeType.roundRect, { x: x + 0.2, y: y + 1.2, w: 3.5, h: 1.4, fill: { color: "FDEDEC" }, cornerRadius: 0.06 });
+    s9.addText(c.challenge, { x: x + 0.3, y: y + 1.25, w: 3.3, h: 1.3, fontSize: 10, fontFace: F.body, color: C.bodyGray, valign: "top", lineSpacingMultiple: 1.4 });
 
-    // 标题
-    slide11.addText(`${c.icon} ${c.title}`, {
-      x: x, y: y, w: 3.9, h: 0.9,
-      fontSize: 16, fontFace: FONTS.title, color: COLORS.white, bold: true,
-      align: "center", valign: "middle",
-    });
-
-    // 挑战标题
-    slide11.addText("❓ 挑战", {
-      x: x + 0.2, y: y + 1.1, w: 3.5, h: 0.35,
-      fontSize: 12, fontFace: FONTS.title, color: COLORS.highlight, bold: true,
-    });
-
-    // 挑战内容
-    slide11.addShape(pptx.ShapeType.roundRect, {
-      x: x + 0.2, y: y + 1.45, w: 3.5, h: 1.2,
-      fill: { color: "FDEDEC" },
-      cornerRadius: 0.08,
-    });
-    slide11.addText(c.challenge, {
-      x: x + 0.3, y: y + 1.5, w: 3.3, h: 1.1,
-      fontSize: 10, fontFace: FONTS.body, color: COLORS.bodyGray,
-      align: "left", valign: "middle",
-      lineSpacingMultiple: 1.4,
-    });
-
-    // 方案标题
-    slide11.addText("✅ 方案", {
-      x: x + 0.2, y: y + 2.9, w: 3.5, h: 0.35,
-      fontSize: 12, fontFace: FONTS.title, color: COLORS.green, bold: true,
-    });
-
-    // 方案内容
-    slide11.addShape(pptx.ShapeType.roundRect, {
-      x: x + 0.2, y: y + 3.25, w: 3.5, h: 1.8,
-      fill: { color: "E8F8F5" },
-      cornerRadius: 0.08,
-    });
-    slide11.addText(c.solution, {
-      x: x + 0.3, y: y + 3.3, w: 3.3, h: 1.7,
-      fontSize: 10, fontFace: FONTS.body, color: COLORS.bodyGray,
-      align: "left", valign: "middle",
-      lineSpacingMultiple: 1.5,
-    });
+    s9.addText("\u5E94\u5BF9", { x: x + 0.2, y: y + 2.8, w: 3.5, h: 0.3, fontSize: 11, fontFace: F.title, color: C.green, bold: true });
+    s9.addShape(pptx.ShapeType.roundRect, { x: x + 0.2, y: y + 3.1, w: 3.5, h: 1.6, fill: { color: "E8F8F5" }, cornerRadius: 0.06 });
+    s9.addText(c.solution, { x: x + 0.3, y: y + 3.15, w: 3.3, h: 1.5, fontSize: 10, fontFace: F.body, color: C.bodyGray, valign: "top", lineSpacingMultiple: 1.4 });
   });
 
-  slide11.addNotes(`【项目难点，2分钟】
-讲一下这个项目真实遇到的三个核心挑战——这些才是AI研发中真正"卡住"的地方：
+  addTransition(s9, pptx, "\u6BCF\u4E00\u4E2A\u6311\u6218\uFF0C\u90FD\u662F\u8BA4\u77E5\u5347\u7EA7\u7684\u6765\u6E90");
 
-第一个，AI意图识别精度。用户说话千变万化，"查余额"和"看看我还有多少钱"是同一意图，但正则怎么写才能不漏？而且边界情况层出不穷——这是规则引擎的固有缺陷，需要持续补充。
-
-第二个，AI生成代码的业务校验。这是我认为最难的一点——AI生成的代码语法上完全正确，但业务语义可能是错的。比如金额符号存反了、字段长度不够溢出了、分类规则大小写没对齐——这些只有跑起来才知道。
-
-第三个，前后端集成契约对齐。AI前端和后端是两套独立的生成，天然存在契约断裂。API路径不一致、参数名不匹配、响应结构预期差异——需要一个统一的契约规范来兜底。`);
+  s9.addNotes(`【真实挑战，1.5分钟】
+三个挑战。重点讲第一个和第二个。
+第一个，意图识别——用户说同样意思的话，表达方式千变万化。成功调教1个意图，背后失败3-4次。
+第二个，AI代码的信任陷阱——我特别想强调这个。代码太漂亮了，你会不自觉地信任它。但余额正负号那个案例说明了一切。
+这三个挑战直接导向了下一张——我从这些挑战中提炼的认知升级。`);
 
   // ============================================================
-  // SLIDE 12: 成果与收获
+  // SLIDE 10: 认知升级
   // ============================================================
-  const slide12 = pptx.addSlide();
-  slide12.background = { color: COLORS.white };
+  const s10 = pptx.addSlide();
+  s10.background = { color: C.white };
+  addSlideHeader(s10, pptx, "\u8BA4\u77E5\u5347\u7EA7", "\u56DB\u6761\u9012\u8FDB\u7684\u91CD\u65B0\u7406\u89E3");
 
-  slide12.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 13.33, h: 0.08, fill: { color: COLORS.accentBlue },
+  const upLevels = [
+    { icon: "1", title: "\u4ECE\u300C\u4EE3\u7801\u662F\u4EA7\u7269\u300D\u5230\u300C\u6587\u6863\u662F\u4EA7\u7269\u300D", desc: "\u4EE3\u7801\u53D8\u66F4\u662F\u6587\u6863\u53D8\u66F4\u7684\u7F16\u8BD1\u7ED3\u679C\u3002\u6587\u6863\u8D28\u91CF\u76F4\u63A5\u51B3\u5B9A\u4EE3\u7801\u8D28\u91CF\u3002" },
+    { icon: "2", title: "\u4ECE\u300CAI\u5199\u4EE3\u7801\u300D\u5230\u300CAI\u7406\u89E3\u4E1A\u52A1\u300D", desc: "AI\u6700\u5F3A\u7684\u4E0D\u662F\u751F\u6210\u4EE3\u7801\uFF0C\u800C\u662F\u7406\u89E3\u6587\u6863\u540E\u751F\u6210\u4EE3\u7801\u3002\u6240\u4EE5\u5173\u952E\u5728\u6587\u6863\u5199\u5F97\u5BF9\u3002" },
+    { icon: "3", title: "\u4ECE\u300C\u7F16\u7801\u80FD\u529B\u300D\u5230\u300C\u89C4\u683C\u8868\u8FBE\u80FD\u529B\u300D", desc: "\u6700\u6709\u4EF7\u503C\u7684\u4E0D\u662F\u5199\u4EE3\u7801\u7684\u901F\u5EA6\uFF0C\u800C\u662F\u628A\u4E1A\u52A1\u89C4\u5219\u7CBE\u786E\u63CF\u8FF0\u7ED9AI\u7684\u80FD\u529B\u3002" },
+    { icon: "4", title: "\u4ECE\u300C\u628A\u4EE3\u7801\u5199\u5BF9\u300D\u5230\u300C\u8BA9AI\u7406\u89E3\u5BF9\u300D", desc: "\u672A\u6765\u7684\u6838\u5FC3\u7ADE\u4E89\u529B\uFF1A\u4E0D\u662F\u4F60\u4F1A\u5199\u4EC0\u4E48\uFF0C\u800C\u662F\u4F60\u80FD\u5426\u8BA9AI\u6B63\u786E\u7406\u89E3\u4F60\u8981\u4EC0\u4E48\u3002" },
+  ];
+
+  upLevels.forEach((u, i) => {
+    const y = 1.4 + i * 1.2;
+
+    s10.addShape(pptx.ShapeType.ellipse, { x: 0.8, y: y + 0.15, w: 0.5, h: 0.5, fill: { color: C.accentBlue } });
+    s10.addText(u.icon, { x: 0.8, y: y + 0.15, w: 0.5, h: 0.5, fontSize: 16, fontFace: F.title, color: C.white, bold: true, align: "center", valign: "middle" });
+    s10.addText(u.title, { x: 1.6, y: y - 0.05, w: 10, h: 0.4, fontSize: 15, fontFace: F.title, color: C.titleGray, bold: true });
+    s10.addShape(pptx.ShapeType.rect, { x: 1.6, y: y + 0.4, w: 10, h: 0.01, fill: { color: C.borderGray } });
+    s10.addText(u.desc, { x: 1.6, y: y + 0.5, w: 10, h: 0.4, fontSize: 11, fontFace: F.body, color: C.bodyGray, valign: "top" });
   });
 
-  slide12.addText("成果与收获", {
-    x: 0.8, y: 0.3, w: 5, h: 0.7,
-    fontSize: 28, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-  });
-  slide12.addText("项目成果数据 + 个人与团队的真实收获", {
-    x: 0.8, y: 0.85, w: 11.73, h: 0.4,
-    fontSize: 12, fontFace: FONTS.body, color: COLORS.subtitleGray,
-  });
-  slide12.addShape(pptx.ShapeType.rect, {
-    x: 0.8, y: 1.2, w: 11.73, h: 0.02, fill: { color: COLORS.borderGray },
+  s10.addShape(pptx.ShapeType.roundRect, { x: 1.5, y: 6.3, w: 10.33, h: 0.55, fill: { color: C.lightBg }, cornerRadius: 0.1, line: { color: C.accentBlue, width: 0.5, dashType: "dash" } });
+  s10.addText("AI\u80FD\u519970%\u7684\u4EE3\u7801\u2014\u2014\u4F46\u90A330%\u7684\u67B6\u6784\u51B3\u7B56\u548C\u4E1A\u52A1\u7406\u89E3\uFF0C\u624D\u662F\u4F60\u4E0D\u53EF\u66FF\u4EE3\u7684\u4EF7\u503C\u3002", {
+    x: 1.7, y: 6.3, w: 9.93, h: 0.55, fontSize: 13, fontFace: F.body, color: C.primaryBlue, bold: true, align: "center", valign: "middle",
   });
 
-  // 上半部分：项目成果指标（压缩为一行）
+  addTransition(s10, pptx, "\u90A3\u5B9E\u9645\u6210\u679C\u5462\uFF1F");
+
+  s10.addNotes(`【认知升级，1.5分钟】
+这四条认知升级，是我做这个项目过程中最本质的收获。
+第一条最重要——回到认知拐点那页说的"文档是源代码"。
+第三条——我越来越觉得"规格表达能力"比"编码能力"更值钱。
+第四条就是我今天最想传递的核心信息：从"把代码写对"变成"让AI理解对"。
+底部这句话是对前面所有思考的一个总结。`);
+
+  // ============================================================
+  // SLIDE 11: 成果数据
+  // ============================================================
+  const s11 = pptx.addSlide();
+  s11.background = { color: C.white };
+  addSlideHeader(s11, pptx, "\u6210\u679C\u6570\u636E", "\u91CF\u5316\u9A8C\u8BC1");
+
   const metrics = [
-    { num: "30+", label: "API接口", sub: "6大业务模块", color: COLORS.accentBlue },
-    { num: "8", label: "数据库表", sub: "物理设计+索引", color: COLORS.green },
-    { num: "23", label: "前端页面", sub: "完整业务交互", color: COLORS.orange },
-    { num: "6", label: "核心Service", sub: "P0全覆盖", color: "8E44AD" },
-    { num: "7", label: "专业文档", sub: "全流程资产", color: COLORS.highlight },
-    { num: "3", label: "MCP Skill", sub: "可插拔AI单元", color: COLORS.primaryBlue },
+    { num: "30+", label: "API\u63A5\u53E3", sub: "6\u5927\u4E1A\u52A1\u6A21\u5757", color: C.accentBlue },
+    { num: "8", label: "\u6570\u636E\u5E93\u8868", sub: "\u7269\u7406\u8BBE\u8BA1+\u7D22\u5F15", color: C.green },
+    { num: "24", label: "\u524D\u7AEF\u9875\u9762", sub: "\u5B8C\u6574\u4EA4\u4E92\u4F53\u9A8C", color: C.orange },
+    { num: "7", label: "\u4E13\u4E1A\u6587\u6863", sub: "\u5168\u6D41\u7A0B\u53EF\u8FFD\u6EAF", color: "8E44AD" },
+    { num: "70%+", label: "\u4EE3\u7801AI\u751F\u6210\u7387", sub: "\u4EBA\u5DE5\u805A\u7126\u51B3\u7B56", color: C.highlight },
+    { num: "3", label: "MCP Skill", sub: "\u53EF\u63D2\u62D4AI\u5355\u5143", color: C.primaryBlue },
   ];
 
+  // 第一行：4个
   metrics.forEach((m, i) => {
-    const x = 0.5 + i * 2.1;
-    const y = 1.4;
+    const col = i % 4;
+    const row = i >= 4 ? 1 : 0;
+    const x = 0.5 + col * 3.15;
+    const y = 1.4 + row * 1.8;
 
-    slide12.addShape(pptx.ShapeType.roundRect, {
-      x: x, y: y, w: 1.9, h: 1.4,
-      fill: { color: COLORS.cardBg },
-      cornerRadius: 0.1,
-      line: { color: COLORS.borderGray, width: 0.5 },
-    });
-    slide12.addShape(pptx.ShapeType.rect, {
-      x: x, y: y, w: 1.9, h: 0.05, fill: { color: m.color },
-    });
-    slide12.addText(m.num, {
-      x: x, y: y + 0.1, w: 1.9, h: 0.5,
-      fontSize: 26, fontFace: FONTS.title, color: m.color, bold: true,
-      align: "center", valign: "middle",
-    });
-    slide12.addText(m.label, {
-      x: x, y: y + 0.6, w: 1.9, h: 0.3,
-      fontSize: 12, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-      align: "center", valign: "middle",
-    });
-    slide12.addText(m.sub, {
-      x: x, y: y + 0.9, w: 1.9, h: 0.3,
-      fontSize: 8, fontFace: FONTS.body, color: COLORS.subtitleGray,
-      align: "center", valign: "middle",
-    });
+    addCard(s11, pptx, x, y, 2.9, 1.5);
+    s11.addShape(pptx.ShapeType.rect, { x, y, w: 2.9, h: 0.05, fill: { color: m.color } });
+    s11.addText(m.num, { x, y: y + 0.15, w: 2.9, h: 0.5, fontSize: 26, fontFace: F.title, color: m.color, bold: true, align: "center", valign: "middle" });
+    s11.addText(m.label, { x, y: y + 0.65, w: 2.9, h: 0.35, fontSize: 12, fontFace: F.title, color: C.titleGray, bold: true, align: "center", valign: "middle" });
+    s11.addText(m.sub, { x, y: y + 1.0, w: 2.9, h: 0.3, fontSize: 9, fontFace: F.body, color: C.subtitleGray, align: "center", valign: "middle" });
   });
 
-  // 分隔
-  slide12.addShape(pptx.ShapeType.rect, {
-    x: 0.8, y: 3.0, w: 11.73, h: 0.02, fill: { color: COLORS.borderGray },
+  // 底部：一句话总结
+  s11.addShape(pptx.ShapeType.roundRect, { x: 1.5, y: 5.5, w: 10.33, h: 0.55, fill: { color: C.lightBg }, cornerRadius: 0.1, line: { color: C.accentBlue, width: 0.5, dashType: "dash" } });
+  s11.addText("\u8FD9\u4E9B\u6570\u636E\u8BC1\u660E\uFF1AAI\u539F\u751F\u7814\u53D1\u4E0D\u4EC5\u53EF\u884C\uFF0C\u800C\u4E14\u80FD\u771F\u6B63\u4EA7\u51FA\u53EF\u7528\u7684\u4EA7\u54C1\u3002\u4F46\u6BD4\u6570\u636E\u66F4\u91CD\u8981\u7684\uFF0C\u662F\u8FD9\u4E00\u8DEF\u7684\u8BA4\u77E5\u5347\u7EA7\u3002", {
+    x: 1.7, y: 5.5, w: 9.93, h: 0.55, fontSize: 12, fontFace: F.body, color: C.primaryBlue, bold: true, align: "center", valign: "middle",
   });
 
-  // 下半部分：收获与成长（左右两栏）
-  // 左栏：个人收获
-  slide12.addText("我的收获与成长", {
-    x: 0.8, y: 3.2, w: 5.5, h: 0.45,
-    fontSize: 16, fontFace: FONTS.title, color: COLORS.accentBlue, bold: true,
-  });
+  addTransition(s11, pptx, "\u56DE\u5230\u6700\u521D\u7684\u95EE\u9898");
 
-  const learnings = [
-    { icon: "🧠", title: "对AI研发的深度认知", desc: `从"AI是写代码工具"到"AI是研发协作者"的认知跃迁——AI最强的是生成速度，最弱的是业务语义理解` },
-    { icon: "✍️", title: "提示词工程经验", desc: "业务约束必须在提示词中显式声明。一句话说清楚业务规则，比后续花10分钟修BUG更高效" },
-    { icon: "🔬", title: "AI代码验证方法论", desc: "AI代码的业务语义验证才是真正的难点——建立了AI代码校验清单和前后端契约测试流程" },
-    { icon: "🏗️", title: "可复用的架构思维", desc: "MCP-Skill架构的设计原则不仅适用于AI，更是一种通用的能力抽象方法论，可迁移到其他系统" },
-  ];
-
-  learnings.forEach((l, i) => {
-    const y = 3.75 + i * 0.85;
-    slide12.addShape(pptx.ShapeType.roundRect, {
-      x: 0.8, y: y, w: 5.8, h: 0.75,
-      fill: { color: COLORS.cardBg },
-      cornerRadius: 0.08,
-      line: { color: COLORS.borderGray, width: 0.3 },
-    });
-    slide12.addText(l.icon, {
-      x: 0.95, y: y + 0.1, w: 0.5, h: 0.5,
-      fontSize: 20, align: "center", valign: "middle",
-    });
-    slide12.addText(l.title, {
-      x: 1.5, y: y + 0.05, w: 4.8, h: 0.3,
-      fontSize: 12, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-      align: "left", valign: "middle",
-    });
-    slide12.addText(l.desc, {
-      x: 1.5, y: y + 0.35, w: 4.8, h: 0.35,
-      fontSize: 9, fontFace: FONTS.body, color: COLORS.subtitleGray,
-      align: "left", valign: "top",
-    });
-  });
-
-  // 右栏：可复用的打法
-  slide12.addText("沉淀的可复用打法", {
-    x: 7.2, y: 3.2, w: 5.53, h: 0.45,
-    fontSize: 16, fontFace: FONTS.title, color: COLORS.green, bold: true,
-  });
-
-  const playbook = [
-    { num: "01", title: "MCP-Skill组件化框架", desc: "标准化AI能力封装→动态注册→安全分级→跨场景复用" },
-    { num: "02", title: "AI代码校验清单", desc: "金额符号→字段长度→分类规则→契约测试，系统化减少隐式BUG" },
-    { num: "03", title: "提示词工程规范", desc: "业务约束显式化·参数边界明确化·预期结果可验证化" },
-    { num: "04", title: "文档与代码一致性机制", desc: "AI保障7份专业文档版本化管理，需求→设计→实现可追溯" },
-    { num: "05", title: "两阶段安全确认模式", desc: "AI只做参数提取+卡片预览，资金操作跳转标准密码页——金融级安全设计模式" },
-  ];
-
-  playbook.forEach((p, i) => {
-    const y = 3.75 + i * 0.68;
-
-    slide12.addShape(pptx.ShapeType.roundRect, {
-      x: 7.2, y: y, w: 0.4, h: 0.4,
-      fill: { color: COLORS.green },
-      cornerRadius: 0.05,
-    });
-    slide12.addText(p.num, {
-      x: 7.2, y: y, w: 0.4, h: 0.4,
-      fontSize: 11, fontFace: FONTS.title, color: COLORS.white, bold: true,
-      align: "center", valign: "middle",
-    });
-
-    slide12.addText(p.title, {
-      x: 7.75, y: y, w: 4.8, h: 0.22,
-      fontSize: 11, fontFace: FONTS.title, color: COLORS.titleGray, bold: true,
-      align: "left", valign: "middle",
-    });
-    slide12.addText(p.desc, {
-      x: 7.75, y: y + 0.22, w: 4.8, h: 0.3,
-      fontSize: 9, fontFace: FONTS.body, color: COLORS.subtitleGray,
-      align: "left", valign: "top",
-    });
-  });
-
-  slide12.addNotes(`【成果与收获，2分钟】
-先看左边，这是我个人在这个项目中的四个核心收获：
-
-第一，对AI研发的深度认知。以前我觉得AI就是个代码生成器，现在我的认知完全变了——AI最强的不是写代码，而是理解和推理；但最弱的恰恰是业务语义理解。代码没错但业务逻辑错了，这是AI研发特有的难题。
-
-第二，提示词工程经验。我最大的教训是：业务约束必须显式写在提示词里，你以为AI知道的，它不知道。一句话说清楚规则，比后续花10分钟修BUG更高效。
-
-第三，AI代码验证方法论。我建立了一套校验清单，从金额符号到字段长度到分类规则，每一步都有检查点——这成了我后续做AI研发的标准流程。
-
-第四，可复用的架构思维。MCP-Skill的设计原则不仅适用于这个项目，它是一种通用的能力抽象方法论。
-
-再看右边，这是我认为可以真正推广的五套打法。如果公司后续要做AI原生研发，这些东西可以直接复用。`);
+  s11.addNotes(`【成果，1分钟】
+快速过一下数据。不多讲。
+重点是底部这句：数据证明了可行性，但比数据更重要的是这一路的认知升级。
+这句话也自然过渡到最后一张。`);
 
   // ============================================================
-  // SLIDE 13: 感谢聆听
+  // SLIDE 12: 总结
   // ============================================================
-  const slide13 = pptx.addSlide();
-  slide13.background = { color: COLORS.darkBlue };
+  const s12 = pptx.addSlide();
+  s12.background = { color: C.darkBlue };
 
-  // 顶部装饰线
-  slide13.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 0, w: 13.33, h: 0.04, fill: { color: COLORS.accentBlue },
+  s12.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 13.33, h: 0.04, fill: { color: C.accentBlue } });
+
+  s12.addText("\u4EE5\u524D\u6211\u4EEC\u5B66\u4E60\u5199\u4EE3\u7801", {
+    x: 0.8, y: 1.6, w: 11.73, h: 0.7, fontSize: 28, fontFace: F.body, color: C.white, align: "center", valign: "middle",
+  });
+  s12.addText("\u8BA9\u8BA1\u7B97\u673A\u7406\u89E3\u6211\u4EEC\u7684\u903B\u8F91", {
+    x: 0.8, y: 2.2, w: 11.73, h: 0.7, fontSize: 28, fontFace: F.body, color: C.white, align: "center", valign: "middle",
   });
 
-  // 主标题
-  slide13.addText("感谢聆听", {
-    x: 0.8, y: 1.8, w: 11.73, h: 1.0,
-    fontSize: 44, fontFace: FONTS.title, color: COLORS.white, bold: true,
-    align: "center", valign: "middle",
+  s12.addShape(pptx.ShapeType.rect, { x: 4.5, y: 3.1, w: 4.33, h: 0.04, fill: { color: C.accentBlue } });
+
+  s12.addText("\u73B0\u5728\u6211\u4EEC\u5B66\u4E60\u5199\u6587\u6863", {
+    x: 0.8, y: 3.5, w: 11.73, h: 0.7, fontSize: 28, fontFace: F.body, color: C.white, align: "center", valign: "middle",
+  });
+  s12.addText("\u8BA9AI\u7406\u89E3\u6211\u4EEC\u7684\u4E1A\u52A1", {
+    x: 0.8, y: 4.1, w: 11.73, h: 0.7, fontSize: 28, fontFace: F.body, color: C.accentBlue, bold: true, align: "center", valign: "middle",
   });
 
-  // 分隔线
-  slide13.addShape(pptx.ShapeType.rect, {
-    x: 4.5, y: 2.9, w: 4.33, h: 0.04, fill: { color: COLORS.accentBlue },
+  s12.addText("\u6E90\u4E8E\u7ADE\u8D5B\uFF0C\u4E0D\u6B62\u4E8E\u7ADE\u8D5B", {
+    x: 0.8, y: 5.2, w: 11.73, h: 0.5, fontSize: 16, fontFace: F.body, color: "8899AA", align: "center", valign: "middle",
   });
 
-  // 副标题
-  slide13.addText("AI原生研发 · 手机银行核心业务系统", {
-    x: 0.8, y: 3.2, w: 11.73, h: 0.6,
-    fontSize: 18, fontFace: FONTS.body, color: "AABBCC",
-    align: "center", valign: "middle",
-  });
+  s12.addShape(pptx.ShapeType.rect, { x: 0, y: 6.5, w: 13.33, h: 0.04, fill: { color: C.accentBlue } });
 
-  // 金句
-  slide13.addText("当所有人都在用 AI 生成代码，", {
-    x: 0.8, y: 4.2, w: 11.73, h: 0.5,
-    fontSize: 16, fontFace: FONTS.body, color: COLORS.white,
-    align: "center", valign: "middle",
-  });
-  slide13.addText("我们选择用 AI 设计架构、治理文档、守住安全底线。", {
-    x: 0.8, y: 4.6, w: 11.73, h: 0.5,
-    fontSize: 16, fontFace: FONTS.body, color: COLORS.accentBlue, bold: true,
-    align: "center", valign: "middle",
-  });
-
-  // 底部联系方式
-  slide13.addShape(pptx.ShapeType.rect, {
-    x: 0, y: 6.5, w: 13.33, h: 0.04, fill: { color: COLORS.accentBlue },
-  });
-
-  slide13.addNotes(`【收尾，0.5分钟】
-各位评委老师，以上就是我们的项目展示。
-
-我想用一句话来总结：
-"当所有人都在用AI生成代码的时候，我们选择用AI设计架构、治理文档、守住安全底线。"
-
-谢谢大家！欢迎提问。`);
+  s12.addNotes(`【收尾，1分钟】
+各位评委，我的分享到这里结束。
+回到目录那页的六个篇章。今天我们从"缘起"走到"展望"，我想告诉大家的是：AI原生研发不是换一个工具写代码，而是重新思考研发人员的角色——从编码者到调教师。
+最后我有一个问题想留给各位思考：如果AI能写70%的代码，那么一个优秀的研发人员的核心竞争力是什么？是写更快的代码，还是让AI更好地理解业务？
+谢谢大家，欢迎提问。`);
 
   // ============================================================
   // 保存文件
   // ============================================================
   const outputDir = "f:\\code\\bank\\bank";
-  const outputPath = `${outputDir}\\AI竞赛讲解_手机银行核心业务_优化版_v2.pptx`;
+  const outputPath = `${outputDir}\\AI竞赛讲解_手机银行核心业务_优化版_v4.pptx`;
 
-  // 避免 EBUSY 错误：如果文件存在先删除
   try {
-    if (fs.existsSync(outputPath)) {
-      fs.unlinkSync(outputPath);
-    }
+    if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
   } catch (e) {}
 
   await pptx.writeFile({ fileName: outputPath });
-  console.log(`✅ PPT generated successfully: ${outputPath}`);
-  console.log(`📊 Total slides: 13`);
-
+  console.log(`PPT generated successfully: ${outputPath}`);
+  console.log(`Total slides: 12`);
   return outputPath;
 }
 
-generatePPT().catch((err) => {
-  console.error("❌ Error generating PPT:", err);
+generatePPT().catch(err => {
+  console.error("Error generating PPT:", err);
   process.exit(1);
 });

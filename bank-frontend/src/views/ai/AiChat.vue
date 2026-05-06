@@ -240,9 +240,10 @@ export default {
     scrollToBottom() {
       const el = this.$refs.chatContainer
       if (el) {
-        this.$nextTick(() => {
+        // Wait for DOM to settle, then scroll to bottom
+        setTimeout(() => {
           el.scrollTop = el.scrollHeight
-        })
+        }, 50)
       }
     },
     // 解析 MCP-Skill 结构化数据
@@ -285,16 +286,20 @@ export default {
 
 <style scoped>
 .chat-page {
-  min-height: 100vh;
+  height: 100vh;
   background: #F0F4F8;
   display: flex;
   flex-direction: column;
   padding-top: 46px;
+  box-sizing: border-box;
 }
 .chat-container {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 .welcome-msg {
   display: flex;
