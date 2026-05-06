@@ -107,3 +107,13 @@ CREATE TABLE IF NOT EXISTS `frequent_payment_account` (
 -- 1. function_called 字段扩展为 TEXT，支持 SkillResult JSON 存储
 ALTER TABLE `chat_message`
   MODIFY COLUMN `function_called` TEXT DEFAULT NULL COMMENT 'MCP-Skill 调用结果（纯字符串或 SkillResult JSON）';
+
+-- ============================================================
+-- V2.3 数据迁移：时间精度升级
+-- 操作人：AI 代码审查
+-- 操作时间：2026-05-06
+-- ============================================================
+
+-- 1. chat_message.created_at 升级为毫秒精度，保障同秒消息排序正确
+ALTER TABLE `chat_message`
+  MODIFY COLUMN `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间（毫秒精度）';

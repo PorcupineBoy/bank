@@ -62,9 +62,7 @@ async function generatePPT() {
   s1.addText("\u624B\u673A\u94F6\u884C\u6838\u5FC3\u4E1A\u52A1\u7CFB\u7EDF \u00B7 \u9879\u76EE\u5C55\u793A", {
     x: 0.8, y: 5.6, w: 11.73, h: 0.5, fontSize: 14, fontFace: F.body, color: "8899AA", align: "center",
   });
-  s1.addNotes(`【开场白，1分钟】
-各位评委好！今天我的分享分三部分：先看成果，再讲历程，最后谈反思。
-我们从一份需求文档起步，用AI原生研发方式完整构建了一个手机银行核心系统。这条路怎么走的？我们开始。`);
+  s1.addNotes(`各位评委好。今天我分享的主题是“源于竞赛，不止于竞赛”——我们从一个AI竞赛出发，最终收获的却不只是竞赛本身。\n在短短几周内，我们用AI原生的研发方式，从零构建了一个完整的手机银行核心系统。更重要的，是在这个过程中，我们对“研发”这件事本身有了全新的理解。\n今天的分享分三个篇章：先看成果证明完成度，再听历程讲述方法，最后我们一起思考——AI时代，一个研发人员的核心竞争力究竟是什么。`);
 
   // ============================================================
   // SLIDE 2: 目录
@@ -93,17 +91,15 @@ async function generatePPT() {
     x: 2.0, y: 4.5, w: 9.33, h: 0.4, fontSize: 12, fontFace: F.body, color: C.subtitleGray, align: "center", letterSpacing: 5,
   });
 
-  // 底部说明——三部分导读
-  s2.addText("\u2460 \u6210\u679C\u5C55\u793A \u2192 \u2461 \u7814\u53D1\u5386\u7A0B \u2192 \u2462 \u53CD\u601D\u4E0E\u5C55\u671B", {
-    x: 2.0, y: 5.2, w: 9.33, h: 0.5, fontSize: 15, fontFace: F.body, color: C.accentBlue, bold: true, align: "center",
+  // 底部说明——三篇章预告
+  s2.addText("\u4E09\u4E2A\u7BC7\u7AE0\u5C42\u5C42\u9012\u8FDB\uFF1A\u5148\u770B\u6210\u679C\u3001\u518D\u542C\u5386\u7A0B\u3001\u6700\u540E\u5171\u540C\u601D\u8003", {
+    x: 2.0, y: 5.2, w: 9.33, h: 0.5, fontSize: 16, fontFace: F.body, color: C.primaryBlue, bold: true, align: "center",
   });
-  s2.addText("\u5168\u7A0B\u7EA720\u5206\u949F\uFF0C\u6BCF\u90E8\u5206\u76F8\u4E92\u547C\u5E94", {
-    x: 3.0, y: 5.7, w: 7.33, h: 0.3, fontSize: 11, fontFace: F.body, color: C.subtitleGray, align: "center",
+  s2.addText("Part 1 \u6210\u679C\u5C55\u793A \u00B7 Part 2 \u7814\u53D1\u5386\u7A0B \u00B7 Part 3 \u53CD\u601D\u4E0E\u5C55\u671B", {
+    x: 3.0, y: 5.7, w: 7.33, h: 0.3, fontSize: 11, fontFace: F.body, color: C.subtitleGray, align: "center", letterSpacing: 3,
   });
 
-  s2.addNotes(`【目录，30秒】
-今天分三部分。第一，先看成果——系统到底长什么样，AI能力有多强。第二，再讲历程——我们是怎么做出来的，中间经历了什么。第三，最后谈反思——做完之后对研发的理解发生了什么变化。
-一句话：先证明系统存在，再讲创新故事，最后留思考。`);
+  s2.addNotes(`三个篇章层层递进。第一篇，我先展示系统的真实截图——功能全景和三大AI创新能力，证明系统是真的跑起来了的。第二篇，我会讲述研发过程中最关键的转折点——我们是怎么从“让AI写代码”到“让AI理解业务”的。第三篇，我想把沉淀下来的认知升级分享给大家——因为比成果更重要的，是我们对研发这件事的理解发生了根本性的变化。`);
 
   // ============================================================
   // SLIDE 3: 功能全景——系统总览
@@ -141,12 +137,9 @@ async function generatePPT() {
     x: 1.0, y: 6.7, w: 11.33, h: 0.4, fontSize: 11, fontFace: F.body, color: C.primaryBlue, bold: true, align: "center", valign: "middle",
   });
 
-  addTransition(s3, pptx, "\u4E0D\u4EC5\u6709\u5B8C\u6574\u7CFB\u7EDF\uFF0C\u8FD8\u6709\u4E09\u5927AI\u521B\u65B0\u80FD\u529B");
+  addTransition(s3, pptx, "\u25B8 \u63A5\u4E0B\u6765\uFF1AAI\u521B\u65B0\u4E09\u5927\u80FD\u529B\u7684\u771F\u5B9E\u6F14\u793A");
 
-  s3.addNotes(`【功能全景，1分钟】
-大家看左边——这是我们的系统首页，真实的运行截图。
-总资产 17万，五快捷功能，AI入口，银行卡管理——全部实现了。
-但这只是基础。接下来看我们的核心创新——AI能力。`);
+  s3.addNotes(`先看成果。左侧是我们的系统首页——真实的运行截图。总资产十七万多，正负号清晰区分收支方向；五大快捷功能覆盖转账、查询、缴费等核心场景；两个AI能力入口内置在首页上。这不是概念设计，这是已经跑通的系统。十大功能模块、三十多个API接口、二十四个前端页面，全部由AI原生研发方式完成。接下来，我们看看核心创新——AI能力。`);
 
   // ============================================================
   // SLIDE 4: AI创新——三大核心能力
@@ -190,15 +183,9 @@ async function generatePPT() {
     x: 0.8, y: 6.65, w: 11.73, h: 0.3, fontSize: 9, fontFace: F.body, color: C.subtitleGray, italic: true, align: "center",
   });
 
-  addTransition(s4, pptx, "\u7CFB\u7EDF\u770B\u5230\u4E86\uFF0C\u90A3\u5B83\u662F\u600E\u4E48\u505A\u51FA\u6765\u7684\uFF1F");
+  addTransition(s4, pptx, "\u25B8 \u63A5\u4E0B\u6765\uFF1A\u8FD9\u4E9B\u80FD\u529B\u4E3A\u4EC0\u4E48\u4F1A\u88AB\u521B\u9020\u51FA\u6765\uFF1F");
 
-  s4.addNotes(`【AI创新，1.5分钟】
-三大AI能力，每个都有真实截图。
-左边：智能客服——用户说"我要看我最近的消费记录"，AI理解意图，返回结构化交易列表。
-中间：消费分析——自动分类、AI洞察文案，比如"您本月最大支出为其他，占比38.5%"。
-右边：安全转账——用户说"转账给张三100块"，AI提取参数，两阶段确认。
-这三个截图证明：AI能力不是噱头，是真的能在实际场景中跑通。
-所有能力都基于后面会讲到的MCP-Skill架构。`);
+  s4.addNotes(`三个AI能力，每个都有真实截图。左边是智能客服——用户说“我要看我最近的消费记录”，AI理解意图，返回结构化的交易列表。中间是消费分析——十大消费分类，两百多个关键词，自动生成月度洞察文案。右边是安全转账——用户说“转账给张三一百块”，AI提取参数，两阶段确认流程。每个能力都跑通了从用户输入到业务完成的全链路。所有能力都基于我们自研的MCP-Skill架构——大模型只负责理解和推理，业务操作通过Skill委托给后端API。`);
 
   // ============================================================
   // SLIDE 5: 痛点驱动
@@ -230,13 +217,9 @@ async function generatePPT() {
   });
 
   s5.addText("\u203B MVP=\u6700\u5C0F\u53EF\u884C\u4EA7\u54C1\uFF1BP0/P1/P2=\u9700\u6C42\u4F18\u5148\u7EA7\u7B49\u7EA7", { x: 0.8, y: 6.9, w: 11.73, h: 0.3, fontSize: 9, fontFace: F.body, color: C.subtitleGray, italic: true });
-  addTransition(s5, pptx, "\u6240\u4EE5\u6211\u4EEC\u51B3\u5B9A\u7528AI\u539F\u751F\u7814\u53D1\u6D4B\u8BD5\u4E00\u4E0B");
+  addTransition(s5, pptx, "\u25B8 \u63A5\u4E0B\u6765\uFF1A\u4E00\u6B21\u8C03\u6559\u4E2D\u7684\u987F\u609F\u6539\u53D8\u4E86\u65B9\u5411");
 
-  s5.addNotes(`【痛点，1分钟】
-系统你们看到了。那它是怎么做出来的？因为我们遇到了三个问题。
-痛点1：文档和代码分裂——这直接导致了认知拐点的发现。
-痛点2：重复CRUD——这也是为什么我们尝试让AI写代码。
-痛点3：沟通损耗——文档直接给AI，反而更精确。`);
+  s5.addNotes(`系统你们看到了。但它是怎么做出来的？我们并不是一开始就带着方法论上路的。实际上，在这个项目之前，我们经历了三个典型的研发痛点。第一，需求和代码的分裂——需求一变，代码和文档立刻脱节。第二，大量时间花在重复的CRUD上，真正有价值的架构思考时间被压缩。第三，传统沟通链条太长——产品到文档到开发，层层理解产生偏差。这三个痛点促使我们去思考：有没有一个更好的研发方式？`);
 
   // ============================================================
   // SLIDE 6: 认知拐点
@@ -268,26 +251,22 @@ async function generatePPT() {
     x: 2.7, y: 6.6, w: 7.93, h: 0.5, fontSize: 13, fontFace: F.body, color: C.primaryBlue, bold: true, align: "center", valign: "middle",
   });
 
-  addTransition(s6, pptx, "\u90A3\u5177\u4F53\u600E\u4E48\u8C03\u6559\uFF1F");
+  addTransition(s6, pptx, "\u25B8 \u63A5\u4E0B\u6765\uFF1A\u57FA\u4E8E\u8FD9\u4E2A\u8BA4\u77E5\uFF0C\u6211\u4EEC\u5F62\u6210\u4E86\u95ED\u73AF\u65B9\u6CD5");
 
-  s6.addNotes(`【认知拐点，1.5分钟】
-这个页面是整个项目最重要的一个顿悟。
-最开始做法是"让AI写代码→出BUG直接改代码"。但老BUG在新功能中反复出现。
-花了一天才发现：AI不是基于最新代码理解的——它是基于文档。
-从此改了规矩：先改文档，再生成代码。代码变更是文档变更的编译结果。`);
+  s6.addNotes(`这一页是整个项目最重要的一个顿悟。最开始我们的做法很简单——让AI写代码，出BUG直接改代码。听起来很高效，对吧？但一个现象反复出现：修好的老BUG，在新功能中又冒出来了。花了一整天才意识到——AI不是基于我们最新代码来理解的，它是基于文档来理解的。你不改文档，AI根本不知道你做过什么修改。从那一刻起，规矩彻底变了：先改文档，再生成代码。代码变更，只是文档变更的编译结果。`);
 
   // ============================================================
   // SLIDE 7: 调教方法论 + 五条纪律
   // ============================================================
   const s7 = pptx.addSlide();
   s7.background = { color: C.white };
-  addSlideHeader(s7, pptx, "\u8C03\u6559\u65B9\u6CD5\u8BBA", "\u95ED\u73AF\u8FED\u4EE3 + \u4E94\u6761\u7EAA\u5F8B");
+  addSlideHeader(s7, pptx, "\u6587\u6863\u9A71\u52A8\u95ED\u73AF", "\u4EE5\u6587\u6863\u4E3A\u4E2D\u5FC3\u7684\u8FED\u4EE3\u95ED\u73AF");
 
   s7.addShape(pptx.ShapeType.ellipse, { x: 5.2, y: 1.3, w: 2.8, h: 1.0, fill: { color: C.accentBlue } });
   s7.addText("\u6587\u6863", { x: 5.2, y: 1.3, w: 2.8, h: 1.0, fontSize: 26, fontFace: F.title, color: C.white, bold: true, align: "center", valign: "middle" });
 
   const loopPts = [
-    { label: "\u8C03\u6559\uFF08\u4FEE\u6539\u6587\u6863\uFF09", x: 4.8, y: 0.4, color: C.orange },
+    { label: "\u4FEE\u6539\u6587\u6863", x: 4.8, y: 0.4, color: C.orange },
     { label: "AI\u751F\u6210\u4EE3\u7801", x: 9.3, y: 1.8, color: C.green },
     { label: "\u4EE3\u7801Review", x: 4.8, y: 3.2, color: C.primaryBlue },
     { label: "\u53D1\u73B0\u95EE\u9898", x: 0.4, y: 1.8, color: C.highlight },
@@ -296,6 +275,17 @@ async function generatePPT() {
     s7.addShape(pptx.ShapeType.roundRect, { x: p.x, y: p.y, w: 3.2, h: 0.5, fill: { color: p.color }, cornerRadius: 0.08 });
     s7.addText(p.label, { x: p.x, y: p.y, w: 3.2, h: 0.5, fontSize: 10, fontFace: F.body, color: C.white, bold: true, align: "center", valign: "middle" });
   });
+
+  // 闭环箭头指示（连接4个节点形成顺时针闭环）
+  const arr = { fontSize: 16, fontFace: F.body, color: C.accentBlue, bold: true, align: "center", valign: "middle" };
+  // ① 修改文档→AI生成代码（顶部节点右侧，指向右）
+  s7.addText("\u25B6", { x: 8.0, y: 0.65, w: 1.3, h: 0.35, ...arr });
+  // ② AI生成代码→代码Review（右节点下方，指向下）
+  s7.addText("\u25BC", { x: 10.9, y: 2.3, w: 0.35, h: 0.9, ...arr });
+  // ③ 代码Review→发现问题（底节点左侧，指向左）
+  s7.addText("\u25C0", { x: 4.8, y: 3.2, w: 1.3, h: 0.35, ...arr });
+  // ④ 发现问题→修改文档（左节点上方，指向上）
+  s7.addText("\u25B2", { x: 4.0, y: 0.9, w: 0.35, h: 0.9, ...arr });
   s7.addText("\u5931\u8D25\u6BD4\u4F8B > \u6210\u529F\u6BD4\u4F8B\uFF1A\u6BCF\u6B21\u6210\u529F\u8C03\u6559\u80CC\u540E\u67093-4\u6B21\u5931\u8D25\u63CF\u8FF0\u5C1D\u8BD5", { x: 0.8, y: 3.9, w: 6.0, h: 0.3, fontSize: 9, fontFace: F.body, color: C.highlight });
 
   s7.addShape(pptx.ShapeType.rect, { x: 0.8, y: 4.3, w: 11.73, h: 0.02, fill: { color: C.borderGray } });
@@ -321,16 +311,14 @@ async function generatePPT() {
     x: 2.0, y: 5.9, w: 9.33, h: 0.45, fontSize: 13, fontFace: F.body, color: C.accentBlue, bold: true, align: "center", valign: "middle", letterSpacing: 2,
   });
 
-  s7.addShape(pptx.ShapeType.roundRect, { x: 0.8, y: 6.4, w: 11.73, h: 0.6, fill: { color: "F5F5F5" }, cornerRadius: 0.06 });
+  s7.addShape(pptx.ShapeType.roundRect, { x: 0.8, y: 6.2, w: 11.73, h: 0.5, fill: { color: "F5F5F5" }, cornerRadius: 0.06 });
   s7.addText("\u8C03\u6559\u65E5\u5FD7\u8282\u9009\uFF1A[2026-04-25] \u9700\u6C42F-TRANS-003 | \u8F6C\u8D26\u91D1\u989D\u7B26\u53F7\u95EE\u9898 | \u6587\u6863\u4ECE\u201C\u6B63\u6570\u6536\u5165\u8D1F\u6570\u652F\u51FA\u201D\u6539\u4E3A\u201C\u4EA4\u6613\u91D1\u989D\u4EE5\u65B9\u5411\u7B26\u53F7\u6807\u8BC6\uFF0C\u6536\u5165=+\u652F\u51FA=-\u201D | AI\u4EE3\u7801\u6B63\u786E\u533A\u5206", {
-    x: 1.0, y: 6.4, w: 11.33, h: 0.6, fontSize: 9, fontFace: "Courier New", color: C.subtitleGray, valign: "middle",
+    x: 1.0, y: 6.2, w: 11.33, h: 0.5, fontSize: 9, fontFace: "Courier New", color: C.subtitleGray, valign: "middle",
   });
 
-  addTransition(s7, pptx, "\u8FD9\u6837\u8C03\u6559\u8DDF\u4F20\u7EDF\u5F00\u53D1\u6709\u4EC0\u4E48\u672C\u8D28\u4E0D\u540C\uFF1F");
+  addTransition(s7, pptx, "\u25B8 \u63A5\u4E0B\u6765\uFF1A\u65B0\u65B9\u6CD5\u4E0E\u4F20\u7EDF\u7684\u672C\u8D28\u5DEE\u5F02");
 
-  s7.addNotes(`【调教方法论，1.5分钟】
-核心闭环：以文档为中心不断迭代。注意失败比例标注。
-下面是五条纪律，特别强调第4条——记录变更。右边是真实调教日志。`);
+  s7.addNotes(`基于这个认知，我们形成了以文档为中心的闭环迭代法。核心模型在这一页：文档在中央，四个步骤不断循环——修改文档，AI生成代码，代码Review，发现问题，再回到修改文档。下面是我们从实操中沉淀的五条纪律：文档先行、增量变更、不改旧代码、记录变更、同步更新。每一条都是从真实的失败中总结出来的。最下面是我真实的调教日志节选——二六年四月二十五日，余额正负号问题。文档从“正数收入负数支出”改为“交易金额以方向符号标识，收入为正、支出为负”。就这一句话的改动，AI代码立刻正确。这就是文档驱动闭环的力量。`);
 
   // ============================================================
   // SLIDE 8: 传统 vs AI原生
@@ -374,11 +362,9 @@ async function generatePPT() {
     x: 2.0, y: 6.3, w: 9.33, h: 0.55, fontSize: 14, fontFace: F.body, color: C.primaryBlue, bold: true, align: "center", valign: "middle",
   });
 
-  addTransition(s8, pptx, "\u8FD9\u5957\u65B9\u6CD5\u9700\u8981\u4EC0\u4E48\u6280\u672F\u652F\u6491\uFF1F");
+  addTransition(s8, pptx, "\u25B8 \u63A5\u4E0B\u6765\uFF1A\u652F\u6491\u65B9\u6CD5\u7684\u6280\u672F\u67B6\u6784");
 
-  s8.addNotes(`【对比，1分钟】
-核心在最后两行：执行风险和设计风险的反转。
-传统最怕代码跑不通，AI写的语法一定对——但设计风险高了，最难的是精确告诉AI要什么。`);
+  s8.addNotes(`这套方法与传统的研发方式到底有什么本质区别？看这张对比表。传统研发的核心产物是代码，人的角色是编码者。AI原生的核心产物是文档，人的角色变成了调教师和规格工程师。最微妙的是最后两行——执行风险和设计风险的逆转。AI写的代码语法一定是对的，所以执行风险降到了零。但设计风险却升高了——最难的事情变成了“如何精确告诉AI你要什么”。如果执行风险不再是问题，那你的核心竞争力究竟在哪里？`);
 
   // ============================================================
   // SLIDE 9: 技术框架
@@ -425,12 +411,9 @@ async function generatePPT() {
     x: 1.0, y: 6.4, w: 11.33, h: 0.35, fontSize: 9, fontFace: F.body, color: C.green, valign: "middle",
   });
 
-  addTransition(s9, pptx, "\u6280\u672F\u6846\u67B6\u642D\u597D\u4E86\uFF0C\u4F46\u771F\u6B63\u505A\u8D77\u6765\u624D\u53D1\u73B0");
+  addTransition(s9, pptx, "\u25B8 \u63A5\u4E0B\u6765\uFF1A\u7406\u60F3\u4E0E\u73B0\u5B9E\u4E4B\u95F4\u7684\u4E09\u5927\u6311\u6218");
 
-  s9.addNotes(`【技术框架，1分钟】
-快速过。架构、MCP-Skill、安全、AI能力都在一页上。
-重点在底部的"信任陷阱"案例——余额正负号问题。
-AI代码语法完全正确，但业务语义是错的。这就是最危险的地方。`);
+  s9.addNotes(`这套方法需要技术的支撑。我们采用了全栈架构，六层结构从客户端到数据持久化层。核心是中间这一层——我们自研的MCP-Skill引擎，实现了意图推理与业务执行的解耦。右侧是MCP-Skill的四个核心特性，特别强调第四点——LLM无关设计，当前这套规则未来可以切换任何大语言模型。底部的黄色区域是一个重要的信任陷阱案例：余额正负号问题。AI代码语法完全正确，但业务语义是错的——这是AI原生研发中最危险也最容易忽略的问题。`);
 
   // ============================================================
   // SLIDE 10: 真实挑战
@@ -471,11 +454,9 @@ AI代码语法完全正确，但业务语义是错的。这就是最危险的地
     x: 1.7, y: 5.8, w: 9.93, h: 0.55, fontSize: 12, fontFace: F.body, color: C.primaryBlue, bold: true, align: "center", valign: "middle",
   });
 
-  addTransition(s10, pptx, "\u6BCF\u4E00\u4E2A\u6311\u6218\uFF0C\u90FD\u662F\u8BA4\u77E5\u5347\u7EA7\u7684\u6765\u6E90");
+  addTransition(s10, pptx, "\u25B8 \u63A5\u4E0B\u6765\uFF1A\u6311\u6218\u4E4B\u540E\u6C89\u6DC0\u7684\u8BA4\u77E5\u5347\u7EA7");
 
-  s10.addNotes(`【挑战，1分钟】
-三个挑战。重点说前两个：意图识别的失败比例和AI代码的信任陷阱。
-"AI代码越漂亮越危险"——这听起来反直觉，但余额正负号案例就是最好的证明。`);
+  s10.addNotes(`当然，过程中充满了挑战。我重点分享三个。第一个，AI意图识别精度——同一个意图有几十种不同的表达方式，边界情况层出不穷。真实数据是：成功调教一个意图，平均失败三到四次描述尝试。第二个，AI代码的业务校验——AI代码语法完美，正因为如此，更容易被信任，但业务语义可能是错的。第三个，前后端契约对齐——前后端由AI独立生成，天然存在契约断裂的风险。底部的这句话是我最深的感触：AI代码越漂亮，越需要警惕业务语义的错误。`);
 
   // ============================================================
   // SLIDE 11: 认知升级
@@ -505,13 +486,9 @@ AI代码语法完全正确，但业务语义是错的。这就是最危险的地
     x: 1.7, y: 6.3, w: 9.93, h: 0.55, fontSize: 13, fontFace: F.body, color: C.primaryBlue, bold: true, align: "center", valign: "middle",
   });
 
-  addTransition(s11, pptx, "\u90A3\u5B9E\u9645\u6210\u679C\u5462\uFF1F");
+  addTransition(s11, pptx, "\u25B8 \u63A5\u4E0B\u6765\uFF1A\u91CF\u5316\u6210\u679C\u4E0E\u6570\u636E\u9A8C\u8BC1");
 
-  s11.addNotes(`【认知升级，1分钟】
-这四条是从项目中真正沉淀下来的认知。
-第一条最重要——回到认知拐点的"文档是源代码"。
-第三条——规格表达能力比编码能力更值钱。
-第四条——从"把代码写对"到"让AI理解对"，这是核心转变。`);
+  s11.addNotes(`每一个挑战的背后，都是一次认知的升级。这是四条递进式的重新理解。第一条也是最根本的——从“代码是产物”到“文档是产物”。代码变更只是文档变更的编译结果。第二条——从“AI写代码”到“AI理解业务”。AI最强的不是生成代码，而是理解文档后生成代码。第三条——从“编码能力”到“规格表达能力”。最有价值的不是写代码的速度，而是把业务规则精确描述给AI的能力。第四条——从“把代码写对”到“让AI理解对”。未来核心竞争力不是你会写什么代码，而是你能否让AI正确理解你要什么。`);
 
   // ============================================================
   // SLIDE 12: 成果数据
@@ -543,13 +520,13 @@ AI代码语法完全正确，但业务语义是错的。这就是最危险的地
 
   // 顶部截图缩略证明
   try {
-    s12.addImage({ path: path.join(SCREENSHOTS, "home.png"), x: 0.5, y: 5.0, w: 1.0, h: 1.7, sizing: { type: "contain", w: 1.0, h: 1.7 } });
+    s12.addImage({ path: path.join(SCREENSHOTS, "home.png"), x: 0.5, y: 4.7, w: 1.0, h: 1.6, sizing: { type: "contain", w: 1.0, h: 1.6 } });
   } catch (e) {}
   try {
-    s12.addImage({ path: path.join(SCREENSHOTS, "ai-transaction.png"), x: 1.7, y: 5.0, w: 1.0, h: 1.7, sizing: { type: "contain", w: 1.0, h: 1.7 } });
+    s12.addImage({ path: path.join(SCREENSHOTS, "ai-transaction.png"), x: 1.7, y: 4.7, w: 1.0, h: 1.6, sizing: { type: "contain", w: 1.0, h: 1.6 } });
   } catch (e) {}
   try {
-    s12.addImage({ path: path.join(SCREENSHOTS, "consumption-analysis.png"), x: 2.9, y: 5.0, w: 1.0, h: 1.7, sizing: { type: "contain", w: 1.0, h: 1.7 } });
+    s12.addImage({ path: path.join(SCREENSHOTS, "consumption-analysis.png"), x: 2.9, y: 4.7, w: 1.0, h: 1.6, sizing: { type: "contain", w: 1.0, h: 1.6 } });
   } catch (e) {}
 
   s12.addText("\u6570\u636E\u6765\u6E90\u8BC1\u636E\uFF1A\u5DE6\u8D77=AI\u5BF9\u8BDD\u622A\u56FE / \u6D88\u8D39\u5206\u6790\u622A\u56FE / \u9996\u9875\u622A\u56FE", {
@@ -561,10 +538,9 @@ AI代码语法完全正确，但业务语义是错的。这就是最危险的地
     x: 1.7, y: 6.4, w: 9.93, h: 0.5, fontSize: 12, fontFace: F.body, color: C.primaryBlue, bold: true, align: "center", valign: "middle",
   });
 
-  addTransition(s12, pptx, "\u56DE\u5230\u6700\u521D\u7684\u95EE\u9898");
+  addTransition(s12, pptx, "\u25B8 \u63A5\u4E0B\u6765\uFF1A\u56DE\u5F52\u672C\u6E90");
 
-  s12.addNotes(`【成果，1分钟】
-6个数据卡片。底部放了三张截图缩略作为"数据来源于这些真实界面"的视觉证据。`);
+  s12.addNotes(`认知升级是内在的收获，但外在的成果同样重要。这六个数据卡片展示了项目的量化成果：三十多个API接口、八个数据库表、二十四个前端页面、七份专业文档、百分之七十以上的代码由AI生成、三个可插拔的MCP Skill。底部这三张截图就是数据的来源证据——AI对话截图、消费分析截图、首页截图。这些数据说明：AI原生研发不仅可行，而且能真正产出可用的产品。但正如前面所说，比数据更重要的，是我们在这一路上对研发认知的根本性升级。`);
 
   // ============================================================
   // SLIDE 13: 总结
@@ -582,11 +558,7 @@ AI代码语法完全正确，但业务语义是错的。这就是最危险的地
   s13.addText("\u6E90\u4E8E\u7ADE\u8D5B\uFF0C\u4E0D\u6B62\u4E8E\u7ADE\u8D5B", { x: 0.8, y: 5.2, w: 11.73, h: 0.5, fontSize: 16, fontFace: F.body, color: "8899AA", align: "center", valign: "middle" });
   s13.addShape(pptx.ShapeType.rect, { x: 0, y: 6.5, w: 13.33, h: 0.04, fill: { color: C.accentBlue } });
 
-  s13.addNotes(`【收尾，1分钟】
-各位评委，今天我从三个部分分享了这次AI原生研发的实践：先展示了系统截图证明了完成度，再讲述了从痛点到方法论的心路历程，最后是四条认知升级。
-最后我有一个问题留给各位：如果AI能写70%的代码，那么一个优秀的研发人员的核心竞争力应该是什么？
-是写更快的代码？还是让AI更好地理解业务？
-谢谢大家，欢迎提问。`);
+  s13.addNotes(`各位评委，今天我从三个篇章分享了这次AI原生研发的实践。如果AI能写百分之七十的代码，那么一个优秀的研发人员的核心竞争力应该是什么？是更快的编码速度，还是让AI更好地理解业务的能力？以前我们学习写代码，是为了让计算机理解我们的逻辑。现在我们学习写文档，是为了让AI理解我们的业务。这个转变，可能比我们想象的更加深刻。谢谢大家，欢迎提问。`);
 
   // ============================================================
   // 保存文件
