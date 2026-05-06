@@ -50,7 +50,7 @@ public class QueryTransactionsSkill implements McpSkill {
                 "时间范围：7d（近7天）/ 1m（近1个月）/ 3m（近3个月）。默认1m",
                 new String[]{"7d", "1m", "3m"}));
         params.put("page_size", new SkillMeta.ParameterSchema("number", false,
-                "返回记录条数：1-20。默认5"));
+                "返回记录条数：1-20。默认10"));
         meta.setParameters(params);
 
         return meta;
@@ -58,7 +58,7 @@ public class QueryTransactionsSkill implements McpSkill {
 
     @Override
     public SkillResult execute(Long userId, Map<String, Object> params) {
-        int pageSize = 5;
+        int pageSize = 10;
         String timeRange = "1m";
         Integer transTypeCode = null;
 
