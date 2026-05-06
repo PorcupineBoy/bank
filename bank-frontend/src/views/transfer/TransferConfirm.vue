@@ -1,5 +1,5 @@
 <template>
-  <div class="transfer-confirm-page">
+  <div class="transfer-confirm-page" :style="{ paddingBottom: showKeyboard ? '240px' : '0' }">
     <van-nav-bar title="确认转账" left-arrow @click-left="$router.back()" />
 
     <div class="confirm-info">
@@ -17,7 +17,7 @@
       大额转账提醒：单笔转账金额超过1万元，请仔细核对收款信息
     </van-notice-bar>
 
-    <div class="password-area">
+    <div class="password-area" ref="passwordArea">
       <div class="pwd-label">请输入交易密码</div>
       <van-password-input
         :value="tradePassword"
@@ -57,6 +57,15 @@ export default {
   },
   mounted() {
     this.showKeyboard = true
+  },
+  watch: {
+    showKeyboard(val) {
+      if (val) {
+        this.$nextTick(() => {
+          this.$refs.passwordArea && this.$refs.passwordArea.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        })
+      }
+    }
   },
   computed: {
     isLargeAmount() {
@@ -107,46 +116,51 @@ export default {
 <style scoped>
 .transfer-confirm-page {
   min-height: 100%;
-  background: #f5f5f5;
+  background: var(--bg-color);
 }
 .confirm-info {
-  background: #fff;
-  padding-bottom: 12px;
+  background: var(--card-bg);
+  padding-bottom: var(--sp-sm);
 }
 .amount {
   text-align: center;
-  font-size: 40px;
-  font-weight: bold;
-  padding: 24px 0 12px;
-  color: #333;
+  font-size: var(--fs-display-md);
+  font-weight: 500;
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+  padding: var(--sp-lg) 0 var(--sp-sm);
+  color: var(--text-primary);
+  line-height: 1;
 }
 .amount span {
-  font-size: 16px;
-  font-weight: normal;
+  font-size: var(--fs-body-md);
+  font-weight: 400;
 }
 .password-area {
-  background: #fff;
-  margin-top: 12px;
-  padding: 20px 16px;
+  background: var(--card-bg);
+  margin-top: var(--sp-sm);
+  padding: 20px var(--sp-md);
 }
 .pwd-label {
   text-align: center;
-  margin-bottom: 16px;
-  font-size: 14px;
-  color: #666;
+  margin-bottom: var(--sp-md);
+  font-size: var(--fs-body-sm);
+  color: var(--text-secondary);
 }
 .van-password-input {
   margin: 0 auto;
   max-width: 300px;
 }
 .van-password-input__item {
-  border: 1px solid #c8c9cc;
-  background: #fafafa;
+  border: 1px solid var(--border-color);
+  background: var(--surface-soft);
   height: 48px;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
 }
 .van-password-input__item--focus {
-  border-color: #1989fa;
-  background: #fff;
+  border-color: var(--primary-color);
+  border-width: 2px;
+  background: var(--card-bg);
 }
 </style>

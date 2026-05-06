@@ -133,12 +133,12 @@ export default {
 <style scoped>
 .limit-setting-page {
   min-height: 100%;
-  background: #f5f5f5;
+  background: var(--bg-color);
 }
 .current-limits {
-  background: #fff;
-  padding: 16px;
-  margin-bottom: 12px;
+  background: var(--card-bg);
+  padding: var(--sp-md);
+  margin-bottom: var(--sp-sm);
   display: flex;
 }
 .limit-item {
@@ -146,13 +146,14 @@ export default {
   text-align: center;
 }
 .limit-label {
-  font-size: 12px;
-  color: #999;
-  margin-bottom: 4px;
+  font-size: var(--fs-caption-sm);
+  color: var(--text-tertiary);
+  margin-bottom: var(--sp-xxs);
 }
 .limit-value {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
+  font-size: var(--fs-title-md);
+  font-weight: 500;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
 }
 </style>

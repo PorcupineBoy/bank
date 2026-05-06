@@ -1,25 +1,97 @@
-/* Global Blue Theme - Matching reference image style */
+/* ============================================
+ * Design System — Based on DESIGN.md
+ * 保留现有蓝色主题色系，应用设计规范：
+ *   - 排版层级：display weight 400 / title weight 500 / body weight 400
+ *   - 圆角体系：xs 4 / sm 6 / md 8 / lg 12 / xl 16 / pill 9999
+ *   - 间距体系：xxs 4 / xs 8 / sm 12 / md 16 / lg 24 / xl 32
+ *   - 阴影哲学：色彩块优先，阴影极少使用
+ * ============================================ */
 
 :root {
+  /* ---- Brand (保持现有色系) ---- */
   --primary-color: #4A90E2;
   --primary-light: #6BA5E7;
   --primary-dark: #3A7BD5;
   --primary-gradient: linear-gradient(135deg, #6BA5E7 0%, #4A90E2 100%);
+
+  /* ---- Surface ---- */
   --bg-color: #F0F4F8;
   --card-bg: #FFFFFF;
+  --surface-soft: #F5F8FF;
+  --surface-strong: #E8ECF0;
+  --surface-dark: #1A1A2E;
+  --surface-dark-elevated: #252540;
+
+  /* ---- Text ---- */
   --text-primary: #1A1A2E;
   --text-secondary: #666666;
   --text-tertiary: #999999;
+  --text-muted-soft: #BFBFBF;
+  --text-on-primary: #FFFFFF;
+  --text-on-dark: #FFFFFF;
+  --text-on-dark-soft: rgba(255,255,255,0.7);
+
+  /* ---- Border / Hairline ---- */
   --border-color: #E8ECF0;
+  --border-soft: #F0F0F0;
+
+  /* ---- Semantic ---- */
   --success-color: #52C41A;
   --warning-color: #FAAD14;
   --danger-color: #FF4D4F;
+
+  /* ---- Radius (DESIGN.md rounded scale) ---- */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 9999px;
+  --radius-full: 50%;
+
+  /* ---- Spacing (DESIGN.md spacing scale) ---- */
+  --sp-xxs: 4px;
+  --sp-xs: 8px;
+  --sp-sm: 12px;
+  --sp-md: 16px;
+  --sp-lg: 24px;
+  --sp-xl: 32px;
+  --sp-xxl: 48px;
+
+  /* ---- Typography ---- */
+  --font-display: "Cormorant Garamond", "EB Garamond", Georgia, serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", "Consolas", monospace;
+
+  /* display — weight 400, negative letter-spacing */
+  --fs-display-xl: 64px;
+  --fs-display-lg: 48px;
+  --fs-display-md: 36px;
+  --fs-display-sm: 28px;
+
+  /* title — weight 500 */
+  --fs-title-lg: 22px;
+  --fs-title-md: 18px;
+  --fs-title-sm: 16px;
+
+  /* body — weight 400 */
+  --fs-body-md: 16px;
+  --fs-body-sm: 14px;
+  --fs-caption: 13px;
+  --fs-caption-sm: 12px;
+
+  /* ---- Shadows (DESIGN.md: color-block first, shadow rare) ---- */
+  --shadow-subtle: 0 1px 3px rgba(20,20,19,0.08);
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-elevated: 0 4px 16px rgba(0,0,0,0.06);
 }
 
 body {
   background-color: var(--bg-color);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-body);
 }
+
+/* ---- Vant Overrides ---- */
 
 .van-nav-bar {
   background: var(--primary-gradient) !important;
@@ -27,7 +99,7 @@ body {
 .van-nav-bar__title,
 .van-nav-bar__text,
 .van-nav-bar .van-icon {
-  color: #FFFFFF !important;
+  color: var(--text-on-primary) !important;
 }
 
 .van-button--primary {
@@ -37,7 +109,7 @@ body {
 
 .van-button--plain.van-button--primary {
   color: var(--primary-color) !important;
-  background: #FFFFFF !important;
+  background: var(--card-bg) !important;
 }
 
 .van-tabbar-item--active {
@@ -48,38 +120,33 @@ body {
   background-color: var(--primary-color) !important;
 }
 
-/* ============================================
- * Vant 表单校验样式修正
- * ============================================ */
+/* ---- 表单校验 ---- */
 
-/* 校验错误时输入框占位符保持灰色，避免与红色错误消息重复 */
-/* 必须同时覆盖 color + -webkit-text-fill-color，因为 Vant 默认 CSS 使用 -webkit-text-fill-color 渲染 */
 .van-field--error .van-field__control::placeholder,
 .van-field--error input::placeholder {
     color: #c8c9cc !important;
     -webkit-text-fill-color: #c8c9cc !important;
 }
-
-/* 校验错误时，隐藏可能由表单重复验证产生的额外错误消息
-   确保每个字段只显示一条错误消息 */
 .van-field--error .van-field__error-message + .van-field__error-message {
     display: none !important;
 }
-
-/* 校验错误时，错误消息和输入框之间保持间距 */
 .van-field--error .van-field__body {
-    margin-bottom: 4px;
+    margin-bottom: var(--sp-xxs);
 }
 
-/* 修复交易密码输入框内边距 */
+/* ---- 交易密码/对话框 ---- */
+
 .van-dialog .van-field {
-    padding: 8px 16px;
+    padding: var(--sp-xs) var(--sp-md);
 }
 
-/* 表单内 van-cell-group 去掉外阴影 */
+/* ---- Cell Group ---- */
+
 .van-cell-group {
-    margin-bottom: 12px;
+    margin-bottom: var(--sp-sm);
 }
+
+/* ---- Tags ---- */
 
 .van-tag--primary {
   background-color: var(--primary-light) !important;
@@ -93,29 +160,30 @@ body {
   color: var(--text-primary);
 }
 
+/* ---- Reusable Utility Classes (DESIGN.md components) ---- */
+
 .action-btn-blue {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg);
   background: var(--primary-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FFFFFF;
+  color: var(--text-on-primary);
   font-size: 24px;
-  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
 }
 
 .card-white {
   background: var(--card-bg);
-  border-radius: 16px;
-  padding: 16px;
-  margin: 0 16px 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-md);
+  margin: 0 var(--sp-md) var(--sp-sm);
+  box-shadow: var(--shadow-card);
 }
 
 .page-container {
   min-height: 100vh;
   background: var(--bg-color);
-  padding-bottom: 24px;
+  padding-bottom: var(--sp-lg);
 }

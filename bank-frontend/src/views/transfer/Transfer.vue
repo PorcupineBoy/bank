@@ -196,19 +196,19 @@ export default {
 <style scoped>
 .transfer-page {
   min-height: 100%;
-  background: #f5f5f5;
+  background: var(--bg-color);
 }
 .lookup-title {
   text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
-  padding: 16px 0 8px;
+  font-size: var(--fs-title-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  padding: var(--sp-md) 0 var(--sp-xs);
 }
 .lookup-empty {
   text-align: center;
-  font-size: 14px;
-  color: #999;
-  padding: 24px 0;
+  font-size: var(--fs-body-sm);
+  color: var(--text-tertiary);
+  padding: var(--sp-lg) 0;
 }
 </style>

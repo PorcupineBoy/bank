@@ -118,18 +118,18 @@ export default {
 <style scoped>
 .register-page {
   min-height: 100%;
-  background: #fff;
+  background: var(--card-bg);
 }
 .form-area {
-  padding: 16px;
+  padding: var(--sp-md);
 }
 .login-link {
   text-align: center;
-  margin-top: 16px;
-  color: #666;
-  font-size: 14px;
+  margin-top: var(--sp-md);
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
 }
 .login-link span {
-  color: #1989fa;
+  color: var(--primary-color);
 }
 </style>

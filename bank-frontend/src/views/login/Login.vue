@@ -144,7 +144,7 @@ export default {
 <style scoped>
 .login-page {
   min-height: 100%;
-  background: #fff;
+  background: var(--card-bg);
 }
 .logo-area {
   text-align: center;
@@ -152,21 +152,24 @@ export default {
 }
 .logo-area h2 {
   margin: 0;
-  color: #1989fa;
-  font-size: 28px;
+  color: var(--primary-color);
+  font-size: var(--fs-display-sm);
+  font-weight: 400;
+  font-family: var(--font-display);
+  letter-spacing: -0.3px;
 }
 .logo-area p {
-  margin: 8px 0 0;
-  color: #999;
-  font-size: 14px;
+  margin: var(--sp-xs) 0 0;
+  color: var(--text-tertiary);
+  font-size: var(--fs-body-sm);
 }
 .login-tabs {
-  padding: 0 16px;
+  padding: 0 var(--sp-md);
 }
 .bottom-links {
   text-align: center;
   margin-top: 20px;
-  color: #1989fa;
-  font-size: 14px;
+  color: var(--primary-color);
+  font-size: var(--fs-body-sm);
 }
 </style>

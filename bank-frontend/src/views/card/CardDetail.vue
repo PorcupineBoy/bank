@@ -92,32 +92,34 @@ export default {
 <style scoped>
 .card-detail-page {
   min-height: 100%;
-  background: #f5f5f5;
+  background: var(--bg-color);
 }
 .card-info {
-  background: linear-gradient(90deg, #1989fa, #3eaf7c);
-  padding: 30px 20px;
-  color: #fff;
-  margin-bottom: 12px;
+  background: var(--primary-gradient);
+  padding: 32px 20px;
+  color: var(--text-on-primary);
+  margin-bottom: var(--sp-sm);
 }
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: var(--sp-md);
 }
 .bank {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: var(--fs-title-md);
+  font-weight: 500;
 }
 .card-number-row {
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: var(--sp-xs);
 }
 .card-number-row .card-number {
-  font-size: 24px;
+  font-size: var(--fs-display-sm);
+  font-family: var(--font-mono);
   letter-spacing: 2px;
+  font-weight: 400;
   flex: 1;
 }
 .card-number-row .eye-icon {
@@ -130,10 +132,10 @@ export default {
   opacity: 1;
 }
 .card-type {
-  font-size: 14px;
+  font-size: var(--fs-body-sm);
   opacity: 0.9;
 }
 .actions {
-  margin: 24px 16px;
+  margin: var(--sp-lg) var(--sp-md);
 }
 </style>

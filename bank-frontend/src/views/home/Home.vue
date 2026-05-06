@@ -179,39 +179,43 @@ export default {
 <style scoped>
 .home-page {
   min-height: 100vh;
-  background: #F0F4F8;
-  padding-bottom: 20px;
+  background: var(--bg-color);
+  padding-bottom: var(--sp-lg);
   position: relative;
 }
 .header {
-  background: linear-gradient(135deg, #7BB7F0 0%, #4A90E2 100%);
-  padding: 24px 20px 40px;
-  color: #fff;
-  border-radius: 0 0 24px 24px;
+  background: var(--primary-gradient);
+  padding: var(--sp-lg) 20px 40px;
+  color: var(--text-on-primary);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 }
 .user-info {
   display: flex;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--sp-lg);
 }
 .avatar {
-  margin-right: 12px;
+  margin-right: var(--sp-sm);
 }
 .name {
-  font-size: 18px;
+  font-size: var(--fs-title-md);
   font-weight: 500;
 }
 .total-assets .label {
-  font-size: 13px;
+  font-size: var(--fs-caption);
   opacity: 0.85;
-  margin-bottom: 4px;
+  margin-bottom: var(--sp-xxs);
 }
 .total-assets .amount {
-  font-size: 36px;
-  font-weight: bold;
+  font-size: var(--fs-display-md);
+  font-weight: 500;
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
   display: flex;
   align-items: center;
   gap: 10px;
+  line-height: 1;
 }
 .eye-icon {
   font-size: 22px;
@@ -219,13 +223,13 @@ export default {
   cursor: pointer;
 }
 .quick-actions {
-  margin: -24px 16px 12px;
-  background: #fff;
-  border-radius: 16px;
-  padding: 20px 16px;
+  margin: -24px var(--sp-md) var(--sp-sm);
+  background: var(--card-bg);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-lg) var(--sp-md);
   display: flex;
   justify-content: space-around;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  box-shadow: var(--shadow-elevated);
 }
 .action-item {
   display: flex;
@@ -236,111 +240,112 @@ export default {
 .action-icon {
   width: 52px;
   height: 52px;
-  border-radius: 16px;
-  background: #4A90E2;
+  border-radius: var(--radius-lg);
+  background: var(--primary-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
-  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+  margin-bottom: var(--sp-xs);
 }
 .action-text {
-  font-size: 13px;
-  color: #333;
+  font-size: var(--fs-caption);
+  color: var(--text-secondary);
 }
 .ai-features {
-  margin: 0 16px 12px;
-  background: #fff;
-  border-radius: 16px;
-  padding: 16px;
+  margin: 0 var(--sp-md) var(--sp-sm);
+  background: var(--card-bg);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-md);
   display: flex;
-  gap: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  gap: var(--sp-md);
+  box-shadow: var(--shadow-card);
 }
 .ai-feature-item {
   display: flex;
   align-items: center;
   gap: 10px;
   flex: 1;
-  padding: 12px;
-  border-radius: 12px;
-  background: #F5F8FF;
+  padding: var(--sp-sm);
+  border-radius: var(--radius-lg);
+  background: var(--surface-soft);
   cursor: pointer;
 }
 .ai-icon {
   width: 40px;
   height: 40px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.ai-chat { background: linear-gradient(135deg, #7BB7F0, #4A90E2); }
+.ai-chat { background: var(--primary-gradient); }
 .ai-analysis { background: linear-gradient(135deg, #A78BFA, #7C3AED); }
 .ai-text {
-  font-size: 14px;
-  color: #333;
+  font-size: var(--fs-body-sm);
+  color: var(--text-primary);
   font-weight: 500;
 }
 .card-section {
-  margin: 0 16px;
-  background: #fff;
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  margin: 0 var(--sp-md);
+  background: var(--card-bg);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-md);
+  box-shadow: var(--shadow-card);
 }
 .section-title {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #1A1A2E;
+  margin-bottom: var(--sp-sm);
+  font-size: var(--fs-title-sm);
+  font-weight: 500;
+  color: var(--text-primary);
 }
 .section-title .more {
-  font-size: 13px;
-  color: #4A90E2;
-  font-weight: normal;
+  font-size: var(--fs-caption);
+  color: var(--primary-color);
+  font-weight: 400;
 }
 .card-item {
-  background: linear-gradient(90deg, #5B9BD5, #4A90E2);
-  border-radius: 12px;
-  padding: 16px;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-md);
   margin-bottom: 10px;
-  color: #fff;
+  color: var(--text-on-primary);
 }
 .card-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: var(--sp-sm);
 }
 .bank-name {
-  font-size: 16px;
-  font-weight: bold;
+  font-size: var(--fs-title-sm);
+  font-weight: 500;
 }
 .card-no {
-  font-size: 18px;
+  font-size: var(--fs-title-lg);
+  font-family: var(--font-mono);
   letter-spacing: 2px;
-  margin-bottom: 6px;
+  font-weight: 400;
+  margin-bottom: var(--sp-xs);
 }
 .card-type {
-  font-size: 12px;
+  font-size: var(--fs-caption-sm);
   opacity: 0.9;
 }
 .empty-tip {
   text-align: center;
-  padding: 24px;
-  color: #999;
-  font-size: 14px;
+  padding: var(--sp-lg);
+  color: var(--text-tertiary);
+  font-size: var(--fs-body-sm);
 }
 .empty-tip span {
-  color: #4A90E2;
+  color: var(--primary-color);
 }
 .logout-area {
   text-align: center;
-  margin-top: 24px;
+  margin-top: var(--sp-lg);
 }
 .ai-float-btn {
   position: fixed;
@@ -348,12 +353,12 @@ export default {
   bottom: 80px;
   width: 56px;
   height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #7BB7F0, #4A90E2);
+  border-radius: var(--radius-full);
+  background: var(--primary-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px rgba(74, 144, 226, 0.4);
+  box-shadow: var(--shadow-elevated);
   z-index: 99;
   cursor: pointer;
 }

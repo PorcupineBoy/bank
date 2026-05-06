@@ -69,37 +69,39 @@ export default {
 <style scoped>
 .card-list-page {
   min-height: 100%;
-  background: #f5f5f5;
+  background: var(--bg-color);
   padding-bottom: 80px;
 }
 .cards {
-  padding: 12px;
+  padding: var(--sp-sm);
 }
 .card-item {
-  background: linear-gradient(90deg, #1989fa, #3eaf7c);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 12px;
-  color: #fff;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-md);
+  margin-bottom: var(--sp-sm);
+  color: var(--text-on-primary);
 }
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: var(--sp-sm);
 }
 .bank {
-  font-size: 16px;
-  font-weight: bold;
+  font-size: var(--fs-title-sm);
+  font-weight: 500;
 }
 .card-number-row {
   display: flex;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: var(--sp-xs);
 }
 .card-number {
-  font-size: 20px;
+  font-size: var(--fs-title-lg);
+  font-family: var(--font-mono);
   letter-spacing: 2px;
+  font-weight: 400;
   flex: 1;
 }
 .card-number-row .eye-icon {
@@ -112,14 +114,14 @@ export default {
   opacity: 1;
 }
 .card-meta {
-  font-size: 12px;
+  font-size: var(--fs-caption-sm);
   opacity: 0.9;
 }
 .add-btn {
   position: fixed;
   bottom: 20px;
-  left: 16px;
-  right: 16px;
+  left: var(--sp-md);
+  right: var(--sp-md);
 }
 .empty-state {
   padding-top: 40px;

@@ -1,5 +1,5 @@
 <template>
-  <div class="payment-confirm-page">
+  <div class="payment-confirm-page" :style="{ paddingBottom: showKeyboard ? '240px' : '0' }">
     <van-nav-bar title="缴费确认" left-arrow @click-left="$router.back()" />
 
     <div class="confirm-info">
@@ -24,7 +24,7 @@
       >保存为常用缴费户号</van-checkbox
     >
 
-    <div class="password-area">
+    <div class="password-area" ref="passwordArea">
       <div class="pwd-label">
         <van-icon name="lock" size="16" style="margin-right:4px;vertical-align:-2px" />
         请输入6位交易密码
@@ -95,6 +95,15 @@ export default {
   mounted() {
     this.showKeyboard = true
   },
+  watch: {
+    showKeyboard(val) {
+      if (val) {
+        this.$nextTick(() => {
+          this.$refs.passwordArea && this.$refs.passwordArea.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        })
+      }
+    }
+  },
   methods: {
     async loadCards() {
       try {
@@ -158,33 +167,37 @@ export default {
 <style scoped>
 .payment-confirm-page {
   min-height: 100%;
-  background: #f5f5f5;
+  background: var(--bg-color);
 }
 .confirm-info {
-  background: #fff;
-  padding-bottom: 12px;
+  background: var(--card-bg);
+  padding-bottom: var(--sp-sm);
 }
 .amount {
   text-align: center;
-  font-size: 40px;
-  font-weight: bold;
-  padding: 24px 0 12px;
-  color: #333;
+  font-size: var(--fs-display-md);
+  font-weight: 500;
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+  padding: var(--sp-lg) 0 var(--sp-sm);
+  color: var(--text-primary);
+  line-height: 1;
 }
 .amount span {
-  font-size: 16px;
-  font-weight: normal;
+  font-size: var(--fs-body-md);
+  font-weight: 400;
 }
 .password-area {
-  background: #fff;
-  margin-top: 12px;
-  padding: 20px 16px;
+  background: var(--card-bg);
+  margin-top: var(--sp-sm);
+  padding: 20px var(--sp-md);
 }
 .pwd-label {
   text-align: center;
-  margin-bottom: 16px;
-  font-size: 15px;
-  color: #333;
+  margin-bottom: var(--sp-md);
+  font-size: var(--fs-body-sm);
+  color: var(--text-primary);
   font-weight: 500;
 }
 .van-password-input {
@@ -192,13 +205,14 @@ export default {
   max-width: 300px;
 }
 .van-password-input__item {
-  border: 1px solid #c8c9cc;
-  background: #fafafa;
+  border: 1px solid var(--border-color);
+  background: var(--surface-soft);
   height: 48px;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
 }
 .van-password-input__item--focus {
-  border-color: #1989fa;
-  background: #fff;
+  border-color: var(--primary-color);
+  border-width: 2px;
+  background: var(--card-bg);
 }
 </style>

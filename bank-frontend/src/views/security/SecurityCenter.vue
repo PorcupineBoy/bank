@@ -18,6 +18,6 @@ export default {
 <style scoped>
 .security-center-page {
   min-height: 100%;
-  background: #f5f5f5;
+  background: var(--bg-color);
 }
 </style>

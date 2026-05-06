@@ -155,76 +155,80 @@ export default {
 <style scoped>
 .payment-page {
   min-height: 100%;
-  background: #f5f5f5;
+  background: var(--bg-color);
 }
 .type-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  padding: 16px;
-  background: #fff;
-  margin-bottom: 12px;
+  gap: var(--sp-sm);
+  padding: var(--sp-md);
+  background: var(--card-bg);
+  margin-bottom: var(--sp-sm);
 }
 .type-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 16px 0;
-  border-radius: 12px;
-  background: #f5f8ff;
-  color: #333;
+  padding: var(--sp-md) 0;
+  border-radius: var(--radius-lg);
+  background: var(--surface-soft);
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s;
 }
 .type-item span {
-  margin-top: 8px;
-  font-size: 13px;
+  margin-top: var(--sp-xs);
+  font-size: var(--fs-caption);
 }
 .type-item.active {
-  background: #4a90e2;
-  color: #fff;
+  background: var(--primary-color);
+  color: var(--text-on-primary);
 }
 .form-area {
-  background: #fff;
-  padding-bottom: 24px;
+  background: var(--card-bg);
+  padding-bottom: var(--sp-lg);
 }
 .history-area {
-  padding: 0 16px 12px;
+  padding: 0 var(--sp-md) var(--sp-sm);
 }
 .history-title {
-  font-size: 13px;
-  color: #999;
-  margin-bottom: 8px;
+  font-size: var(--fs-caption);
+  color: var(--text-tertiary);
+  margin-bottom: var(--sp-xs);
 }
 .history-tags {
   display: flex;
   flex-wrap: wrap;
 }
 .bill-card {
-  margin: 16px;
-  padding: 16px;
-  background: #f5f8ff;
-  border-radius: 12px;
+  margin: var(--sp-md);
+  padding: var(--sp-md);
+  background: var(--surface-soft);
+  border-radius: var(--radius-lg);
 }
 .bill-title {
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 12px;
+  font-size: var(--fs-title-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: var(--sp-sm);
 }
 .bill-row {
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 8px;
+  font-size: var(--fs-body-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-xs);
 }
 .bill-amount {
-  font-size: 18px;
-  font-weight: bold;
-  color: #ee0a24;
-  margin-top: 12px;
+  font-size: var(--fs-title-md);
+  font-weight: 500;
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.3px;
+  color: var(--danger-color);
+  margin-top: var(--sp-sm);
   text-align: center;
+  line-height: 1;
 }
 </style>

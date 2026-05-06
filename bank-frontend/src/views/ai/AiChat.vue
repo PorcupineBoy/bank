@@ -72,7 +72,7 @@
             <!-- 转账预确认卡片 -->
             <div v-if="skillData(msg).type === 'transfer_preview'" class="mcp-card transfer-preview-card">
               <div class="card-title">
-                <van-icon name="exchange" color="#07c160" />
+                <van-icon name="exchange" color="var(--success-color)" />
                 转账确认
               </div>
               <div class="preview-row">
@@ -90,7 +90,7 @@
               <van-button
                 round
                 block
-                color="#07c160"
+                color="var(--success-color)"
                 class="confirm-btn"
                 @click="goTransfer(skillData(msg).data)"
               >
@@ -117,7 +117,7 @@
               v-if="msg.content && msg.content.includes('去转账')"
               size="mini"
               round
-              color="#07c160"
+              color="var(--success-color)"
               @click="$router.push('/transfer')"
             >去转账</van-button>
             <van-button
@@ -304,7 +304,7 @@ export default {
 <style scoped>
 .chat-page {
   height: 100vh;
-  background: #F0F4F8;
+  background: var(--bg-color);
   display: flex;
   flex-direction: column;
   padding-top: 46px;
@@ -313,18 +313,18 @@ export default {
 .chat-container {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  padding: var(--sp-md);
 }
 .welcome-msg {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 16px;
+  margin-bottom: var(--sp-md);
 }
 .ai-avatar {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #7BB7F0, #4A90E2);
+  border-radius: var(--radius-full);
+  background: var(--primary-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -332,37 +332,37 @@ export default {
   flex-shrink: 0;
 }
 .welcome-bubble {
-  background: #fff;
-  padding: 12px 16px;
-  border-radius: 12px;
-  border-top-left-radius: 4px;
-  font-size: 14px;
-  color: #333;
+  background: var(--card-bg);
+  padding: var(--sp-sm) var(--sp-md);
+  border-radius: var(--radius-lg);
+  border-top-left-radius: var(--radius-xs);
+  font-size: var(--fs-body-sm);
+  color: var(--text-primary);
   max-width: 75%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: var(--shadow-card);
 }
 .msg-row {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 16px;
+  margin-bottom: var(--sp-md);
 }
 .msg-row.user {
   justify-content: flex-end;
 }
 .msg-row.user .msg-bubble {
-  background: #4A90E2;
-  color: #fff;
-  border-top-right-radius: 4px;
+  background: var(--primary-color);
+  color: var(--text-on-primary);
+  border-top-right-radius: var(--radius-xs);
 }
 .msg-bubble {
-  background: #fff;
+  background: var(--card-bg);
   padding: 10px 14px;
-  border-radius: 12px;
-  border-top-left-radius: 4px;
-  font-size: 14px;
-  color: #333;
+  border-radius: var(--radius-lg);
+  border-top-left-radius: var(--radius-xs);
+  font-size: var(--fs-body-sm);
+  color: var(--text-primary);
   max-width: 80%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: var(--shadow-card);
   word-break: break-word;
 }
 .msg-text {
@@ -373,30 +373,30 @@ export default {
 }
 .msg-time {
   font-size: 11px;
-  color: #999;
+  color: var(--text-tertiary);
   margin-top: 6px;
   text-align: right;
 }
 .msg-row.user .msg-time {
-  color: rgba(255,255,255,0.7);
+  color: var(--text-on-dark-soft);
 }
 .msg-action {
-  margin-top: 8px;
+  margin-top: var(--sp-xs);
   display: flex;
-  gap: 8px;
+  gap: var(--sp-xs);
   flex-wrap: wrap;
 }
 .typing {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 14px 16px;
+  gap: var(--sp-xxs);
+  padding: 14px var(--sp-md);
 }
 .dot {
   width: 8px;
   height: 8px;
   background: #ccc;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   animation: bounce 1.4s infinite ease-in-out both;
 }
 .dot:nth-child(1) { animation-delay: -0.32s; }
@@ -406,23 +406,23 @@ export default {
   40% { transform: scale(1); }
 }
 .input-area {
-  background: #fff;
-  padding: 10px 16px 16px;
-  border-top: 1px solid #eee;
+  background: var(--card-bg);
+  padding: 10px var(--sp-md) var(--sp-md);
+  border-top: 1px solid var(--border-soft);
 }
 .quick-tags {
   display: flex;
-  gap: 8px;
+  gap: var(--sp-xs);
   margin-bottom: 10px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding-bottom: var(--sp-xxs);
 }
 .tag {
-  padding: 4px 12px;
-  background: #F0F4F8;
-  color: #4A90E2;
-  font-size: 12px;
-  border-radius: 12px;
+  padding: var(--sp-xxs) var(--sp-sm);
+  background: var(--surface-soft);
+  color: var(--primary-color);
+  font-size: var(--fs-caption-sm);
+  border-radius: var(--radius-lg);
   white-space: nowrap;
   cursor: pointer;
 }
@@ -433,12 +433,12 @@ export default {
 }
 .chat-input {
   flex: 1;
-  background: #F5F5F5;
-  border-radius: 20px;
+  background: var(--bg-color);
+  border-radius: var(--radius-pill);
   padding: 6px 14px;
 }
 .chat-input ::v-deep .van-field__control {
-  font-size: 14px;
+  font-size: var(--fs-body-sm);
 }
 
 /* MCP-Skill 结构化卡片样式 */
@@ -446,42 +446,47 @@ export default {
   margin-top: 10px;
 }
 .mcp-card {
-  background: #f8fafc;
-  border: 1px solid #e8edf2;
-  border-radius: 10px;
-  padding: 12px;
-  margin-top: 4px;
+  background: var(--surface-soft);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-sm);
+  margin-top: var(--sp-xxs);
 }
 .card-title {
-  font-size: 13px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 8px;
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: var(--sp-xs);
   display: flex;
   align-items: center;
   gap: 6px;
 }
 .total-balance {
-  font-size: 24px;
-  font-weight: bold;
-  color: #4A90E2;
+  font-size: var(--fs-display-sm);
+  font-weight: 500;
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.3px;
+  color: var(--primary-color);
   margin-bottom: 2px;
+  line-height: 1;
 }
 .card-subtitle {
-  font-size: 12px;
-  color: #999;
+  font-size: var(--fs-caption-sm);
+  color: var(--text-tertiary);
   margin-bottom: 10px;
 }
 .card-item {
   display: flex;
   justify-content: space-between;
   padding: 6px 0;
-  font-size: 13px;
-  border-top: 1px solid #eee;
+  font-size: var(--fs-caption);
+  border-top: 1px solid var(--border-soft);
 }
 .card-balance {
-  font-weight: bold;
-  color: #333;
+  font-weight: 500;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
 }
 
 /* 交易卡片 */
@@ -489,52 +494,53 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  border-top: 1px solid #eee;
+  padding: var(--sp-xs) 0;
+  border-top: 1px solid var(--border-soft);
   cursor: pointer;
 }
 .trans-left {
   flex: 0 0 auto;
 }
 .trans-type {
-  font-size: 13px;
-  font-weight: bold;
-  color: #333;
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  color: var(--text-primary);
 }
 .trans-time {
   font-size: 11px;
-  color: #999;
+  color: var(--text-tertiary);
   margin-top: 2px;
 }
 .trans-mid {
   flex: 1;
   text-align: center;
-  padding: 0 8px;
+  padding: 0 var(--sp-xs);
 }
 .trans-payee {
-  font-size: 12px;
-  color: #666;
+  font-size: var(--fs-caption-sm);
+  color: var(--text-secondary);
 }
 .trans-remark {
   font-size: 11px;
-  color: #999;
+  color: var(--text-tertiary);
 }
 .trans-right {
   text-align: right;
 }
 .trans-amount {
-  font-size: 14px;
-  font-weight: bold;
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+  font-family: var(--font-mono);
 }
 .trans-amount.expense {
-  color: #333;
+  color: var(--text-primary);
 }
 .trans-amount.income {
-  color: #07c160;
+  color: var(--success-color);
 }
 .trans-status {
   font-size: 11px;
-  color: #999;
+  color: var(--text-tertiary);
   margin-top: 2px;
 }
 
@@ -547,18 +553,22 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 6px 0;
-  font-size: 14px;
+  font-size: var(--fs-body-sm);
 }
 .preview-label {
-  color: #666;
+  color: var(--text-secondary);
 }
 .preview-value {
-  font-weight: bold;
-  color: #333;
+  font-weight: 500;
+  color: var(--text-primary);
 }
 .amount-highlight {
-  color: #ee0a24;
-  font-size: 18px;
+  color: var(--danger-color);
+  font-size: var(--fs-title-md);
+  font-weight: 500;
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
 }
 .confirm-btn {
   margin-top: 10px;
@@ -570,14 +580,14 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 6px 0;
-  font-size: 13px;
-  border-top: 1px solid #eee;
+  font-size: var(--fs-caption);
+  border-top: 1px solid var(--border-soft);
 }
 .default-badge {
-  background: #4A90E2;
-  color: #fff;
+  background: var(--primary-color);
+  color: var(--text-on-primary);
   padding: 1px 6px;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-size: 10px;
 }
 </style>

@@ -170,45 +170,47 @@ export default {
 <style scoped>
 .transaction-list-page {
   min-height: 100%;
-  background: #f5f5f5;
+  background: var(--bg-color);
 }
 .amount {
-  font-size: 16px;
-  font-weight: bold;
+  font-size: var(--fs-body-md);
+  font-weight: 500;
+  font-family: var(--font-mono);
 }
 .amount.expense {
-  color: #333;
+  color: var(--text-primary);
 }
 .amount.income {
-  color: #07c160;
+  color: var(--success-color);
 }
 .status {
-  font-size: 12px;
-  color: #999;
+  font-size: var(--fs-caption-sm);
+  color: var(--text-tertiary);
   margin-top: 2px;
 }
 .filter-panel {
-  padding: 16px;
+  padding: var(--sp-md);
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 .filter-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 16px;
+  font-size: var(--fs-title-md);
+  font-weight: 500;
+  margin-bottom: var(--sp-md);
+  color: var(--text-primary);
 }
 .filter-section {
-  margin-bottom: 16px;
+  margin-bottom: var(--sp-md);
 }
 .filter-label {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 8px;
+  font-size: var(--fs-body-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-xs);
 }
 .filter-actions {
   margin-top: auto;
   display: flex;
-  gap: 12px;
+  gap: var(--sp-sm);
 }
 </style>

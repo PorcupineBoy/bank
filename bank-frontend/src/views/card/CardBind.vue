@@ -90,7 +90,7 @@
     <!-- 绑定成功提示 -->
     <van-dialog v-model="showSuccess" title="绑定成功" :show-confirm-button="true" @confirm="onSuccessConfirm">
       <div class="success-content">
-        <van-icon name="checked" size="48" color="#07c160" />
+        <van-icon name="checked" size="48" color="var(--success-color)" />
         <p>银行卡绑定成功！</p>
         <p class="success-card">{{ bindResult.cardNoMasked }}</p>
       </div>
@@ -201,23 +201,23 @@ export default {
 <style scoped>
 .card-bind-page {
   min-height: 100%;
-  background: #fff;
+  background: var(--card-bg);
 }
 .form-area {
-  padding: 16px;
+  padding: var(--sp-md);
 }
 .success-content {
   text-align: center;
   padding: 20px 0;
 }
 .success-content p {
-  margin: 8px 0 0;
-  font-size: 16px;
-  color: #333;
+  margin: var(--sp-xs) 0 0;
+  font-size: var(--fs-body-md);
+  color: var(--text-primary);
 }
 .success-content .success-card {
-  font-size: 14px;
-  color: #999;
+  font-size: var(--fs-body-sm);
+  color: var(--text-tertiary);
   letter-spacing: 1px;
 }
 </style>
