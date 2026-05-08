@@ -133,9 +133,20 @@ public class XiaomiLlmClient {
                 return new IntentResult("UNKNOWN", null);
             }
 
-            String content = choices.get(0).path("message").path("content").asText("");
+            JsonNode message = choices.get(0).path("message");
+
+            // MiMo 模型将回复内容放在 reasoning_content 而非 content 字段
+            // 参见：https://github.com/openclaw/openclaw/issues/60261
+            String content = message.path("content").asText("");
             if (content == null || content.isEmpty()) {
-                log.warn("[Xiaomi] response content 为空 ({}ms)", costMs);
+                content = message.path("reasoning_content").asText("");
+                if (!content.isEmpty()) {
+                    log.debug("[Xiaomi] 从 reasoning_content 读取到内容");
+                }
+            }
+
+            if (content == null || content.isEmpty()) {
+                log.warn("[Xiaomi] response content 和 reasoning_content 均为空 ({}ms)", costMs);
                 return new IntentResult("UNKNOWN", null);
             }
 
