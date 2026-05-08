@@ -53,7 +53,7 @@ public class LlmClientRouter {
                 try {
                     IntentResult result = xiaomiLlmClient.recognizeIntent(userMessage);
                     if (result != null && !"UNKNOWN".equals(result.getIntent())) {
-                        log.info("[Router] 小米 MiMo 识别成功: intent={}", result.getIntent());
+                        log.info("[Router] 小米 MiMo 识别成功: intent={},param={}", result.getIntent(),result.getParams());
                         return result;
                     }
                     log.warn("[Router] 小米 MiMo 返回 UNKNOWN，降级到 OpenAI/DeepSeek");
