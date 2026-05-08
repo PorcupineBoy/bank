@@ -39,7 +39,7 @@ public class AiController {
 
     @PostMapping("/chat/send")
     public Result<ChatMessageVO> sendMessage(@RequestBody @Validated ChatSendRequest request) {
-        return Result.success(aiChatService.sendMessage(request.getUserId(), request.getContent(), request.getSessionId()));
+        return Result.success(aiChatService.sendMessage(request.getUserId(), request.getContent(), request.getSessionId(), request.getProvider()));
     }
 
     @PostMapping("/chat/history")

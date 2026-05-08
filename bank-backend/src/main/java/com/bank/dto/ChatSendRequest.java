@@ -12,4 +12,12 @@ public class ChatSendRequest extends ReqBasic {
     private String content;
 
     private String sessionId;
+
+    /**
+     * 大模型提供商选择
+     * - xiaomi：小米 MiMo
+     * - none：关闭大模型，仅关键词匹配
+     * - null/空：使用配置文件默认值
+     */
+    private String provider;
 }

@@ -74,13 +74,18 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public ChatMessageVO sendMessage(Long userId, String content, String sessionId) {
+        return sendMessage(userId, content, sessionId, null);
+    }
+
+    @Override
+    public ChatMessageVO sendMessage(Long userId, String content, String sessionId, String provider) {
         if (sessionId == null || sessionId.isEmpty()) {
             sessionId = generateNewSessionId();
         }
 
         saveMessage(userId, sessionId, ROLE_USER, content, null, null);
 
-        ChatResult result = processIntent(userId, content);
+        ChatResult result = processIntent(userId, content, provider);
 
         // 如果有结构化数据，序列化到 functionCalled 字段传递
         String functionCalled = result.functionCalled;
@@ -146,10 +151,10 @@ public class AiChatServiceImpl implements AiChatService {
      * 1. 先尝试 LLM 语义识别（IntentLlmClient），命中则直接路由
      * 2. LLM 超时/异常/返回 UNKNOWN，自动降级到关键词匹配兜底
      */
-    private ChatResult processIntent(Long userId, String content) {
+    private ChatResult processIntent(Long userId, String content, String provider) {
         // 第一层：LLM 语义识别
         try {
-            IntentResult llmResult = llmClientRouter.recognizeIntent(content);
+            IntentResult llmResult = llmClientRouter.recognizeIntent(content, provider);
             if (llmResult != null && !"UNKNOWN".equals(llmResult.getIntent())) {
                 log.info("[Intent] LLM 识别成功: intent={}", llmResult.getIntent());
                 return dispatchByLlmIntent(userId, llmResult.getIntent(), llmResult.getParams(), content);

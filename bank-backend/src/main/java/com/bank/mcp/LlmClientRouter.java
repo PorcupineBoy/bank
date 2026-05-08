@@ -45,8 +45,27 @@ public class LlmClientRouter {
      * @return IntentResult，全部失败返回 intent=UNKNOWN
      */
     public IntentResult recognizeIntent(String userMessage) {
+        return recognizeIntent(userMessage, null);
+    }
+
+    /**
+     * 调用指定的大模型识别用户意图（前端动态选择）
+     *
+     * @param userMessage 用户输入的自然语言
+     * @param activeProvider 指定提供商：xiaomi / none / null（使用配置默认值）
+     * @return IntentResult，全部失败返回 intent=UNKNOWN
+     */
+    public IntentResult recognizeIntent(String userMessage, String activeProvider) {
+        String selectedProvider = activeProvider != null ? activeProvider : this.provider;
+
+        // provider=none：跳过 LLM，直接返回 UNKNOWN 触发关键词兜底
+        if ("none".equalsIgnoreCase(selectedProvider)) {
+            log.debug("[Router] provider=none，跳过 LLM，直接使用关键词匹配");
+            return new IntentResult("UNKNOWN", null);
+        }
+
         // 第一优先：小米 MiMo
-        if ("xiaomi".equalsIgnoreCase(provider)) {
+        if ("xiaomi".equalsIgnoreCase(selectedProvider)) {
             if (xiaomiLlmClient == null) {
                 log.warn("[Router] 已选择 xiaomi 但 XiaomiLlmClient 不可用");
             } else {
@@ -64,7 +83,7 @@ public class LlmClientRouter {
         }
 
         // 第二优先：OpenAI / DeepSeek（兜底）
-        log.debug("[Router] 使用 OpenAI/DeepSeek 识别 intent={}", provider);
+        log.debug("[Router] 使用 OpenAI/DeepSeek 识别 selectedProvider={}", selectedProvider);
         return intentLlmClient.recognizeIntent(userMessage);
     }
 

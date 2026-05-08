@@ -8,6 +8,12 @@ import java.util.Map;
 
 public interface AiChatService {
     ChatMessageVO sendMessage(Long userId, String content, String sessionId);
+
+    /**
+     * 发送消息（支持指定大模型提供商）
+     * @param provider 大模型提供商：xiaomi / none / null（使用配置默认值）
+     */
+    ChatMessageVO sendMessage(Long userId, String content, String sessionId, String provider);
     List<ChatMessageVO> getChatHistory(Long userId, String sessionId, Integer limit);
     String generateNewSessionId();
 

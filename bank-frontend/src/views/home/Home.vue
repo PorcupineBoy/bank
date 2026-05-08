@@ -56,19 +56,46 @@
       </div>
     </div>
 
-    <!-- AI Feature Buttons -->
-    <div class="ai-features">
-      <div class="ai-feature-item" @click="$router.push('/ai-chat')">
-        <div class="ai-icon ai-chat">
-          <van-icon name="chat-o" size="20" color="#fff" />
-        </div>
-        <span class="ai-text">AI助手</span>
+    <!-- AI 智能助手（与聊天框一致的内联版） -->
+    <div class="ai-chat-section">
+      <div class="section-title">
+        <span><van-icon name="chat-o" style="margin-right:4px;" />AI 智能助手</span>
+        <span class="more" @click="$router.push('/ai-chat')">完整对话</span>
       </div>
-      <div class="ai-feature-item" @click="$router.push('/consumption-analysis')">
-        <div class="ai-icon ai-analysis">
-          <van-icon name="chart-trending-o" size="20" color="#fff" />
+      <!-- 模型选择器 -->
+      <div class="model-selector">
+        <span
+          :class="['model-option', homeProvider === 'xiaomi' ? 'active' : '']"
+          @click="homeProvider = 'xiaomi'"
+        >小米 MiMo</span>
+        <span
+          :class="['model-option', homeProvider === '' ? 'active' : '']"
+          @click="homeProvider = ''"
+        >默认</span>
+        <span
+          :class="['model-option', homeProvider === 'none' ? 'active' : '']"
+          @click="homeProvider = 'none'"
+        >无大模型</span>
+      </div>
+      <div class="ai-input-row">
+        <div class="quick-tags">
+          <span v-for="tag in homeQuickTags" :key="tag" class="tag" @click="homeInputText = tag">{{ tag }}</span>
         </div>
-        <span class="ai-text">消费分析</span>
+        <div class="home-input-area">
+          <van-field
+            v-model="homeInputText"
+            class="home-chat-input"
+            placeholder="输入您的问题..."
+            @keyup.enter="sendHomeMessage"
+          />
+          <van-button
+            :disabled="!homeInputText.trim() || homeLoading"
+            color="#4A90E2"
+            round
+            size="small"
+            @click="sendHomeMessage"
+          >发送</van-button>
+        </div>
       </div>
     </div>
 
@@ -120,8 +147,9 @@
 </template>
 
 <script>
-import { listCards } from '@/api/card'
-import { logout } from '@/api/auth'
+import {listCards} from '@/api/card'
+import {logout} from '@/api/auth'
+import {sendChatMessage} from '@/api/ai'
 
 export default {
   name: 'Home',
@@ -130,7 +158,11 @@ export default {
       showBalance: true,
       totalAssets: 0,
       cards: [],
-      refreshing: false
+      refreshing: false,
+      homeProvider: '',
+      homeInputText: '',
+      homeLoading: false,
+      homeQuickTags: ['查余额', '最近交易', '消费分析', '我的银行卡', '转账给张三500元']
     }
   },
   computed: {
@@ -171,6 +203,24 @@ export default {
         this.$store.dispatch('logout')
         this.$router.replace('/login')
       } catch (e) {}
+    },
+    async sendHomeMessage() {
+      const text = this.homeInputText.trim()
+      if (!text || this.homeLoading) return
+      this.homeInputText = ''
+      this.homeLoading = true
+      try {
+        await sendChatMessage({
+          content: text,
+          sessionId: 'home_' + Date.now(),
+          provider: this.homeProvider || undefined
+        })
+        this.$toast.success('已发送，请前往完整对话查看回复')
+      } catch (e) {
+        this.$toast.fail('发送失败')
+      } finally {
+        this.homeLoading = false
+      }
     }
   }
 }
@@ -360,6 +410,71 @@ export default {
   justify-content: center;
   box-shadow: var(--shadow-elevated);
   z-index: 99;
+  cursor: pointer;
+}
+
+/* AI 聊天内联样式 */
+.ai-chat-section {
+  margin: 0 var(--sp-md) var(--sp-sm);
+  background: var(--card-bg);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-md);
+  box-shadow: var(--shadow-card);
+}
+.model-selector {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.model-option {
+  padding: 2px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  background: var(--card-bg);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.model-option.active {
+  border-color: var(--primary-color);
+  color: #fff;
+  background: var(--primary-color);
+}
+.ai-input-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.home-input-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.home-chat-input {
+  flex: 1;
+  background: var(--bg-color);
+  border-radius: 999px;
+  padding: 6px 14px;
+}
+.home-chat-input ::v-deep .van-field__control {
+  font-size: var(--fs-body-sm);
+}
+.quick-tags {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+}
+.tag {
+  padding: 2px 10px;
+  background: var(--surface-soft);
+  color: var(--primary-color);
+  font-size: 11px;
+  border-radius: 999px;
+  white-space: nowrap;
   cursor: pointer;
 }
 </style>

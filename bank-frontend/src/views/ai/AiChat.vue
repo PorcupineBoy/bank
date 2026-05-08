@@ -151,6 +151,24 @@
     </div>
 
     <div class="input-area">
+      <!-- 模型选择器 -->
+      <div class="model-selector">
+        <span class="model-label">模型</span>
+        <div class="model-options">
+          <span
+            :class="['model-option', provider === 'xiaomi' ? 'active' : '']"
+            @click="provider = 'xiaomi'"
+          >小米 MiMo</span>
+          <span
+            :class="['model-option', provider === '' ? 'active' : '']"
+            @click="provider = ''"
+          >默认</span>
+          <span
+            :class="['model-option', provider === 'none' ? 'active' : '']"
+            @click="provider = 'none'"
+          >无大模型</span>
+        </div>
+      </div>
       <div class="quick-tags">
         <span
           v-for="tag in quickTags"
@@ -179,13 +197,14 @@
 </template>
 
 <script>
-import { sendChatMessage, getChatHistory, newChatSession } from '@/api/ai'
+import {getChatHistory, newChatSession, sendChatMessage} from '@/api/ai'
 
 export default {
   name: 'AiChat',
   data() {
     return {
       sessionId: '',
+      provider: '',
       messages: [],
       inputText: '',
       loading: false,
@@ -222,7 +241,8 @@ export default {
       try {
         const res = await sendChatMessage({
           content: text,
-          sessionId: this.sessionId
+          sessionId: this.sessionId,
+          provider: this.provider || undefined
         })
         if (res && res.sessionId) {
           this.sessionId = res.sessionId
@@ -430,6 +450,41 @@ export default {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+/* 模型选择器 */
+.model-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 0 2px;
+}
+.model-label {
+  font-size: var(--fs-caption-sm);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+.model-options {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+}
+.model-option {
+  padding: 2px 10px;
+  font-size: 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  background: var(--card-bg);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.model-option.active {
+  border-color: var(--primary-color);
+  color: #fff;
+  background: var(--primary-color);
 }
 .chat-input {
   flex: 1;
