@@ -2,9 +2,7 @@ package com.bank.service.impl;
 
 import com.bank.entity.ChatMessage;
 import com.bank.mapper.ChatMessageMapper;
-import com.bank.mcp.McpGateway;
-import com.bank.mcp.McpSkillRegistry;
-import com.bank.mcp.SkillResult;
+import com.bank.mcp.*;
 import com.bank.service.AiChatService;
 import com.bank.service.BankCardService;
 import com.bank.service.TransactionCategorizationService;
@@ -66,6 +64,8 @@ public class AiChatServiceImpl implements AiChatService {
     private McpGateway mcpGateway;
     @Autowired
     private McpSkillRegistry skillRegistry;
+    @Autowired
+    private LlmClientRouter llmClientRouter;
 
     private static final int ROLE_USER = 1;
     private static final int ROLE_AI = 2;
@@ -141,10 +141,69 @@ public class AiChatServiceImpl implements AiChatService {
     }
 
     /**
-     * 意图推理引擎
-     * 将用户自然语言映射到 MCP-Skill，通过 McpGateway 路由执行
+     * 意图推理引擎（增强版）
+     * 分两层：
+     * 1. 先尝试 LLM 语义识别（IntentLlmClient），命中则直接路由
+     * 2. LLM 超时/异常/返回 UNKNOWN，自动降级到关键词匹配兜底
      */
     private ChatResult processIntent(Long userId, String content) {
+        // 第一层：LLM 语义识别
+        try {
+            IntentResult llmResult = llmClientRouter.recognizeIntent(content);
+            if (llmResult != null && !"UNKNOWN".equals(llmResult.getIntent())) {
+                log.info("[Intent] LLM 识别成功: intent={}", llmResult.getIntent());
+                return dispatchByLlmIntent(userId, llmResult.getIntent(), llmResult.getParams(), content);
+            }
+        } catch (Exception e) {
+            log.warn("[Intent] LLM 意图识别异常，降级到关键词匹配: {}", e.getMessage());
+        }
+
+        // 第二层：关键词匹配兜底（保底策略）
+        log.debug("[Intent] 降级使用关键词匹配");
+        return processIntentByKeyword(userId, content);
+    }
+
+    /**
+     * 根据 LLM 识别的意图直接路由到对应的业务方法
+     */
+    private ChatResult dispatchByLlmIntent(Long userId, String intent, Map<String, Object> params, String originalContent) {
+        switch (intent) {
+            case "GREETING":
+                return buildMcpResult("GREETING", null, buildGreetingReply());
+            case "HELP":
+                return buildMcpResult("HELP", null, buildHelpReply());
+            case "QUERY_BALANCE":
+                return executeAndBuildResult(userId, "query_balance",
+                        (params != null && !params.isEmpty()) ? params : extractBankNameParam(originalContent));
+            case "CONSUMPTION_ANALYSIS":
+                if (params != null && params.containsKey("year")) {
+                    try {
+                        int year = ((Number) params.get("year")).intValue();
+                        return handleConsumptionAnalysisByYear(userId, year);
+                    } catch (Exception e) {
+                        log.warn("[Intent] LLM year 参数转换失败: {}", e.getMessage());
+                    }
+                }
+                return handleConsumptionAnalysis(userId);
+            case "QUERY_TRANSACTIONS":
+                return executeAndBuildResult(userId, "query_transactions",
+                        params != null ? params : new HashMap<>());
+            case "QUERY_CARDS":
+                return handleQueryCards(userId);
+            case "TRANSFER":
+                Map<String, Object> transferParams = (params != null && params.containsKey("payee_name"))
+                        ? params : extractTransferParams(originalContent);
+                return executeAndBuildResult(userId, "transfer_prepare", transferParams);
+            default:
+                return processIntentByKeyword(userId, originalContent);
+        }
+    }
+
+    /**
+     * 意图推理引擎（关键词匹配版）
+     * 保留原有的纯关键词匹配逻辑，作为 LLM 识别的降级兜底
+     */
+    private ChatResult processIntentByKeyword(Long userId, String content) {
         String lower = content.toLowerCase().trim();
 
         // 问候

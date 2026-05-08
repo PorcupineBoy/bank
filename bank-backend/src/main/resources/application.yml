@@ -35,6 +35,23 @@ mybatis-plus:
       logic-not-delete-value: 0
 
 bank:
+  llm:
+    # 当前激活的大模型提供商（可选值：openai / deepseek / xiaomi）
+    # 设为 xiaomi 时优先使用小米 MiMo，失败自动降级到 OpenAI/DeepSeek
+    provider: xiaomi
+    # OpenAI / DeepSeek 配置（给 IntentLlmClient 使用）
+    # - OpenAI：https://api.openai.com/v1
+    # - DeepSeek：https://api.deepseek.com/v1
+    # 未配置时自动降级为关键词匹配，不影响系统正常运行
+    api-url: ""
+    api-key: ""
+    model: deepseek-chat
+    timeout: 5000
+    # 小米 MiMo 专属配置（给 XiaomiLlmClient 使用）
+    xiaomi:
+      api-url: ""   # 例如 https://api.momo.mi.com/v1
+      api-key: ""
+      model: mimo-v2-pro
   jwt:
     secret: bank-mobile-jwt-secret-key-2026
     expiration: 1800000

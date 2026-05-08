@@ -2,7 +2,7 @@
 
 | 项目 | 内容 |
 |------|------|
-| 文档版本 | V1.0 |
+| 文档版本 | V1.1 |
 | 编写日期 | 2026-05-06 |
 | 项目名称 | 简易手机银行核心业务系统 - AI 智能助手模块 |
 | 文档性质 | AI 研发全流程记录文档 |
@@ -12,7 +12,7 @@
 
 | 版本 | 修改日期 | 操作人 | 修改内容 |
 |------|---------|--------|---------|
-| V1.0 | 2026-05-06 17:00:00 | AI 需求评审 | 初始版本：完整记录 AI 助手从需求分析到落地的全流程 |
+| V1.1 | 2026-05-07 00:30:00 | AI Integration | 新增多提供商 LLM 集成：IntentLlmClient（OpenAI/DeepSeek）、XiaomiLlmClient（小米MiMo）、LlmClientRouter（统一入口+自动降级） |
 
 ---
 
@@ -79,7 +79,7 @@
 | ORM | MyBatis-Plus | 3.5.5 | 简化数据库操作 |
 | 前端框架 | Vue | 2.x | 移动端 H5 |
 | UI 组件库 | Vant | 2.x | 轻量级移动端组件 |
-| AI 交互 | 自定义 LLM 集成 | — | 通过 AiController 实现对话交互 |
+| AI 交互 | 自定义多提供商 LLM 集成 | — | 通过 LlmClientRouter 统一入口，支持 OpenAI/DeepSeek/小米 MiMo |
 
 ### 2.2 整体架构
 
@@ -102,8 +102,15 @@
 │  ┌──────────────────┐                                │
 │  │  AiChatServiceImpl│                                │
 │  │  ┌──────────────┐ │                                │
-│  │  │ 意图识别引擎   │ │  ← 正则 + LLM 双模式匹配     │
-│  │  └──────┬───────┘ │                                │
+│  │  │ 意图识别引擎   │ │  ← LLM 优先 + 关键词兜底  │
+│  │  │ ┌──────────┐│ │                                │
+│  │  │ │LLM语义层 ││ │  ← 多提供商 IntentLlmClient    │
+│  │  │ │(多提供商) ││ │     XiaomiLlmClient            │
+│  │  │ └────┬─────┘│ │                                │
+│  │  │      ↓ 降级  │ │                                │
+│  │  │ ┌──────────┐│ │                                │
+│  │  │ │关键词兜底 ││ │  ← 规则型匹配（保底）          │
+│  │  │ └──────────┘│ │                                │
 │  │         ▼         │                                │
 │  │  ┌──────────────┐ │                                │
 │  │  │  McpGateway  │ │  ← 参数校验 + Skill 路由      │
@@ -181,7 +188,11 @@ Spring Boot 启动时，`@Component` 标注的 Skill 通过 `McpSkillConfig` 自
 
 | 文件路径 | 说明 |
 |---------|------|
-| `com/bank/mcp/McpSkill.java` | Skill 核心接口 |
+| `com/bank/mcp/IntentLlmClient.java` | OpenAI/DeepSeek LLM 意图识别客户端 |
+| `com/bank/mcp/IntentResult.java` | LLM 意图识别统一返回结果 |
+| `com/bank/mcp/XiaomiLlmClient.java` | 小米 MiMo LLM 意图识别客户端 |
+| `com/bank/mcp/LlmClientRouter.java` | LLM 多提供商路由器（统一入口 + 自动降级） |
+| `com/bank/config/RestTemplateConfig.java` | RestTemplate 配置（超时设置） |
 | `com/bank/mcp/SkillMeta.java` | Skill 元数据定义 |
 | `com/bank/mcp/SkillResult.java` | Skill 统一返回结果 |
 | `com/bank/mcp/McpSkillRegistry.java` | Skill 注册中心 |
@@ -204,10 +215,10 @@ Spring Boot 启动时，`@Component` 标注的 Skill 通过 `McpSkillConfig` 自
 返回给前端                       前端根据 type 渲染卡片
 ```
 
-意图识别逻辑：
-1. 正则快速匹配（如"查余额"→ query_balance）
-2. LLM 语义匹配（复杂输入，通过预设提示词识别意图和提取参数）
-3. 匹配失败 → 友好提示用户重新输入
+意图识别逻辑（双分层架构）：
+1. **LLM 语义识别层**（优先）：通过 LlmClientRouter 路由到当前激活的大模型提供商（OpenAI/DeepSeek/小米 MiMo），识别意图并提取参数
+2. **关键词匹配层**（兜底）：LLM 超时/异常/返回空时，自动降级到正则关键词匹配
+3. 全部匹配失败 → 友好提示用户重新输入
 
 ### 4.3 JDK 1.8 兼容要点
 
