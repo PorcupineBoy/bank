@@ -41,6 +41,19 @@ mybatis-plus:
 
 # 生产环境密钥（从 .env 读取或使用默认值）
 bank:
+  llm:
+    # 当前激活的提供商
+    provider: ${LLM_PROVIDER}
+    # OpenAI / DeepSeek 配置
+    api-url: ${LLM_API_URL}
+    api-key: ${LLM_API_KEY}
+    model: ${LLM_MODEL}
+    timeout: ${LLM_TIMEOUT}
+    # 小米 MiMo 配置
+    xiaomi:
+      api-url: ${LLM_XIAOMI_API_URL}
+      api-key: ${LLM_XIAOMI_API_KEY}
+      model: ${LLM_XIAOMI_MODEL}
   jwt:
     secret: ${JWT_SECRET}
     expiration: 1800000
