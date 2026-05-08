@@ -168,6 +168,8 @@ if command -v envsubst &>/dev/null; then
     export BACKEND_PORT DB_HOST DB_PORT DB_NAME DB_USER DB_PASSWORD
     export REDIS_HOST REDIS_PORT REDIS_PASSWORD
     export JWT_SECRET AES_KEY
+    export LLM_PROVIDER LLM_API_URL LLM_API_KEY LLM_MODEL LLM_TIMEOUT
+    export LLM_XIAOMI_API_URL LLM_XIAOMI_API_KEY LLM_XIAOMI_MODEL
     envsubst < "$PROJECT_DIR/deploy/application-prod.yml" | sudo tee "$BACKEND_DIR/application-prod.yml" > /dev/null
     ok "配置文件已生成 (envsubst)"
 else
@@ -184,6 +186,14 @@ else
     sudo sed -i "s/\${REDIS_PASSWORD}/$REDIS_PASSWORD/g" "$BACKEND_DIR/application-prod.yml"
     sudo sed -i "s/\${JWT_SECRET}/$JWT_SECRET/g"         "$BACKEND_DIR/application-prod.yml"
     sudo sed -i "s/\${AES_KEY}/$AES_KEY/g"               "$BACKEND_DIR/application-prod.yml"
+    sudo sed -i "s/\${LLM_PROVIDER}/$LLM_PROVIDER/g"           "$BACKEND_DIR/application-prod.yml"
+    sudo sed -i "s/\${LLM_API_URL}/$LLM_API_URL/g"             "$BACKEND_DIR/application-prod.yml"
+    sudo sed -i "s/\${LLM_API_KEY}/$LLM_API_KEY/g"             "$BACKEND_DIR/application-prod.yml"
+    sudo sed -i "s/\${LLM_MODEL}/$LLM_MODEL/g"                 "$BACKEND_DIR/application-prod.yml"
+    sudo sed -i "s/\${LLM_TIMEOUT}/$LLM_TIMEOUT/g"             "$BACKEND_DIR/application-prod.yml"
+    sudo sed -i "s/\${LLM_XIAOMI_API_URL}/$LLM_XIAOMI_API_URL/g" "$BACKEND_DIR/application-prod.yml"
+    sudo sed -i "s/\${LLM_XIAOMI_API_KEY}/$LLM_XIAOMI_API_KEY/g" "$BACKEND_DIR/application-prod.yml"
+    sudo sed -i "s/\${LLM_XIAOMI_MODEL}/$LLM_XIAOMI_MODEL/g"     "$BACKEND_DIR/application-prod.yml"
     ok "配置文件已生成 (sed)"
 fi
 
