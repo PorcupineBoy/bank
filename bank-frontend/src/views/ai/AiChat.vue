@@ -324,11 +324,15 @@ export default {
 <style scoped>
 .chat-page {
   height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
   background: var(--bg-color);
   display: flex;
   flex-direction: column;
   padding-top: 46px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 .chat-container {
   flex: 1;
@@ -427,15 +431,16 @@ export default {
 }
 .input-area {
   background: var(--card-bg);
-  padding: 10px var(--sp-md) var(--sp-md);
+  padding: 8px var(--sp-md) calc(8px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--border-soft);
+  flex-shrink: 0;
 }
 .quick-tags {
   display: flex;
   gap: var(--sp-xs);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   overflow-x: auto;
-  padding-bottom: var(--sp-xxs);
+  padding-bottom: 2px;
 }
 .tag {
   padding: var(--sp-xxs) var(--sp-sm);
@@ -457,7 +462,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   padding: 0 2px;
 }
 .model-label {

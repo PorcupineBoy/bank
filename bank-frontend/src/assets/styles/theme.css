@@ -93,6 +93,46 @@ body {
 
 /* ---- Vant Overrides ---- */
 
+/* ---- Loading Toast (DESIGN.md style) ---- */
+.van-toast--loading {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-elevated) !important;
+  padding: var(--sp-md) var(--sp-lg) !important;
+  min-width: 100px !important;
+  backdrop-filter: blur(4px);
+}
+.van-toast--loading .van-loading__spinner--circular {
+  color: var(--primary-color) !important;
+  width: 32px !important;
+  height: 32px !important;
+}
+.van-toast--loading .van-loading__text {
+  font-family: var(--font-body) !important;
+  font-size: var(--fs-caption) !important;
+  color: var(--text-secondary) !important;
+  margin-top: var(--sp-xs) !important;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* ---- Toast 成功/失败 (统一圆角阴影) ---- */
+.van-toast {
+  border-radius: var(--radius-lg) !important;
+  font-family: var(--font-body) !important;
+  font-size: var(--fs-body-sm) !important;
+}
+.van-toast--success {
+  background: rgba(255, 255, 255, 0.98) !important;
+  box-shadow: var(--shadow-elevated) !important;
+  color: var(--success-color) !important;
+}
+.van-toast--fail {
+  background: rgba(255, 255, 255, 0.98) !important;
+  box-shadow: var(--shadow-elevated) !important;
+  color: var(--danger-color) !important;
+}
+
 .van-nav-bar {
   background: var(--primary-gradient) !important;
 }
