@@ -49,4 +49,18 @@ public class Constants {
 
     public static final int DEFAULT_SINGLE_LIMIT = 50000;
     public static final int DEFAULT_DAILY_LIMIT = 200000;
+
+    // AI 模块错误码
+    public static final int AI_LLM_TIMEOUT = 5001;
+    public static final int AI_LLM_PARSE_ERROR = 5002;
+    public static final int AI_SKILL_EXEC_ERROR = 5003;
+
+    // AI 相关常量
+    public static final String REDIS_AI_CHAT_KEY = "ai_chat:";
+    public static final String REDIS_AI_SESSION_KEY = "ai_session:";
+    public static final String LLM_PROVIDER_OPENAI = "openai";
+    public static final String LLM_PROVIDER_DEEPSEEK = "deepseek";
+    public static final String LLM_PROVIDER_XIAOMI = "xiaomi";
+    public static final int LLM_TIMEOUT_SECONDS = 10;
+    public static final int LLM_CIRCUIT_BREAKER_THRESHOLD = 3;
 }

@@ -1,10 +1,7 @@
 package com.bank.controller;
 
 import com.bank.common.Result;
-import com.bank.dto.ChatHistoryRequest;
-import com.bank.dto.ChatSendRequest;
-import com.bank.dto.ConsumptionAnalysisRequest;
-import com.bank.dto.ReqBasic;
+import com.bank.dto.*;
 import com.bank.mcp.McpGateway;
 import com.bank.mcp.SkillMeta;
 import com.bank.service.AiChatService;
@@ -23,7 +20,6 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ai")
@@ -115,17 +111,5 @@ public class AiController {
     @PostMapping("/mcp/skills")
     public Result<List<SkillMeta>> listSkills(@RequestBody ReqBasic request) {
         return Result.success(mcpGateway.getAllSkillMeta());
-    }
-
-    /**
-     * MCP Skill 执行请求 DTO（内部类）
-     */
-    public static class McpExecuteRequest extends ReqBasic {
-        public String getSkillName() { return skillName; }
-        public void setSkillName(String skillName) { this.skillName = skillName; }
-        public Map<String, Object> getParams() { return params; }
-        public void setParams(Map<String, Object> params) { this.params = params; }
-        private String skillName;
-        private Map<String, Object> params;
     }
 }

@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { queryTransactions } from '@/api/transaction'
+import {queryTransactions} from '@/api/transaction'
 
 export default {
   name: 'TransactionList',
@@ -136,6 +136,7 @@ export default {
         }
       } catch (e) {
         this.finished = true
+        this.$toast.fail('加载交易记录失败')
       } finally {
         this.loading = false
       }

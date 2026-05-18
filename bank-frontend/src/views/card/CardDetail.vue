@@ -56,20 +56,26 @@ export default {
         const cardId = this.$route.params.cardId
         const res = await getCardDetail(cardId)
         this.card = res
-      } catch (e) {}
+      } catch (e) {
+        this.$toast.fail('加载银行卡详情失败')
+      }
     },
     async queryCardBalance() {
       try {
         const res = await queryBalance(this.card.cardId)
         this.balance = Number(res.balance)
-      } catch (e) {}
+      } catch (e) {
+        this.$toast.fail('查询余额失败')
+      }
     },
     async setDefault() {
       try {
         await setDefaultCard(this.card.cardId)
         this.$toast.success('设置成功')
         this.loadDetail()
-      } catch (e) {}
+      } catch (e) {
+        this.$toast.fail('设置默认卡失败')
+      }
     },
     async onUnbind() {
       try {
@@ -83,7 +89,9 @@ export default {
         await unbindCard(this.card.cardId, { tradePassword: this.tradePassword })
         this.$toast.success('解绑成功')
         this.$router.back()
-      } catch (e) {}
+      } catch (e) {
+        this.$toast.fail('解绑失败')
+      }
     }
   }
 }

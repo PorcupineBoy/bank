@@ -99,8 +99,8 @@
 </template>
 
 <script>
-import { bindCard } from '@/api/card'
-import { sendSms } from '@/api/auth'
+import {bindCard} from '@/api/card'
+import {sendSms} from '@/api/auth'
 
 export default {
   name: 'CardBind',
@@ -179,7 +179,9 @@ export default {
           this.smsCountdown--
           if (this.smsCountdown <= 0) clearInterval(this.timer)
         }, 1000)
-      } catch (e) {}
+      } catch (e) {
+        this.$toast.fail('验证码发送失败')
+      }
     },
     async onBind() {
       this.loading = true
@@ -187,7 +189,9 @@ export default {
         const res = await bindCard(this.form)
         this.bindResult = res || {}
         this.showSuccess = true
-      } catch (e) {} finally {
+      } catch (e) {
+        this.$toast.fail('绑卡失败，请重试')
+      } finally {
         this.loading = false
       }
     },

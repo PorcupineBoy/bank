@@ -41,7 +41,7 @@
       <van-cell-group title="转账金额">
         <van-field
           v-model="form.amount"
-          type="number"
+          type="digit"
           label="金额"
           placeholder="请输入转账金额"
           :rules="[{ required: true, message: '请输入金额', trigger: 'onBlur' }]"

@@ -230,7 +230,9 @@ export default {
       try {
         const list = await getChatHistory({ sessionId: this.sessionId, limit: 50 })
         this.messages = list || []
-      } catch (e) {}
+      } catch (e) {
+        this.$toast.fail('加载聊天记录失败')
+      }
     },
     async sendMessage() {
       const text = this.inputText.trim()

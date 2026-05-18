@@ -151,7 +151,9 @@ export default {
           total += Number(card.balance || 0)
         }
         this.totalAssets = total
-      } catch (e) {}
+      } catch (e) {
+        this.$toast.fail('加载数据失败')
+      }
     },
     toggleBalance() {
       this.showBalance = !this.showBalance
@@ -170,7 +172,11 @@ export default {
         await logout()
         this.$store.dispatch('logout')
         this.$router.replace('/login')
-      } catch (e) {}
+      } catch (e) {
+        if (e !== 'cancel') {
+          this.$toast.fail('退出登录失败')
+        }
+      }
     }
   }
 }
