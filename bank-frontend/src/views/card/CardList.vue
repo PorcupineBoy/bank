@@ -11,7 +11,14 @@
             <span class="bank">{{ card.bankName }}</span>
             <van-tag v-if="card.isDefault === 1" type="primary" size="mini">默认</van-tag>
           </div>
-          <div class="card-number">{{ card.cardNoMasked }}</div>
+          <div class="card-number-row">
+            <span class="card-number">{{ showFullCards[card.cardId] ? card.cardNo : card.cardNoMasked }}</span>
+            <van-icon
+              :name="showFullCards[card.cardId] ? 'eye-o' : 'closed-eye'"
+              class="eye-icon"
+              @click.stop="toggleCardNumber(card.cardId)"
+            />
+          </div>
           <div class="card-meta">{{ card.cardType === 1 ? '借记卡' : '信用卡' }}</div>
         </div>
       </div>
@@ -24,14 +31,15 @@
 </template>
 
 <script>
-import { listCards } from '@/api/card'
+import {listCards} from '@/api/card'
 
 export default {
   name: 'CardList',
   data() {
     return {
       cards: [],
-      refreshing: false
+      refreshing: false,
+      showFullCards: {}
     }
   },
   created() {
@@ -50,6 +58,9 @@ export default {
     },
     goDetail(cardId) {
       this.$router.push('/cards/' + cardId)
+    },
+    toggleCardNumber(cardId) {
+      this.$set(this.showFullCards, cardId, !this.showFullCards[cardId])
     }
   }
 }
@@ -58,43 +69,59 @@ export default {
 <style scoped>
 .card-list-page {
   min-height: 100%;
-  background: #f5f5f5;
+  background: var(--bg-color);
   padding-bottom: 80px;
 }
 .cards {
-  padding: 12px;
+  padding: var(--sp-sm);
 }
 .card-item {
-  background: linear-gradient(90deg, #1989fa, #3eaf7c);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 12px;
-  color: #fff;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-md);
+  margin-bottom: var(--sp-sm);
+  color: var(--text-on-primary);
 }
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: var(--sp-sm);
 }
 .bank {
-  font-size: 16px;
-  font-weight: bold;
+  font-size: var(--fs-title-sm);
+  font-weight: 500;
+}
+.card-number-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--sp-xs);
 }
 .card-number {
-  font-size: 20px;
+  font-size: var(--fs-title-lg);
+  font-family: var(--font-mono);
   letter-spacing: 2px;
-  margin-bottom: 6px;
+  font-weight: 400;
+  flex: 1;
+}
+.card-number-row .eye-icon {
+  font-size: 18px;
+  padding: 2px 6px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+.card-number-row .eye-icon:active {
+  opacity: 1;
 }
 .card-meta {
-  font-size: 12px;
+  font-size: var(--fs-caption-sm);
   opacity: 0.9;
 }
 .add-btn {
   position: fixed;
   bottom: 20px;
-  left: 16px;
-  right: 16px;
+  left: var(--sp-md);
+  right: var(--sp-md);
 }
 .empty-state {
   padding-top: 40px;

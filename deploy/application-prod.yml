@@ -1,0 +1,61 @@
+# ============================================
+# 生产环境配置
+# 由 deploy/deploy.sh 根据 .env 自动填充并生效
+# ============================================
+server:
+  port: ${BACKEND_PORT}
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
+    database: 0
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 16
+        max-idle: 8
+        min-idle: 2
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  type-aliases-package: com.bank.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    # 生产环境关闭 SQL 日志
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+# 生产环境密钥（从 .env 读取或使用默认值）
+bank:
+  llm:
+    # 当前激活的提供商
+    provider: ${LLM_PROVIDER}
+    # OpenAI / DeepSeek 配置
+    api-url: ${LLM_API_URL}
+    api-key: ${LLM_API_KEY}
+    model: ${LLM_MODEL}
+    timeout: ${LLM_TIMEOUT}
+    # 小米 MiMo 配置
+    xiaomi:
+      api-url: ${LLM_XIAOMI_API_URL}
+      api-key: ${LLM_XIAOMI_API_KEY}
+      model: ${LLM_XIAOMI_MODEL}
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: 1800000
+  aes:
+    key: ${AES_KEY}

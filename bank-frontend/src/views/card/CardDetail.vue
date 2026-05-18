@@ -7,7 +7,14 @@
         <span class="bank">{{ card.bankName }}</span>
         <van-tag v-if="card.isDefault === 1" type="primary">默认卡</van-tag>
       </div>
-      <div class="card-number">{{ card.cardNoMasked }}</div>
+      <div class="card-number-row">
+        <span class="card-number">{{ showFullCard ? card.cardNo : card.cardNoMasked }}</span>
+        <van-icon
+          :name="showFullCard ? 'eye-o' : 'closed-eye'"
+          class="eye-icon"
+          @click="showFullCard = !showFullCard"
+        />
+      </div>
       <div class="card-type">{{ card.cardType === 1 ? '借记卡' : '信用卡' }}</div>
     </div>
 
@@ -27,7 +34,7 @@
 </template>
 
 <script>
-import { getCardDetail, setDefaultCard, queryBalance, unbindCard } from '@/api/card'
+import {getCardDetail, queryBalance, setDefaultCard, unbindCard} from '@/api/card'
 
 export default {
   name: 'CardDetail',
@@ -36,7 +43,8 @@ export default {
       card: null,
       balance: null,
       showPwdDialog: false,
-      tradePassword: ''
+      tradePassword: '',
+      showFullCard: false
     }
   },
   created() {
@@ -48,20 +56,26 @@ export default {
         const cardId = this.$route.params.cardId
         const res = await getCardDetail(cardId)
         this.card = res
-      } catch (e) {}
+      } catch (e) {
+        this.$toast.fail('加载银行卡详情失败')
+      }
     },
     async queryCardBalance() {
       try {
         const res = await queryBalance(this.card.cardId)
         this.balance = Number(res.balance)
-      } catch (e) {}
+      } catch (e) {
+        this.$toast.fail('查询余额失败')
+      }
     },
     async setDefault() {
       try {
         await setDefaultCard(this.card.cardId)
         this.$toast.success('设置成功')
         this.loadDetail()
-      } catch (e) {}
+      } catch (e) {
+        this.$toast.fail('设置默认卡失败')
+      }
     },
     async onUnbind() {
       try {
@@ -75,7 +89,9 @@ export default {
         await unbindCard(this.card.cardId, { tradePassword: this.tradePassword })
         this.$toast.success('解绑成功')
         this.$router.back()
-      } catch (e) {}
+      } catch (e) {
+        this.$toast.fail('解绑失败')
+      }
     }
   }
 }
@@ -84,34 +100,50 @@ export default {
 <style scoped>
 .card-detail-page {
   min-height: 100%;
-  background: #f5f5f5;
+  background: var(--bg-color);
 }
 .card-info {
-  background: linear-gradient(90deg, #1989fa, #3eaf7c);
-  padding: 30px 20px;
-  color: #fff;
-  margin-bottom: 12px;
+  background: var(--primary-gradient);
+  padding: 32px 20px;
+  color: var(--text-on-primary);
+  margin-bottom: var(--sp-sm);
 }
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: var(--sp-md);
 }
 .bank {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: var(--fs-title-md);
+  font-weight: 500;
 }
-.card-number {
-  font-size: 24px;
+.card-number-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--sp-xs);
+}
+.card-number-row .card-number {
+  font-size: var(--fs-display-sm);
+  font-family: var(--font-mono);
   letter-spacing: 2px;
-  margin-bottom: 8px;
+  font-weight: 400;
+  flex: 1;
+}
+.card-number-row .eye-icon {
+  font-size: 22px;
+  padding: 4px 8px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+.card-number-row .eye-icon:active {
+  opacity: 1;
 }
 .card-type {
-  font-size: 14px;
+  font-size: var(--fs-body-sm);
   opacity: 0.9;
 }
 .actions {
-  margin: 24px 16px;
+  margin: var(--sp-lg) var(--sp-md);
 }
 </style>

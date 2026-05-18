@@ -13,14 +13,14 @@
             v-model="form.phone"
             label="手机号"
             placeholder="请输入手机号"
-            :rules="[{ required: true, message: '请输入手机号' }, { pattern: /^1[3-9]\d{9}$/, message: '手机号格式错误' }]"
+            :rules="[{ required: true, message: '请输入手机号', trigger: 'onBlur' }, { pattern: /^1[3-9]\d{9}$/, message: '手机号格式错误', trigger: 'onBlur' }]"
           />
           <van-field
             v-model="form.password"
             :type="showPassword ? 'text' : 'password'"
             label="密码"
             placeholder="请输入登录密码"
-            :rules="[{ required: true, message: '请输入密码' }]"
+            :rules="[{ required: true, message: '请输入密码', trigger: 'onBlur' }]"
             :right-icon="showPassword ? 'eye-o' : 'closed-eye'"
             @click-right-icon="showPassword = !showPassword"
           />
@@ -36,7 +36,7 @@
             v-model="form.phone"
             label="手机号"
             placeholder="请输入手机号"
-            :rules="[{ required: true, message: '请输入手机号' }, { pattern: /^1[3-9]\d{9}$/, message: '手机号格式错误' }]"
+            :rules="[{ required: true, message: '请输入手机号', trigger: 'onBlur' }, { pattern: /^1[3-9]\d{9}$/, message: '手机号格式错误', trigger: 'onBlur' }]"
           />
           <van-field
             v-model="form.smsCode"
@@ -44,7 +44,7 @@
             clearable
             label="验证码"
             placeholder="请输入验证码"
-            :rules="[{ required: true, message: '请输入验证码' }]"
+            :rules="[{ required: true, message: '请输入验证码', trigger: 'onBlur' }]"
           >
             <template #button>
               <van-button size="small" type="primary" :disabled="smsCountdown > 0" @click="sendSmsCode">
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { loginByPassword, loginBySms, sendSms } from '@/api/auth'
+import {loginByPassword, loginBySms, sendSms} from '@/api/auth'
 
 export default {
   name: 'Login',
@@ -144,7 +144,7 @@ export default {
 <style scoped>
 .login-page {
   min-height: 100%;
-  background: #fff;
+  background: var(--card-bg);
 }
 .logo-area {
   text-align: center;
@@ -152,21 +152,24 @@ export default {
 }
 .logo-area h2 {
   margin: 0;
-  color: #1989fa;
-  font-size: 28px;
+  color: var(--primary-color);
+  font-size: var(--fs-display-sm);
+  font-weight: 400;
+  font-family: var(--font-display);
+  letter-spacing: -0.3px;
 }
 .logo-area p {
-  margin: 8px 0 0;
-  color: #999;
-  font-size: 14px;
+  margin: var(--sp-xs) 0 0;
+  color: var(--text-tertiary);
+  font-size: var(--fs-body-sm);
 }
 .login-tabs {
-  padding: 0 16px;
+  padding: 0 var(--sp-md);
 }
 .bottom-links {
   text-align: center;
   margin-top: 20px;
-  color: #1989fa;
-  font-size: 14px;
+  color: var(--primary-color);
+  font-size: var(--fs-body-sm);
 }
 </style>

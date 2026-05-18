@@ -47,3 +47,14 @@ export function queryBalance(cardId) {
     data: { cardId }
   })
 }
+
+/**
+ * 根据收款人姓名模糊查找银行卡（用于转账时自动填充）
+ */
+export function lookupCardsByName(name) {
+  return request({
+    url: '/api/cards/lookup-by-name',
+    method: 'post',
+    data: { name }
+  })
+}

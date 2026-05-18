@@ -1,12 +1,10 @@
 package com.bank.controller;
 
 import com.bank.common.Result;
-import com.bank.dto.CardBindRequest;
-import com.bank.dto.CardIdRequest;
-import com.bank.dto.CardListRequest;
-import com.bank.dto.CardUnbindRequest;
+import com.bank.dto.*;
 import com.bank.service.BankCardService;
 import com.bank.vo.BalanceVO;
+import com.bank.vo.BankCardLookupVO;
 import com.bank.vo.BankCardVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -51,5 +49,10 @@ public class BankCardController {
     @PostMapping("/balance")
     public Result<BalanceVO> queryBalance(@RequestBody @Validated CardIdRequest request) {
         return Result.success(bankCardService.queryBalance(request.getUserId(), request.getCardId()));
+    }
+
+    @PostMapping("/lookup-by-name")
+    public Result<List<BankCardLookupVO>> lookupByName(@RequestBody @Validated CardsLookupRequest request) {
+        return Result.success(bankCardService.lookupCardsByName(request.getName()));
     }
 }

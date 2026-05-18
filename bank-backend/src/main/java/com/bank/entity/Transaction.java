@@ -22,6 +22,8 @@ public class Transaction {
     private String payeeCardNoMasked;
     private String payeeBankName;
     private String remark;
+    private Integer category;
+    private String subCategory;
     private Integer status;
     private LocalDateTime createdAt;
     private LocalDateTime completedAt;

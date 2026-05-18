@@ -3,45 +3,45 @@
     <van-nav-bar title="绑定银行卡" left-arrow @click-left="$router.back()" />
 
     <div class="form-area">
-      <van-form @submit="onBind" validate-first>
+      <van-form @submit="onBind">
         <van-field
           v-model="form.cardNo"
           label="银行卡号"
-          placeholder="请输入银行卡号"
+          placeholder="13-19位银行卡号"
           maxlength="19"
-          :rules="[{ required: true, message: '请输入银行卡号' }, { pattern: /^\d{13,19}$/, message: '卡号格式错误' }]"
+          :rules="[{ required: true, message: '请输入银行卡号', trigger: 'onBlur' }, { pattern: /^\d{13,19}$/, message: '卡号格式错误', trigger: 'onBlur' }]"
         />
         <van-field
           v-model="form.cardHolderName"
           label="持卡人姓名"
-          placeholder="请输入持卡人姓名"
-          :rules="[{ required: true, message: '请输入持卡人姓名' }]"
+          placeholder="与身份证保持一致"
+          :rules="[{ required: true, message: '请输入持卡人姓名', trigger: 'onBlur' }]"
         />
         <van-field
           v-model="form.idCard"
           label="身份证号"
-          placeholder="请输入身份证号"
+          placeholder="18位二代身份证号"
           maxlength="18"
-          :rules="[{ required: true, message: '请输入身份证号' }, { validator: validateIdCard, message: '身份证号格式错误' }]"
+          :rules="[{ required: true, message: '请输入身份证号', trigger: 'onBlur' }, { validator: validateIdCard, message: '身份证号格式错误', trigger: 'onBlur' }]"
         />
         <van-field
           v-model="form.reservedPhone"
           label="银行预留手机号"
-          placeholder="请输入银行预留手机号"
+          placeholder="11位预留手机号"
           maxlength="11"
-          :rules="[{ required: true, message: '请输入手机号' }, { pattern: /^1[3-9]\d{9}$/, message: '手机号格式错误' }]"
+          :rules="[{ required: true, message: '请输入手机号', trigger: 'onBlur' }, { pattern: /^1[3-9]\d{9}$/, message: '手机号格式错误', trigger: 'onBlur' }]"
         />
         <van-field
           v-model="form.smsCode"
           center
           clearable
           label="验证码"
-          placeholder="请输入验证码"
+          placeholder="6位短信验证码"
           maxlength="6"
-          :rules="[{ required: true, message: '请输入验证码' }]"
+          :rules="[{ required: true, message: '请输入验证码', trigger: 'onBlur' }]"
         >
           <template #button>
-            <van-button size="small" type="primary" :disabled="smsCountdown > 0" @click="sendSmsCode">
+            <van-button size="small" type="primary" native-type="button" :disabled="smsCountdown > 0" @click="sendSmsCode">
               {{ smsCountdown > 0 ? smsCountdown + 's' : '获取验证码' }}
             </van-button>
           </template>
@@ -52,7 +52,7 @@
           readonly
           placeholder="请选择开户银行"
           is-link
-          :rules="[{ required: true, message: '请选择开户银行' }]"
+          :rules="[{ required: true, message: '请选择开户银行', trigger: 'onBlur' }]"
           @click="showBankPicker = true"
         />
         <van-popup v-model="showBankPicker" position="bottom">
@@ -69,7 +69,7 @@
           readonly
           placeholder="请选择卡类型"
           is-link
-          :rules="[{ required: true, message: '请选择卡类型' }]"
+          :rules="[{ required: true, message: '请选择卡类型', trigger: 'onBlur' }]"
           @click="showTypePicker = true"
         />
         <van-popup v-model="showTypePicker" position="bottom">
@@ -90,7 +90,7 @@
     <!-- 绑定成功提示 -->
     <van-dialog v-model="showSuccess" title="绑定成功" :show-confirm-button="true" @confirm="onSuccessConfirm">
       <div class="success-content">
-        <van-icon name="checked" size="48" color="#07c160" />
+        <van-icon name="checked" size="48" color="var(--success-color)" />
         <p>银行卡绑定成功！</p>
         <p class="success-card">{{ bindResult.cardNoMasked }}</p>
       </div>
@@ -99,8 +99,8 @@
 </template>
 
 <script>
-import { bindCard } from '@/api/card'
-import { sendSms } from '@/api/auth'
+import {bindCard} from '@/api/card'
+import {sendSms} from '@/api/auth'
 
 export default {
   name: 'CardBind',
@@ -179,7 +179,9 @@ export default {
           this.smsCountdown--
           if (this.smsCountdown <= 0) clearInterval(this.timer)
         }, 1000)
-      } catch (e) {}
+      } catch (e) {
+        this.$toast.fail('验证码发送失败')
+      }
     },
     async onBind() {
       this.loading = true
@@ -187,7 +189,9 @@ export default {
         const res = await bindCard(this.form)
         this.bindResult = res || {}
         this.showSuccess = true
-      } catch (e) {} finally {
+      } catch (e) {
+        this.$toast.fail('绑卡失败，请重试')
+      } finally {
         this.loading = false
       }
     },
@@ -201,23 +205,23 @@ export default {
 <style scoped>
 .card-bind-page {
   min-height: 100%;
-  background: #fff;
+  background: var(--card-bg);
 }
 .form-area {
-  padding: 16px;
+  padding: var(--sp-md);
 }
 .success-content {
   text-align: center;
   padding: 20px 0;
 }
 .success-content p {
-  margin: 8px 0 0;
-  font-size: 16px;
-  color: #333;
+  margin: var(--sp-xs) 0 0;
+  font-size: var(--fs-body-md);
+  color: var(--text-primary);
 }
 .success-content .success-card {
-  font-size: 14px;
-  color: #999;
+  font-size: var(--fs-body-sm);
+  color: var(--text-tertiary);
   letter-spacing: 1px;
 }
 </style>

@@ -4,10 +4,10 @@
 
     <div class="detail-header" v-if="detail">
       <div class="status-icon">
-        <van-icon :name="detail.status === 1 ? 'success' : 'warning-o'" :color="detail.status === 1 ? '#07c160' : '#ff976a'" size="48" />
+        <van-icon :name="detail.status === 1 ? 'success' : 'warning-o'" :color="detail.status === 1 ? 'var(--success-color)' : 'var(--warning-color)'" size="48" />
       </div>
       <div class="status-text">{{ detail.status === 1 ? '交易成功' : (detail.status === 0 ? '处理中' : '交易失败') }}</div>
-      <div class="amount">-{{ detail.amount.toFixed(2) }} 元</div>
+      <div class="amount">{{ detail.amount.toFixed(2) }} 元</div>
     </div>
 
     <van-cell-group v-if="detail">
@@ -55,22 +55,27 @@ export default {
 <style scoped>
 .transaction-detail-page {
   min-height: 100%;
-  background: #f5f5f5;
+  background: var(--bg-color);
 }
 .detail-header {
-  background: #fff;
-  padding: 30px 16px;
+  background: var(--card-bg);
+  padding: 32px var(--sp-md);
   text-align: center;
-  margin-bottom: 12px;
+  margin-bottom: var(--sp-sm);
 }
 .status-text {
-  font-size: 16px;
-  margin-top: 8px;
+  font-size: var(--fs-body-md);
+  margin-top: var(--sp-xs);
+  color: var(--text-secondary);
 }
 .amount {
-  font-size: 32px;
-  font-weight: bold;
-  margin-top: 8px;
-  color: #333;
+  font-size: var(--fs-display-sm);
+  font-weight: 500;
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.3px;
+  margin-top: var(--sp-xs);
+  color: var(--text-primary);
+  line-height: 1;
 }
 </style>

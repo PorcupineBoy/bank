@@ -23,3 +23,27 @@ export function transfer(data) {
     data
   })
 }
+
+export function queryPaymentBill(data) {
+  return request({
+    url: '/api/transactions/payment/query',
+    method: 'post',
+    data
+  })
+}
+
+export function payBill(data) {
+  return request({
+    url: '/api/transactions/payment',
+    method: 'post',
+    data
+  })
+}
+
+export function listPaymentAccounts(paymentType) {
+  return request({
+    url: '/api/transactions/payment/accounts',
+    method: 'post',
+    data: { paymentType }
+  })
+}

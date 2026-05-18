@@ -1,8 +1,8 @@
 <template>
-  <div class="trade-password-page">
+  <div class="trade-password-page" :style="{ paddingBottom: showKeyboard ? '240px' : '0' }">
     <van-nav-bar :title="isModify ? '修改交易密码' : '设置交易密码'" left-arrow @click-left="$router.back()" />
 
-    <div class="password-area">
+    <div class="password-area" ref="passwordArea">
       <div class="pwd-label">
         {{ activeField === 'old' ? '请输入旧交易密码' : (activeField === 'new' ? '请输入新交易密码' : '请确认新交易密码') }}
       </div>
@@ -12,6 +12,7 @@
         :gutter="10"
         :focused="showKeyboard"
         @focus="showKeyboard = true"
+        @click="showKeyboard = true"
       />
       <div class="field-tabs" v-if="isModify">
         <div :class="['tab', { active: activeField === 'old' }]" @click="activeField = 'old'">旧密码</div>
@@ -67,6 +68,21 @@ export default {
     this.isModify = this.$route.query.modify === '1'
     this.activeField = this.isModify ? 'old' : 'new'
   },
+  mounted() {
+    this.showKeyboard = true
+  },
+  watch: {
+    showKeyboard(val) {
+      if (val) {
+        this.$nextTick(() => {
+          this.$refs.passwordArea && this.$refs.passwordArea.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        })
+      }
+    },
+    activeField() {
+      this.showKeyboard = true
+    }
+  },
   methods: {
     onInput(key) {
       if (this.activeField === 'old' && this.oldPassword.length < 6) {
@@ -115,33 +131,48 @@ export default {
 <style scoped>
 .trade-password-page {
   min-height: 100%;
-  background: #f5f5f5;
+  background: var(--bg-color);
 }
 .password-area {
-  background: #fff;
-  padding: 20px 16px;
+  background: var(--card-bg);
+  padding: 20px var(--sp-md);
 }
 .pwd-label {
   text-align: center;
-  margin-bottom: 16px;
-  font-size: 14px;
-  color: #666;
+  margin-bottom: var(--sp-md);
+  font-size: var(--fs-body-sm);
+  color: var(--text-secondary);
 }
 .field-tabs {
   display: flex;
   justify-content: center;
-  margin-top: 16px;
-  gap: 16px;
+  margin-top: var(--sp-md);
+  gap: var(--sp-md);
 }
 .tab {
-  padding: 6px 12px;
-  font-size: 13px;
-  color: #666;
-  border-radius: 4px;
-  background: #f5f5f5;
+  padding: 6px var(--sp-sm);
+  font-size: var(--fs-caption);
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  background: var(--surface-soft);
 }
 .tab.active {
-  background: #1989fa;
-  color: #fff;
+  background: var(--primary-color);
+  color: var(--text-on-primary);
+}
+.van-password-input {
+  margin: 0 auto;
+  max-width: 300px;
+}
+.van-password-input__item {
+  border: 1px solid var(--border-color);
+  background: var(--surface-soft);
+  height: 48px;
+  border-radius: var(--radius-xs);
+}
+.van-password-input__item--focus {
+  border-color: var(--primary-color);
+  border-width: 2px;
+  background: var(--card-bg);
 }
 </style>

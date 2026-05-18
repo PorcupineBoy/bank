@@ -14,6 +14,7 @@ import com.bank.util.AESUtil;
 import com.bank.util.LuhnUtil;
 import com.bank.util.PasswordUtil;
 import com.bank.vo.BalanceVO;
+import com.bank.vo.BankCardLookupVO;
 import com.bank.vo.BankCardVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -203,9 +204,31 @@ public class BankCardServiceImpl implements BankCardService {
         return vo;
     }
 
+    @Override
+    public List<BankCardLookupVO> lookupCardsByName(String name) {
+        return bankCardMapper.lookupByName(name);
+    }
+
+    @Override
+    public BankCardVO getDefaultCard(Long userId) {
+        List<BankCard> cards = bankCardMapper.selectActiveByUserId(userId);
+        return cards.stream()
+                .filter(c -> c.getIsDefault() != null && c.getIsDefault() == 1)
+                .findFirst()
+                .map(this::convertToVO)
+                .orElse(null);
+    }
+
     private BankCardVO convertToVO(BankCard card) {
         BankCardVO vo = new BankCardVO();
         BeanUtils.copyProperties(card, vo);
+        // 解密卡号，供前端小眼睛展示完整卡号
+        try {
+            vo.setCardNo(AESUtil.decrypt(card.getCardNoEncrypted()));
+        } catch (Exception e) {
+            log.warn("Failed to decrypt card number for cardId={}", card.getCardId());
+            vo.setCardNo(card.getCardNoMasked());
+        }
         return vo;
     }
 
