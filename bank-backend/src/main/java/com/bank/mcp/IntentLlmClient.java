@@ -40,8 +40,9 @@ public class IntentLlmClient {
             + "3. QUERY_BALANCE - 查询账户余额（如：查余额、还有多少钱），可提取参数 bank_name（银行名称）\n"
             + "4. QUERY_TRANSACTIONS - 查询交易记录（如：最近交易、账单、花了多少），可提取参数 trans_type（income/bill/transfer）\n"
             + "5. CONSUMPTION_ANALYSIS - 消费分析（如：消费分析、月度报告、花了什么），可提取参数 year（年份数字）\n"
-            + "6. QUERY_CARDS - 查看银行卡（如：我的卡、绑定的卡）\n"
-            + "7. TRANSFER - 转账汇款（如：转账给张三100元），可提取参数 payee_name（收款人姓名,中文）、amount（金额,数字）\n\n"
+            + "6. QUERY_CARDS - 查看银行卡（如：我的卡、绑定的卡、有几张卡）\n"
+            + "7. QUERY_DEFAULT_CARD - 查询默认银行卡（如：默认卡、默认银行卡、我的主卡）\n"
+            + "8. TRANSFER - 转账汇款（如：转账给张三100元），可提取参数 payee_name（收款人姓名,中文）、amount（金额,数字）\n\n"
             + "返回 JSON 格式（只返回 JSON，不要包含其他文字）：\n"
             + "{\"intent\": \"INTENT_NAME\", \"params\": {\"param1\": \"value1\"}}\n\n"
             + "如果无法识别意图，返回 {\"intent\": \"UNKNOWN\", \"params\": {}}";

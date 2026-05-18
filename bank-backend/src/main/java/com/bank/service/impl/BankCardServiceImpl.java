@@ -209,6 +209,16 @@ public class BankCardServiceImpl implements BankCardService {
         return bankCardMapper.lookupByName(name);
     }
 
+    @Override
+    public BankCardVO getDefaultCard(Long userId) {
+        List<BankCard> cards = bankCardMapper.selectActiveByUserId(userId);
+        return cards.stream()
+                .filter(c -> c.getIsDefault() != null && c.getIsDefault() == 1)
+                .findFirst()
+                .map(this::convertToVO)
+                .orElse(null);
+    }
+
     private BankCardVO convertToVO(BankCard card) {
         BankCardVO vo = new BankCardVO();
         BeanUtils.copyProperties(card, vo);

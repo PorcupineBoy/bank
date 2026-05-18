@@ -18,4 +18,12 @@ public interface BankCardService {
      * 根据收款人姓名模糊查找其名下银行卡列表
      */
     List<BankCardLookupVO> lookupCardsByName(String name);
+
+    /**
+     * 获取用户的默认银行卡
+     *
+     * @param userId 用户ID
+     * @return 默认银行卡，无默认卡时返回 null
+     */
+    BankCardVO getDefaultCard(Long userId);
 }

@@ -4,13 +4,15 @@ import com.bank.mcp.McpSkill;
 import com.bank.mcp.SkillMeta;
 import com.bank.mcp.SkillResult;
 import com.bank.service.BankCardService;
-import com.bank.vo.BalanceVO;
 import com.bank.vo.BankCardVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -107,9 +109,11 @@ public class QueryBalanceSkill implements McpSkill {
         sb.append("各卡余额：\n");
         for (BankCardVO card : filteredCards) {
             String type = card.getCardType() != null && card.getCardType() == 1 ? "借记卡" : "信用卡";
+            boolean isDefault = card.getIsDefault() != null && card.getIsDefault() == 1;
             sb.append("• ").append(card.getBankName())
               .append(" ").append(type)
               .append(" ").append(card.getCardNoMasked())
+              .append(isDefault ? " 【默认卡】" : "")
               .append("：¥").append(card.getBalance() != null ? card.getBalance().setScale(2, BigDecimal.ROUND_HALF_UP) : "0.00")
               .append("\n");
         }
@@ -146,6 +150,8 @@ public class QueryBalanceSkill implements McpSkill {
         map.put("cardTypeLabel", card.getCardType() != null && card.getCardType() == 1 ? "借记卡" : "信用卡");
         map.put("balance", card.getBalance() != null ? card.getBalance().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
         map.put("isDefault", card.getIsDefault());
+        // 增加 defaultLabel 字段，前端可直接使用
+        map.put("defaultLabel", card.getIsDefault() != null && card.getIsDefault() == 1 ? "默认" : "");
         return map;
     }
 }

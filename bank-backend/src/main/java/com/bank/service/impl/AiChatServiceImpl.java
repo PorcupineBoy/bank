@@ -195,6 +195,8 @@ public class AiChatServiceImpl implements AiChatService {
                         params != null ? params : new HashMap<>());
             case "QUERY_CARDS":
                 return handleQueryCards(userId);
+            case "QUERY_DEFAULT_CARD":
+                return handleQueryDefaultCard(userId);
             case "TRANSFER":
                 Map<String, Object> transferParams = (params != null && params.containsKey("payee_name"))
                         ? params : extractTransferParams(originalContent);
@@ -253,6 +255,11 @@ public class AiChatServiceImpl implements AiChatService {
         // 查看银行卡
         if (matchAny(lower, "卡", "银行卡", "我的卡", "绑定的卡", "有几张卡")) {
             return handleQueryCards(userId);
+        }
+
+        // 默认卡查询 → 专门处理
+        if (matchAny(lower, "默认卡", "默认银行卡", "主卡", "常用卡")) {
+            return handleQueryDefaultCard(userId);
         }
 
         // 转账 → 路由到 transfer_prepare Skill
@@ -367,6 +374,20 @@ public class AiChatServiceImpl implements AiChatService {
         return buildMcpResult("QUERY_CARDS", "listCards", sb.toString().trim());
     }
 
+    private ChatResult handleQueryDefaultCard(Long userId) {
+        var defaultCard = bankCardService.getDefaultCard(userId);
+        if (defaultCard == null) {
+            return buildMcpResult("QUERY_CARDS", null,
+                    "您当前没有设置默认银行卡。\n\n您可以：\n1. 进入「银行卡」页面 → 选择一张卡设为默认\n2. 或直接使用「我的卡」查看所有卡片");
+        }
+        String type = defaultCard.getCardType() != null && defaultCard.getCardType() == 1 ? "借记卡" : "信用卡";
+        String reply = String.format(
+                "您的默认银行卡：\n\n• %s %s %s 【默认卡】\n• 余额：¥%s\n\n如需更换默认卡，请进入「银行卡」页面操作。",
+                defaultCard.getBankName(), type, defaultCard.getCardNoMasked(),
+                defaultCard.getBalance() != null ? defaultCard.getBalance().setScale(2, java.math.BigDecimal.ROUND_HALF_UP) : "0.00");
+        return buildMcpResult("QUERY_CARDS", null, reply);
+    }
+
     private ChatResult handleConsumptionAnalysis(Long userId) {
         com.bank.vo.ConsumptionAnalysisVO analysis = categorizationService.analyzeConsumption(userId, java.time.LocalDate.now());
         if (analysis == null || analysis.getTotalExpense() == null || analysis.getTotalExpense().compareTo(java.math.BigDecimal.ZERO) == 0) {
@@ -456,7 +477,8 @@ public class AiChatServiceImpl implements AiChatService {
                "• 查询交易记录（如：\"最近交易\"）\n" +
                "• 转账汇款（如：\"转账给张三500元\"）\n" +
                "• 消费分析（如：\"消费分析\"）\n" +
-               "• 查看银行卡（如：\"我的卡\"）\n\n" +
+               "• 查看银行卡（如：\"我的卡\"）\n" +
+               "• 查询默认卡（如：\"默认卡\"）\n\n" +
                "请问有什么可以帮您的？";
     }
 
@@ -465,8 +487,9 @@ public class AiChatServiceImpl implements AiChatService {
                "1. 查询余额：说\"查余额\"\n" +
                "2. 查看交易：说\"最近交易\"\n" +
                "3. 查看银行卡：说\"我的卡\"\n" +
-               "4. 消费分析：说\"消费分析\"\n" +
-               "5. 转账：说\"转账给XXX N元\"\n\n" +
+               "4. 查询默认卡：说\"默认卡\"\n" +
+               "5. 消费分析：说\"消费分析\"\n" +
+               "6. 转账：说\"转账给XXX N元\"\n\n" +
                "您也可以直接说：\"查工商银行卡余额\" 或 \"上个月花了多少\"";
     }
 
@@ -476,6 +499,7 @@ public class AiChatServiceImpl implements AiChatService {
                "- \"最近交易\"\n" +
                "- \"消费分析\"\n" +
                "- \"我的银行卡\"\n" +
+               "- \"默认卡\"\n" +
                "- \"转账给张三100元\"\n" +
                "或输入\"帮助\"查看全部功能。";
     }

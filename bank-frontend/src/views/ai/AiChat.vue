@@ -40,7 +40,7 @@
               </div>
               <div class="card-subtitle">共{{ skillData(msg).data?.cardCount }}张银行卡</div>
               <div v-for="item in skillData(msg).items" :key="item.cardId" class="card-item">
-                <span>{{ item.bankName }} {{ item.cardTypeLabel }}</span>
+                <span>{{ item.bankName }} {{ item.cardTypeLabel }}<span v-if="item.isDefault" class="default-badge" style="margin-left:6px">默认</span></span>
                 <span class="card-balance">¥{{ formatAmount(item.balance) }}</span>
               </div>
             </div>
